@@ -67,7 +67,7 @@ Versión inicial.
 == Upgrade Notice ==
 = 0.4 =
 * Arreglo de fallo en el guardado de configuraciones de gastos de envío adicionales.
-* Arreglo de fallo en la traducción en español.
+* Arreglo de fallo en el idioma español.
 = 0.3 =
 * Añadido campo Coste adicional.
 * Añadidos tipos de impuestos por grupos.

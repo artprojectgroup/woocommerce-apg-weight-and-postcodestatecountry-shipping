@@ -2,7 +2,7 @@
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
 Version: 0.3
-Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcode-state-country-shipping/
+Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
 
@@ -30,7 +30,7 @@ function apg_shipping_enlaces($enlaces, $archivo) {
 
 	if ($archivo == $plugin) 
 	{
-		$enlaces[] = '<a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcode-state-country-shipping" target="_blank" title="Art Project Group">' . __('Visit the official plugin website', 'apg_shipping') . '</a>';
+		$enlaces[] = '<a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping" target="_blank" title="Art Project Group">' . __('Visit the official plugin website', 'apg_shipping') . '</a>';
 		$enlaces[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><img alt="Google Video Sitemap Feed With Multisite Support" src="' . __('https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif', 'apg_shipping') . '" width="53" height="15" style="vertical-align:text-bottom;"></a>';
 	}
 	
@@ -467,7 +467,7 @@ function apg_shipping_inicio() {
 			}
 			</style>
 			<h3><?php _e('Weight and Postcode/State/Country based shipping', 'apg_shipping'); ?></h3>
-			<p><?php _e('Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcode-state-country-shipping" target="_blank">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>.', 'apg_shipping'); ?></p>
+			<p><?php _e('Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping" target="_blank">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>.', 'apg_shipping'); ?></p>
 			<div class="donacion"><?php _e('If you enjoyed and find helpful this plugin, please make a donation.', 'apg_shipping'); ?>
 				<div><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><img alt="WooCoomerce - APG Weight and Postcode/State/Country Shipping" border="0" src="<?php _e('https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif', 'apg_shipping'); ?>" width="92" height="26"></a></div>
 			</div>

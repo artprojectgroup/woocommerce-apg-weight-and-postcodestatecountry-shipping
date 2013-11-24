@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country Shipping v0.3\n"
+"Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country Shipping v0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-11-24 10:21:46+0000\n"
+"PO-Revision-Date: 2013-11-24 11:26:06+0000\n"
 "Last-Translator: artprojectgroup <info@herves-vida.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -228,17 +228,11 @@ msgstr "Coste adicional"
 msgid "Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g. 6%. Leave blank to disable."
 msgstr "Introduce un coste adicional por pedido, por ejemplo: 2.50, o un porcentaje, por ejempolo: 6%. Déjalo en blanco para deshabilitarlo."
 
-#. translators: plugin header field 'Version'
-#: apg-shipping.php:0
-#@ apg_shipping
-msgid "0.3"
-msgstr ""
-
 #: apg-shipping.php:212
 #, php-format
 #@ apg_shipping
 msgid "P%s Tax Class:"
-msgstr "Tipo de impuesto para P%:"
+msgstr "Tipo de impuesto para P%s:"
 
 #: apg-shipping.php:213
 #, php-format
@@ -257,7 +251,7 @@ msgstr "Estándar"
 #, php-format
 #@ apg_shipping
 msgid "S%s Tax Class:"
-msgstr "Tipo de impuestos para S%:"
+msgstr "Tipo de impuestos para S%s:"
 
 #: apg-shipping.php:243
 #, php-format
@@ -269,7 +263,7 @@ msgstr "Selecciona el tipo de impuestos para el Grupo de provincia (estado) %s"
 #, php-format
 #@ apg_shipping
 msgid "C%s Tax Class:"
-msgstr "Tipo de impuesto para C%:"
+msgstr "Tipo de impuesto para C%s:"
 
 #: apg-shipping.php:271
 #, php-format
@@ -293,4 +287,10 @@ msgstr "Añade a WooCommerce el cálculo de los gastos de envío según el peso 
 #@ apg_shipping
 msgid "Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
 msgstr "Permite calcular el gasto de envío basándose en el Código Postal/Provincia (Estado)/País y el peso del carro de la compra. Le permite establecer un número ilimitado de franjas de peso en base al código postal/provincia (estado)/país y agrupar los grupos que comparten el mismo precio/franja de gasto de envío. Para obtener más ayuda y saber cómo utilizar el plugin visita <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
+
+#. translators: plugin header field 'Version'
+#: apg-shipping.php:0
+#@ apg_shipping
+msgid "0.4"
+msgstr ""
 

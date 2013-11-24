@@ -1,11 +1,10 @@
-+
 === WooCommerce - APG Weight and Postcode/State/Country Shipping ===
 Contributors: artprojectgroup
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW
 Tags: woocommerce, commerce, e-commerce, commerce, shipping, weight, zip, postcode, state, country, tax, shop, virtual shop
 Requires at least: 3.3
 Tested up to: 3.7.1
-Stable tag: 0.3
+Stable tag: 0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,34 +47,33 @@ Recuerda que puedes encontrar más plugin para WordPress en [Art Project Group](
 
 
 == Frequently asked questions ==
-
 = ¿Cómo se configura? =
-Como la configuración del plugin es un poco compleja, hemos creado un tutorial donde explicamos paso a paso el proceso de configuración con un ejemplo real. Puedes visitarlo en [Art Project Group](http://www.artprojectgroup.es/cwoocommerce-apg-weight-and-postcodestatecountry-shipping).
+Como la configuración del plugin es un poco compleja, hemos creado un tutorial donde explicamos paso a paso el proceso de configuración con un ejemplo real. Puedes visitarlo en [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](http://www.artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
 
 == Screenshots ==
 1. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Opciones de Envío.
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
-
+= 0.4 =
+Arreglo de fallo con el guardado de configuraciones y en el idioma español.
 = 0.3 =
 Añadido el campo de coste adicional y tipos de IVA individuales por grupo.
-
 = 0.2 =
 Versión inicial mejorada.
-
 = 0.1 =
 Versión inicial.
 
 == Upgrade Notice ==
-
-= 0.2 =
-* Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información.
-* Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
-
+= 0.4 =
+* Arreglo de fallo en el guardado de configuraciones de gastos de envío adicionales.
+* Arreglo de fallo en la traducción en español.
 = 0.3 =
 * Añadido campo Coste adicional.
 * Añadidos tipos de impuestos por grupos.
+= 0.2 =
+* Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información.
+* Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
 
 ==Traducciones ==
 * English

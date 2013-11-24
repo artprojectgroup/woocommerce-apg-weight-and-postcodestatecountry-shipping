@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.3
+Version: 0.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -55,7 +55,7 @@ function apg_shipping_inicio() {
 	class apg_shipping extends WC_Shipping_Method {
 
 		function __construct() {
-			$this->id 			= 'apg_shipping';
+			$this->id 				= 'apg_shipping';
 			$this->method_title	= __('APG Shipping', 'apg_shipping');
 			$this->init();
 		}
@@ -463,7 +463,7 @@ function apg_shipping_inicio() {
 			}
 			.woocommerce table.form-table {
 				clear:none!important;
-				width:85%;
+				width:80%;
 			}
 			</style>
 			<h3><?php _e('Weight and Postcode/State/Country based shipping', 'apg_shipping'); ?></h3>
@@ -480,25 +480,25 @@ function apg_shipping_inicio() {
 	
 	//Añade clases necesarias para nuevos gastos de envío
 	$contador = count(dame_apg_shipping());
-	$count = 2;
+	$cuenta = 2;
 	for ($i = 0; $i < $contador; $i++)
 	{
 		eval("
-		class apg_shipping_$count extends apg_shipping {
+		class apg_shipping_$cuenta extends apg_shipping {
 
         	function __construct() {
 				global \$woocommerce;
 			
 				\$shipping = dame_apg_shipping();
 	
-				\$this->id = 'apg_shipping_$count';
-        	    \$this->method_title			 = __(\$shipping[$i], 'apg_shipping');
+				\$this->id 			= \"apg_shipping_$cuenta\";
+        	    \$this->method_title	= __(\$shipping[$i], 'apg_shipping');
 
 				parent::init();
 	        }
 		}
 		");
-		$count++;
+		$cuenta++;
 	}
 }
 add_action('plugins_loaded', 'apg_shipping_inicio', 0);
@@ -507,16 +507,16 @@ add_action('plugins_loaded', 'apg_shipping_inicio', 0);
 function apg_shipping_anade_gastos_de_envio($methods) {
 	$methods[] = 'apg_shipping';
 
-	$count = 2;
+	$cuenta = 2;
 	$contador = count(dame_apg_shipping());
 	for ($i = 0; $i < $contador; $i++)
 	{
-		$shipping = 'apg_shipping_' . $count;
+		$shipping = 'apg_shipping_' . $cuenta;
 		$methods[] = $shipping;
-		$count++;
+		$cuenta++;
 	}
 
-	for ($i = $contador + 1; $i < 100; $i++)
+	for ($i = $cuenta; $i < 100; $i++)
 	{
 		$shipping = 'woocommerce_apg_shipping_' . $i . '_settings';
 		if (get_option($shipping)) delete_option($shipping);
@@ -527,27 +527,27 @@ function apg_shipping_anade_gastos_de_envio($methods) {
 add_filter('woocommerce_shipping_methods', 'apg_shipping_anade_gastos_de_envio');
 
 //Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
-function apg_shipping_nuevos_gastos_de_envio($settings) {
-	$add_setting = array();
+function apg_shipping_nuevos_gastos_de_envio($configuracion) {
+	$anadir_seccion = array();
 
-	foreach ($settings as $section) 
+	foreach ($configuracion as $seccion) 
 	{
-		if (isset($section['id']) && 'shipping_options' == $section['id'] && isset($section['type']) && 'sectionend' == $section['type']) 
+		if ((isset($seccion['id']) && $seccion['id'] == 'shipping_options') && (isset($seccion['type']) && $seccion['type'] == 'sectionend')) 
 		{
-     		$add_setting[] = array(
-        		'name'     => __('Additional Shipping', 'apg_shipping'),
-		        'desc_tip' => __('List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping'),
-		        'id'       => 'woocommerce_apg_shipping',
-		        'type'     => 'textarea',
-		        'css'      => 'min-width:300px;',
-        		'default'  => '',
+			$anadir_seccion[] = array(
+				'name'     => __('Additional Shipping', 'apg_shipping'),
+				'desc_tip' => __('List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping'),
+				'id'       => 'woocommerce_apg_shipping',
+				'type'     => 'textarea',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
       		);
     	}
 
-		$add_setting[] = $section;
+		$anadir_seccion[] = $seccion;
 	}
 	
-	return $add_setting;
+	return $anadir_seccion;
 }
 add_filter('woocommerce_shipping_settings', 'apg_shipping_nuevos_gastos_de_envio');
 
@@ -568,7 +568,7 @@ function dame_impuestos() {
 	$tipos_impuestos = array();
 	if ($impuestos)
 	{
-		foreach ($impuestos as $impuesto) $tipos_impuestos[ sanitize_title($impuesto) ] = esc_html($impuesto);
+		foreach ($impuestos as $impuesto) $tipos_impuestos[sanitize_title($impuesto)] = esc_html($impuesto);
 	}
 	
 	return $tipos_impuestos;

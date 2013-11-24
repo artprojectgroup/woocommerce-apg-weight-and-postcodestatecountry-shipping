@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country Shipping v0.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-11-22 12:27:07+0000\n"
+"PO-Revision-Date: 2013-11-24 10:21:46+0000\n"
 "Last-Translator: artprojectgroup <info@herves-vida.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -169,11 +169,6 @@ msgstr "Los países añadidos a los grupos de países serán añadidos automáti
 msgid "Add the postcodes for this group. Semi-colon (;) separate multiple values. Wildcards (*) can be used. Example: <code>07*</code>. Ranges for numeric postcodes will be expanded into individual postcodes. Example: <code>12345-12350</code>."
 msgstr "Introduzca los códigos postales para este grupo. Los valores múltiples se separan con punto y coma (;). Los comodines (*) están permitidos. Ejemplo: <code>07 *</code>. Los rangos de números de códigos postales se convierten automáticamente en códigos postales individuales. Ejemplo: <code>12345-1235 </code>."
 
-#: apg-shipping.php:470
-#@ apg_shipping
-msgid "Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcode-state-country-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
-msgstr "Permite calcular el gasto de envío basándose en el Código Postal/Provincia (Estado)/País y el peso del carro de la compra. Le permite establecer un número ilimitado de franjas de peso en base al código postal/provincia (estado)/país y agrupar los grupos que comparten el mismo precio/franja de gasto de envío. Para obtener más ayuda y saber cómo utilizar el plugin visita <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcode-state-country-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
-
 #: apg-shipping.php:164
 #@ apg_shipping
 msgid "Set your weight based rates for postcode/state/country groups (one per line). Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)</code>."
@@ -199,12 +194,6 @@ msgstr "https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donate_LG.gif"
 #: apg-shipping.php:0
 #@ apg_shipping
 msgid "WooCommerce - APG Weight and Postcode/State/Country Shipping"
-msgstr ""
-
-#. translators: plugin header field 'PluginURI'
-#: apg-shipping.php:0
-#@ apg_shipping
-msgid "http://wordpress.org/plugins/woocommerce-apg-weight-and-postcode-state-country-shipping/"
 msgstr ""
 
 #. translators: plugin header field 'Author'
@@ -288,9 +277,20 @@ msgstr "Tipo de impuesto para C%:"
 msgid "Select the tax class for Country Group %s"
 msgstr "Selecciona el tipo de impuestos para el Grupo de países %s"
 
+#. translators: plugin header field 'PluginURI'
+#: apg-shipping.php:0
+#@ apg_shipping
+msgid "http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/"
+msgstr ""
+
 #. translators: plugin header field 'Description'
 #: apg-shipping.php:0
 #@ apg_shipping
-msgid "Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href=\"http://profiles.wordpress.org/andy_p/\" target=\"_blank\">Andy_P</a> <a href=\"http://wordpress.org/plugins/awd-weightcountry-shipping/\" target=\"_blank\"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href=\"http://wordpress.org/support/profile/mantish\" target=\"_blank\">Mantish</a> published in <a href=\"https://gist.github.com/Mantish/5658280\" target=\"_blank\">GitHub</a>."
+msgid "Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href=\"http://profiles.wordpress.org/andy_p/\" target=\"_blank\">Andy_P</a> <a href=\"http://wordpress.org/plugins/awd-weightcountry-shipping/\" target=\"_blank\"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href=\"http://wordpress.org/support/profile/mantish\" target=\"_blank\">Mantish</a> publicada en <a href=\"https://gist.github.com/Mantish/5658280\" target=\"_blank\">GitHub</a>."
 msgstr "Añade a WooCommerce el cálculo de los gastos de envío según el peso del pedido y el código postal, provincia (estado) y país de la dirección de envío del cliente. Permite añadir una cantidad ilimitada de tarifas. Creado a partir del plugin de <a href=\\\"http://profiles.wordpress.org/andy_p/\\\" target=\\\"_blank\\\">Andy_P</a> <a href=\\\"http://wordpress.org/plugins/awd-weightcountry-shipping/\\\" target=\\\"_blank\\\"><strong>AWD Weight/Country Shipping</strong></a> y la modificación de <a href=\\\"http://wordpress.org/support/profile/mantish\\\" target=\\\"_blank\\\">Mantish</a> publicada en <a href=\\\"https://gist.github.com/Mantish/5658280\\\" target=\\\"_blank\\\">GitHub</a>."
+
+#: apg-shipping.php:470
+#@ apg_shipping
+msgid "Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
+msgstr "Permite calcular el gasto de envío basándose en el Código Postal/Provincia (Estado)/País y el peso del carro de la compra. Le permite establecer un número ilimitado de franjas de peso en base al código postal/provincia (estado)/país y agrupar los grupos que comparten el mismo precio/franja de gasto de envío. Para obtener más ayuda y saber cómo utilizar el plugin visita <a href=\"http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping\" target=\"_blank\">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>."
 

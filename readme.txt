@@ -42,7 +42,7 @@ Recuerda que puedes encontrar más plugin para WordPress en [Art Project Group](
 == Installation ==
 1. Subir la carpeta ‘woocommerce-apg-shipping' al directorio '/wp-content/plugins/‘, o subir el archivo ZIP completo vía *Plugins -> Añadir nuevo -> Subir* en el Panel de Administración de tu instalación de WordPress.
 2. Activar el plugin a través del menú *Plugins* en el Panel de Administración de WordPress.
-3. Configurar el plugin en *WooCommerce -> Ajustes -> Envío*.
+3. Configurar el plugin en *WooCommerce -> Ajustes -> Envío* o a través del botón *Ajustes*.
 4. Listo, ahora ya puedes disfrutar de él, y si te gusta y te resulta útil, hacer una [*donación*](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW).
 
 
@@ -90,7 +90,7 @@ Por ello regalamos a esa gran comunidad hispana nuestros plugins con interfaces,
 Esperamos que os guste nuestra iniciativa.
 
 == Donación ==
-¿Te ha gustado y te ha resultado útil **WooCommerce - APG Weight and Postcode/State/Country Shipping** en tu sitio web? Te agradeceríamos una[pequeña donación](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW) que nos ayudará a seguir mejorando este plugin y a crear más plugins totalmente gratuitos para toda la comunidad WordPress.
+¿Te ha gustado y te ha resultado útil **WooCommerce - APG Weight and Postcode/State/Country Shipping** en tu sitio web? Te agradeceríamos una [pequeña donación](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW) que nos ayudará a seguir mejorando este plugin y a crear más plugins totalmente gratuitos para toda la comunidad WordPress.
 
 == Gracias ==
 * A [Andy_P](http://profiles.wordpress.org/andy_p/) y [Mantish](http://wordpress.org/support/profile/mantish) por el gran plugin y la modificación que han inspirado **WooCommerce - APG Weight and Postcode/State/Country Shipping**.

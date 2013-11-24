@@ -31,7 +31,7 @@ function apg_shipping_enlaces($enlaces, $archivo) {
 	if ($archivo == $plugin) 
 	{
 		$enlaces[] = '<a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping" target="_blank" title="Art Project Group">' . __('Visit the official plugin website', 'apg_shipping') . '</a>';
-		$enlaces[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><img alt="Google Video Sitemap Feed With Multisite Support" src="' . __('https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif', 'apg_shipping') . '" width="53" height="15" style="vertical-align:text-bottom;"></a>';
+		$enlaces[] = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><img alt="WooCommerce - APG Weight and Postcode/State/Country Shipping" src="' . __('https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif', 'apg_shipping') . '" width="53" height="15" style="vertical-align:text-bottom;"></a>';
 	}
 	
 	return $enlaces;

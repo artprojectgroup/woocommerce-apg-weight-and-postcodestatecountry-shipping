@@ -31,7 +31,7 @@ En nuestro sitio web oficial puede obtener más información sobre [**WooCommerc
 = Comentarios =
 No olvides dejarnos tu comentario en:
 
-* [Art Project Group](http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping).
+* [WooCommerce - APG Weight and Postcode/State/Country Shipping](http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping) en Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) en Facebook.
 * [@artprojectgroup](https://twitter.com/artprojectgroup) en Twitter.
 * [+ArtProjectGroupES](https://twitter.com/artprojectgroup) en Google+.
@@ -40,7 +40,10 @@ No olvides dejarnos tu comentario en:
 Recuerda que puedes encontrar más plugin para WordPress en [Art Project Group](http://www.artprojectgroup.es/plugins-para-wordpress/) y en nuestro perfil en [WordPress](http://profiles.wordpress.org/artprojectgroup/).
 
 == Installation ==
-1. Subir la carpeta ‘woocommerce-apg-weight-and-postcodestatecountry-shipping' al directorio '/wp-content/plugins/‘, o subir el archivo ZIP completo vía *Plugins -> Añadir nuevo -> Subir* en el Panel de Administración de tu instalación de WordPress.
+1. Puedes:
+ * Subir la carpeta `woocommerce-apg-weight-and-postcodestatecountry-shipping` al directorio `/wp-content/plugins/` vía FTP. 
+ * Subir el archivo ZIP completo vía *Plugins -> Añadir nuevo -> Subir* en el Panel de Administración de tu instalación de WordPress.
+ * Buscar **WooCommerce - APG Weight and Postcode/State/Country Shipping** en el buscador disponible en *Plugins -> Añadir nuevo* y pulsar el botón *Instalar ahora*.
 2. Activar el plugin a través del menú *Plugins* en el Panel de Administración de WordPress.
 3. Configurar el plugin en *WooCommerce -> Ajustes -> Envío* o a través del botón *Ajustes*.
 4. Listo, ahora ya puedes disfrutar de él, y si te gusta y te resulta útil, hacer una [*donación*](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW).
@@ -56,16 +59,6 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 
 == Changelog ==
 = 0.4 =
-Arreglo de fallo con el guardado de configuraciones y en el idioma español.
-= 0.3 =
-Añadido el campo de coste adicional y tipos de IVA individuales por grupo.
-= 0.2 =
-Versión inicial mejorada.
-= 0.1 =
-Versión inicial.
-
-== Upgrade Notice ==
-= 0.4 =
 * Arreglo de fallo en el guardado de configuraciones de gastos de envío adicionales.
 * Arreglo de fallo en el idioma español.
 = 0.3 =
@@ -74,10 +67,20 @@ Versión inicial.
 = 0.2 =
 * Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información.
 * Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
+= 0.1 =
+Versión inicial.
+
+== Upgrade Notice ==
+= 0.4 =
+Arreglo de fallo con el guardado de configuraciones y en el idioma español.
+= 0.3 =
+Añadido el campo de coste adicional y tipos de IVA individuales por grupo.
+= 0.2 =
+Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información y añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío
 
 ==Traducciones ==
-* English
-* Español
+* *English*: by **Art Project Group** (default language).
+* *Español*: por **Art Project Group**.
 
 == ¿Por qué está esta página en español? ==
 Mientras WordPress no nos permita a los desarrolladores realizar esta página en más de un idioma, elegiremos siempre el español.

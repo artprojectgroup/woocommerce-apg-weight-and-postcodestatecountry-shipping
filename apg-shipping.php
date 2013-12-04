@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.4
+Version: 0.5
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -78,12 +78,11 @@ function apg_shipping_inicio() {
 			$this->country_group_no	= $this->settings['country_group_no'];
 			$this->sync_countries		= $this->settings['sync_countries'];
 			$this->availability		= 'specific';
-			$this->states				= $this->settings['states'];
-			$this->countries			= $this->settings['countries'];
 			$this->type				= 'order';
 			$this->tax_status			= $this->settings['tax_status'];
 			$this->fee					= $this->settings['fee'];
 			$this->cargo				= $this->settings['cargo'];
+			$this->maximo				= $this->settings['maximo'];
 			$this->options				= isset($this->settings['options']) ? $this->settings['options'] : '';
 			$this->options				= (array) explode("\n", $this->options);
 			
@@ -161,33 +160,39 @@ function apg_shipping_inicio() {
 				'options' => array(
 					'title'			=> __('Shipping Rates', 'apg_shipping'),
 					'type'			=> 'textarea',
-					'desc_tip'		=> __('Set your weight based rates for postcode/state/country groups (one per line). Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)</code>.', 'apg_shipping'),
+					'desc_tip'		=> __('Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions. Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)|LxWxH (optional)</code>.', 'apg_shipping'),
 					'css'			=> 'width:300px;',
 					'default'		=> '',
-					'description'	=> '1000|6.95|P2,S1,C3',
+					'description'	=> '<code>1000|6.95|P2,S1,C3|1x1x1</code><br />' . sprintf(__('Remember your weight unit: %s, and dimensions unit: %s.', 'apg_shipping'), get_option('woocommerce_weight_unit'),get_option('woocommerce_dimension_unit')),
+				),
+				'maximo' => array(
+					'title'			=> __('Overweight/over dimensions', 'apg_shipping'),
+					'type'			=> 'checkbox',
+					'label'			=> __('Return the maximum price.', 'apg_shipping'),
+					'default'		=> 'yes',
 				),
 				'postal_group_no' => array(
 					'title'			=> __('Number of postcode groups', 'apg_shipping'),
 					'type'			=> 'text',
 					'desc_tip'		=> __('Number of groups of ZIP/Postcode sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping'),
-					'default'		=> '1',
+					'default'		=> '0',
 				),
 				'state_group_no' => array(
 					'title'			=> __('Number of state groups', 'apg_shipping'),
 					'type'			=> 'text',
 					'desc_tip'		=> __('Number of groups of states sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping'),
-					'default'		=> '1',
+					'default'		=> '0',
 				),
 				'country_group_no' => array(
 					'title'			=> __('Number of country groups', 'apg_shipping'),
 					'type'			=> 'text',
 					'desc_tip'		=> __('Number of groups of countries sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping'),
-					'default'		=> '1',
+					'default'		=> '0',
 				),
 				'sync_countries' => array(
 					'title'			=> __('Add countries to allowed', 'apg_shipping'),
 					'type'			=> 'checkbox',
-					'label'			=> __('Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="/wp-admin/admin.php?page=woocommerce_settings&tab=general">General settings</a> tab.', 'apg_shipping'),
+					'label'			=> __('Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="admin.php?page=woocommerce_settings&tab=general">General settings</a> tab.', 'apg_shipping'),
 					'default'		=> 'no',
 				),
 			);
@@ -283,9 +288,21 @@ function apg_shipping_inicio() {
 
 			$grupo = $this->dame_grupos($paquete);
 			$tarifas = $this->dame_tarifas($grupo);
-			
+
 			$peso = $woocommerce->cart->cart_contents_weight;
-			$precio = $this->dame_tarifa_mas_barata($tarifas, $peso);
+			
+			//Obtenemos las medidas
+			$largo = $ancho = $alto = 0;
+			foreach ($woocommerce->cart->get_cart() as $identificador => $valores) 
+			{
+                $producto = $valores['data'];
+
+                if ($producto->length) $largo += $producto->length;
+                if ($producto->width) $ancho += $producto->width;
+                if ($producto->height) $alto += $producto->height;
+     		}
+			
+			$precio = $this->dame_tarifa_mas_barata($tarifas, $peso, $largo, $ancho, $alto);
 
 			if ($precio === false) return false;
 
@@ -357,12 +374,13 @@ function apg_shipping_inicio() {
 
 		//Devuelve la tarifa aplicable al grupo/s seleccionado/s
 		function dame_tarifas($grupo = null) {
-			$tarifas = array();
+			$tarifas = $tarifa_de_grupo = array();
+			
 			if (sizeof($this->options) > 0) foreach ($this->options as $indice => $opcion) 
 			{
-			    $tarifa = preg_split('~\s*\|\s*~', trim($opcion));
+			    $tarifa = preg_split('~\s*\|\s*~', preg_replace('/\s+/', '', $opcion));
 
-			    if (sizeof($tarifa) !== 3) continue;
+			    if (sizeof($tarifa) < 3) continue;
 				else $tarifas[] = $tarifa;
 			}
 
@@ -379,19 +397,27 @@ function apg_shipping_inicio() {
 		}
 
 		//Selecciona la tarifa más barata
-		function dame_tarifa_mas_barata($tarifas, $peso) {
+		function dame_tarifa_mas_barata($tarifas, $peso, $largo, $ancho, $alto) {
 			if ($peso == 0) return 0; // no shipping for cart without weight
+			
+			$gasto_de_envio = $tarifa_gasto_de_envio = array();
 
 			if (sizeof($tarifas) > 0) foreach ($tarifas as $indice => $tarifa) 
 			{
-			    if ($peso <= $tarifa[0]) $gasto_de_envio[] = $tarifa[1];
+				$tamano = true;
+				if (isset($tarifa[3]))
+				{
+					$medidas = explode("x", $tarifa[3]);
+					if ($largo > $medidas[0] || $ancho > $medidas[1] || $alto > $medidas[2]) $tamano = false;
+				}
+		    	if ($peso <= $tarifa[0] && $tamano) $gasto_de_envio[] = $tarifa[1];
 			    $tarifa_gasto_de_envio[] = $tarifa[1];
 			}
 
 			if (sizeof($gasto_de_envio) > 0) return min($gasto_de_envio);
 			else 
 			{
-			    if (sizeof($tarifa_gasto_de_envio) > 0) return max($tarifa_gasto_de_envio);
+			    if (sizeof($tarifa_gasto_de_envio) > 0 && $this->maximo == "yes") return max($tarifa_gasto_de_envio);
 			}
 			
 			return false;
@@ -444,37 +470,7 @@ function apg_shipping_inicio() {
 
 		//Pinta el formulario
 		public function admin_options() {
-			?>
-			<style type="text/css">
-			div.donacion {
-				background: #FFFFE0;
-				border: 1px solid #E6DB55;
-				float: right;
-				margin: 10px 0px;
-				padding: 10px;
-				width: 220px;
-				text-align: center;
-			}
-			div.donacion div {
-				padding: 10px;
-				margin: 10px auto 0px;
-				width: 190px;
-				border-top: 1px solid #E6DB55;
-			}
-			.woocommerce table.form-table {
-				clear:none!important;
-				width:80%;
-			}
-			</style>
-			<h3><?php _e('Weight and Postcode/State/Country based shipping', 'apg_shipping'); ?></h3>
-			<p><?php _e('Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands. For more help and know how to use the plugin visit <a href="http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping" target="_blank">WooCoomerce - APG Weight and Postcode/State/Country Shipping</a>.', 'apg_shipping'); ?></p>
-			<div class="donacion"><?php _e('If you enjoyed and find helpful this plugin, please make a donation.', 'apg_shipping'); ?>
-				<div><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><img alt="WooCoomerce - APG Weight and Postcode/State/Country Shipping" border="0" src="<?php _e('https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif', 'apg_shipping'); ?>" width="92" height="26"></a></div>
-			</div>
-			<table class="form-table">
-			   	<?php $this->generate_settings_html(); ?>
-			</table><!--/.form-table-->
-			<?php
+			include('formulario.php');
 		}
 	}
 	

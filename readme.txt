@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 0.5.1
+Stable tag: 0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,8 +18,8 @@ Añade a tu tienda WooCommerce el cálculo de los gastos de envío según el pes
 * Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje.
 * Puedes crear un número ilimitado de grupos, tanto para los códigos postales, como para las provincias (estados), como para los países.
 * Puedes crear un número ilimitado de tarifas.
-* Puedes crear las tarifas con un peso y medidas máximos.
-* Puedes elegir si aceptar excesos de peso o medidas.
+* Puedes crear las tarifas con un peso y/o dimensiones máximos.
+* Puedes elegir si aceptar excesos de peso o dimensiones.
 * Puedes aplicar un tipo de IVA diferente a cada grupo creado.
 * Puedes crear un número ilimitado de empresas de transporte para utilizar este sistema de cálculo.
 * Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*.
@@ -60,11 +60,13 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.6 =
+Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
 Arreglo del archivo ZIP.
 = 0.5 =
 * Añadido soporte de medidas.
-* Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o medidas.
+* Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones.
 * Rediseño de la pantalla de configuración.
 * Arreglos menores en el código.
 = 0.4 =
@@ -80,10 +82,12 @@ Arreglo del archivo ZIP.
 Versión inicial.
 
 == Upgrade Notice ==
+= 0.6 =
+Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
 Arreglo del archivo ZIP.
 = 0.5 =
-Añadido soporte de medidas, añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o medidas, rediseño de la pantalla de configuración y arreglos menores en el código.
+Añadido soporte de medidas, añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones, rediseño de la pantalla de configuración y arreglos menores en el código.
 = 0.4 =
 Arreglo de fallo con el guardado de configuraciones y en el idioma español.
 = 0.3 =

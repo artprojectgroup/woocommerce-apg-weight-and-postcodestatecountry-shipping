@@ -89,7 +89,7 @@ input[type="submit"]:focus, input[type="submit"]:hover {
 	text-decoration: none;
 }
 </style>
-
+<?php if (!isset($this->maximo)) echo '<div class="updated fade" id="message"><p><strong>' . __('Please, update settings.', 'apg_shipping') . '</strong></p></div>'; ?>
 <h3>
   <?php _e('Weight and Postcode/State/Country based shipping', 'apg_shipping'); ?>
 </h3>

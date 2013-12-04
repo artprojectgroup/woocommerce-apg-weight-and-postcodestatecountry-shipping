@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.5.1
+Version: 0.6
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -70,7 +70,7 @@ function apg_shipping_inicio() {
 
 			$this->init_form_fields();
 			$this->init_settings();
-
+			
 			$this->enabled				= $this->settings['enabled'];
 			$this->title				= $this->settings['title'];
 			$this->postal_group_no	= $this->settings['postal_group_no'];
@@ -160,10 +160,10 @@ function apg_shipping_inicio() {
 				'options' => array(
 					'title'			=> __('Shipping Rates', 'apg_shipping'),
 					'type'			=> 'textarea',
-					'desc_tip'		=> __('Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions. Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)|LxWxH (optional)</code>.', 'apg_shipping'),
+					'desc_tip'		=> __('Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions. Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)|LxWxH (optional)</code>. Also you can set your dimensions based rates. Example: <code>LxWxH|Cost|postcode/state/country group code separated by comma (,)</code>', 'apg_shipping'),
 					'css'			=> 'width:300px;',
 					'default'		=> '',
-					'description'	=> '<code>1000|6.95|P2,S1,C3|1x1x1</code><br />' . sprintf(__('Remember your weight unit: %s, and dimensions unit: %s.', 'apg_shipping'), get_option('woocommerce_weight_unit'),get_option('woocommerce_dimension_unit')),
+					'description'	=> '<code>1000|6.95|P2,S1,C3|10x10x10</code><br /><code>10x10x10|6.95|P2,S1,C3</code><br />' . sprintf(__('Remember your weight unit: %s, and dimensions unit: %s.', 'apg_shipping'), get_option('woocommerce_weight_unit'),get_option('woocommerce_dimension_unit')),
 				),
 				'maximo' => array(
 					'title'			=> __('Overweight/over dimensions', 'apg_shipping'),
@@ -297,9 +297,9 @@ function apg_shipping_inicio() {
 			{
                 $producto = $valores['data'];
 
-                if ($producto->length) $largo += $producto->length;
-                if ($producto->width) $ancho += $producto->width;
-                if ($producto->height) $alto += $producto->height;
+                if ($producto->length) $largo += ($producto->length * $valores['quantity']);
+                if ($producto->width) $ancho += ($producto->width * $valores['quantity']);
+                if ($producto->height) $alto += ($producto->height * $valores['quantity']);
      		}
 			
 			$precio = $this->dame_tarifa_mas_barata($tarifas, $peso, $largo, $ancho, $alto);
@@ -398,20 +398,34 @@ function apg_shipping_inicio() {
 
 		//Selecciona la tarifa más barata
 		function dame_tarifa_mas_barata($tarifas, $peso, $largo, $ancho, $alto) {
-			if ($peso == 0) return 0; // no shipping for cart without weight
-			
 			$gasto_de_envio = $tarifa_gasto_de_envio = array();
 
 			if (sizeof($tarifas) > 0) foreach ($tarifas as $indice => $tarifa) 
 			{
-				$tamano = true;
-				if (isset($tarifa[3]))
+				$dimensiones = false;
+				if (stripos($tarifa[0], "x")) //Son dimensiones no pesos
 				{
-					$medidas = explode("x", $tarifa[3]);
+					$dimensiones = true;
+					$medidas = strtolower($tarifa[0]);
+				}
+				if (isset($tarifa[3])) $medidas = strtolower($tarifa[3]);//Tiene dimensiones máximas
+				
+				$tamano = true;
+				if (isset($medidas))
+				{
+					$medidas = explode("x", $medidas);
 					if ($largo > $medidas[0] || $ancho > $medidas[1] || $alto > $medidas[2]) $tamano = false;
 				}
-		    	if ($peso <= $tarifa[0] && $tamano) $gasto_de_envio[] = $tarifa[1];
-			    $tarifa_gasto_de_envio[] = $tarifa[1];
+				
+				if (!$dimensiones)
+				{
+					if ($peso <= $tarifa[0] && $tamano) $gasto_de_envio[] = $tarifa[1];
+				}
+				else
+				{
+					if ($tamano) $gasto_de_envio[] = $tarifa[1];
+				}
+				$tarifa_gasto_de_envio[] = $tarifa[1];
 			}
 
 			if (sizeof($gasto_de_envio) > 0) return min($gasto_de_envio);

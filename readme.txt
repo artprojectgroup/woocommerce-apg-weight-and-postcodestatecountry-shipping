@@ -60,6 +60,8 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.5.1 =
+Arreglo del archivo ZIP.
 = 0.5 =
 * Añadido soporte de medidas.
 * Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o medidas.
@@ -78,6 +80,8 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 Versión inicial.
 
 == Upgrade Notice ==
+= 0.5.1 =
+Arreglo del archivo ZIP.
 = 0.5 =
 Añadido soporte de medidas, añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o medidas, rediseño de la pantalla de configuración y arreglos menores en el código.
 = 0.4 =

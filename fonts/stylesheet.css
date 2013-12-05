@@ -8,19 +8,11 @@
 	font-weight: normal;
 	font-style: normal;
 }
-/* Factooria */
-@font-face {
-	font-family: 'Bebas';
-	src: url('Bebas.eot');
-	src: url('Bebas.eot?#iefix') format('embedded-opentype'), url('Bebas.woff') format('woff'), url('Bebas.ttf') format('truetype'), url('Bebas.svg#Bebas') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
 /* Iconos */
 @font-face {
 	font-family: "Flaticon";
-	src: url("flaticon.eot");
-	src: url("flaticon.eot#iefix") format("embedded-opentype"), url("flaticon.woff") format("woff"), url("flaticon.ttf") format("truetype"), url("flaticon.svg") format("svg");
+	src: url("icon.eot");
+	src: url("icon.eot#iefix") format("embedded-opentype"),  url("icon.woff") format("woff"),  url("icon.ttf") format("truetype"),  url("icon.svg") format("svg");
 	font-weight: normal;
 	font-style: normal;
 }
@@ -28,44 +20,47 @@
 .artprojectgroup {
 	font-family: d3_euronismregular;
 }
-.factooria {
-	font-family: Bebas;
-}
-[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+[class^="icon-"]:before, [class*=" icon-"]:before, [class^="icon-"]:after, [class*=" icon-"]:after {
 	font-family: Flaticon;
 }
-[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after, .artprojectgroup, .factooria {
-	font-size: 20px;
+[class^="icon-"]:before, [class*=" icon-"]:before, [class^="icon-"]:after, [class*=" icon-"]:after, .artprojectgroup {
 	font-style: normal;
 	color: #333333!important;
 }
-.flaticon-creative:before {
+[class^="icon-"]:hover, [class*=" icon-"]:hover, .artprojectgroup:hover {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity=80);
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+}
+.icon-facebook6:before {
 	content: "\e000";
 }
-.flaticon-facebook6:before {
+.icon-google16:before {
 	content: "\e001";
 }
-.flaticon-google16:before {
+.icon-logo:before {
 	content: "\e002";
 }
-.flaticon-logo:before {
+.icon-open21:before {
 	content: "\e003";
 }
-.flaticon-mail9:before {
+.icon-paypal:before {
 	content: "\e004";
 }
-.flaticon-paypal:before {
+.icon-social19:before {
 	content: "\e005";
 }
-.flaticon-social19:before {
+.icon-social23:before {
 	content: "\e006";
 }
-.flaticon-social23:before {
+.icon-social6:before {
 	content: "\e007";
 }
-.flaticon-social6:before {
+.icon-wordpress2:before {
 	content: "\e008";
 }
-.flaticon-wordpress2:before {
+.icon-work:before {
 	content: "\e009";
 }

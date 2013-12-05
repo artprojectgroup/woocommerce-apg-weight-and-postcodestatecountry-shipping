@@ -2,8 +2,11 @@
  @import url(fonts/stylesheet.css);
 /*General*/
 table.form-table {
-    clear: none;
-    width: 70%;
+	clear: none;
+	width: 70%;
+}
+div.donacion [class^="icon-"]:before, div.donacion [class*=" icon-"]:before, div.donacion [class^="icon-"]:after, div.donacion [class*=" icon-"]:after, div.donacion .artprojectgroup {
+	font-size: 20px;
 }
 div.donacion {
 	background: #FFFFE0;

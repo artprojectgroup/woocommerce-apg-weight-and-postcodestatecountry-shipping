@@ -1,0 +1,71 @@
+/* Fuentes */
+
+/* APG */
+@font-face {
+	font-family: 'd3_euronismregular';
+	src: url('d3euronism-webfont.eot');
+	src: url('d3euronism-webfont.eot?#iefix') format('embedded-opentype'), url('d3euronism-webfont.woff') format('woff'), url('d3euronism-webfont.ttf') format('truetype'), url('d3euronism-webfont.svg#d3_euronismregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+/* Factooria */
+@font-face {
+	font-family: 'Bebas';
+	src: url('Bebas.eot');
+	src: url('Bebas.eot?#iefix') format('embedded-opentype'), url('Bebas.woff') format('woff'), url('Bebas.ttf') format('truetype'), url('Bebas.svg#Bebas') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+/* Iconos */
+@font-face {
+	font-family: "Flaticon";
+	src: url("flaticon.eot");
+	src: url("flaticon.eot#iefix") format("embedded-opentype"), url("flaticon.woff") format("woff"), url("flaticon.ttf") format("truetype"), url("flaticon.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+/* Clases */
+.artprojectgroup {
+	font-family: d3_euronismregular;
+}
+.factooria {
+	font-family: Bebas;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+	font-family: Flaticon;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after, .artprojectgroup, .factooria {
+	font-size: 20px;
+	font-style: normal;
+	color: #333333!important;
+}
+.flaticon-creative:before {
+	content: "\e000";
+}
+.flaticon-facebook6:before {
+	content: "\e001";
+}
+.flaticon-google16:before {
+	content: "\e002";
+}
+.flaticon-logo:before {
+	content: "\e003";
+}
+.flaticon-mail9:before {
+	content: "\e004";
+}
+.flaticon-paypal:before {
+	content: "\e005";
+}
+.flaticon-social19:before {
+	content: "\e006";
+}
+.flaticon-social23:before {
+	content: "\e007";
+}
+.flaticon-social6:before {
+	content: "\e008";
+}
+.flaticon-wordpress2:before {
+	content: "\e009";
+}

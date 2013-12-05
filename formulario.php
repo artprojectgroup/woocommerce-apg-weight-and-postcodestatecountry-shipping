@@ -11,19 +11,19 @@
   <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW" target="_blank" title="PayPal"><span class="flaticon-paypal"></span></a></p>
   <div>
     <p>Art Project Group:</p>
-    <p><a href="http://www.artprojectgroup.es" title="Art Project Group"><strong class="artprojectgroup">APG</strong></a></p>
+    <p><a href="http://www.artprojectgroup.es" title="Art Project Group" target="_blank"><strong class="artprojectgroup">APG</strong></a></p>
   </div>
   <div>
     <p>
       <?php _e('Follow us:', 'apg_shipping'); ?>
     </p>
-    <p><a href="https://www.facebook.com/artprojectgroup" title="Facebook"><span class="flaticon-facebook6"></span></a> <a href="https://twitter.com/artprojectgroup" title="Twitter"><span class="flaticon-social19"></span></a> <a href="https://plus.google.com/+ArtProjectGroupES" title="Google+"><span class="flaticon-google16"></span></a> <a href="http://es.linkedin.com/in/artprojectgroup" title="LinkedIn"><span class="flaticon-logo"></span></a></p>
+    <p><a href="https://www.facebook.com/artprojectgroup" title="Facebook" target="_blank"><span class="flaticon-facebook6"></span></a> <a href="https://twitter.com/artprojectgroup" title="Twitter" target="_blank"><span class="flaticon-social19"></span></a> <a href="https://plus.google.com/+ArtProjectGroupES" title="Google+" target="_blank"><span class="flaticon-google16"></span></a> <a href="http://es.linkedin.com/in/artprojectgroup" title="LinkedIn" target="_blank"><span class="flaticon-logo"></span></a></p>
   </div>
   <div>
     <p>
       <?php _e('More plugins:', 'apg_shipping'); ?>
     </p>
-    <p><a href="http://profiles.wordpress.org/artprojectgroup/" title="WordPress"><span class="flaticon-wordpress2"></span></a></p>
+    <p><a href="http://profiles.wordpress.org/artprojectgroup/" title="WordPress" target="_blank"><span class="flaticon-wordpress2"></span></a></p>
   </div>
   <div>
     <p>

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 0.6
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.6.1 =
+* Control de la existencia de los parámetros de configuración.
+* Añadidos nuevos enlaces.
 = 0.6 =
 Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
@@ -76,24 +79,37 @@ Arreglo del archivo ZIP.
 * Añadido campo Coste adicional.
 * Añadidos tipos de impuestos por grupos.
 = 0.2 =
-* Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información.
+* Pequeñas modificaciones y arreglos de código.
+* Inclusión de enlaces.
+* Actualización de los textos de información.
 * Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
 = 0.1 =
 Versión inicial.
 
 == Upgrade Notice ==
+= 0.6.1 =
+* Control de la existencia de los parámetros de configuración.
+* Añadidos nuevos enlaces.
 = 0.6 =
 Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
 Arreglo del archivo ZIP.
 = 0.5 =
-Añadido soporte de medidas, añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones, rediseño de la pantalla de configuración y arreglos menores en el código.
+* Añadido soporte de medidas.
+* Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones.
+* Rediseño de la pantalla de configuración.
+* Arreglos menores en el código.
 = 0.4 =
-Arreglo de fallo con el guardado de configuraciones y en el idioma español.
+* Arreglo de fallo en el guardado de configuraciones de gastos de envío adicionales.
+* Arreglo de fallo en el idioma español.
 = 0.3 =
-Añadido el campo de coste adicional y tipos de IVA individuales por grupo.
+* Añadido campo Coste adicional.
+* Añadidos tipos de impuestos por grupos.
 = 0.2 =
-Pequeñas modificaciones y arreglos de código, inclusión de enlaces y actualización de los textos de información y añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío
+* Pequeñas modificaciones y arreglos de código.
+* Inclusión de enlaces.
+* Actualización de los textos de información.
+* Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
 
 ==Traducciones ==
 * *English*: by **Art Project Group** (default language).

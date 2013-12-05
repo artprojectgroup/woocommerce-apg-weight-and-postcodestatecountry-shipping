@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country Shipping v0.6.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-12-05 09:36:25+0000\n"
+"PO-Revision-Date: 2013-12-05 09:54:26+0000\n"
 "Last-Translator: artprojectgroup <info@herves-vida.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -165,7 +165,7 @@ msgid "Add the postcodes for this group. Semi-colon (;) separate multiple values
 msgstr "Introduzca los códigos postales para este grupo. Los valores múltiples se separan con punto y coma (;). Los comodines (*) están permitidos. Ejemplo: <code>07 *</code>. Los rangos de números de códigos postales se convierten automáticamente en códigos postales individuales. Ejemplo: <code>12345-1235 </code>."
 
 #: apg-shipping.php:43
-#: apg-shipping.php:597
+#: apg-shipping.php:598
 #@ apg_shipping
 msgid "Settings"
 msgstr "Ajustes"
@@ -304,17 +304,6 @@ msgstr "Devolver el precio máximo."
 msgid "Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions. Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)|LxWxH (optional)</code>. Also you can set your dimensions based rates. Example: <code>LxWxH|Cost|postcode/state/country group code separated by comma (,)</code>"
 msgstr "Establezca sus tarifas basadas en el peso para los grupos de código postal/provincia (estado)/país (una por línea). Opcionalmente también puede añadir las dimensiones máximas. Ejemplo: <code>Peso máximo|Tarifa|Código de grupo de código postal/provincia (estado)/país separado por comas (,)|LargoxAnchoxAlto (opcional)</code>. También puede establecerlas basadas en dimensiones.. Ejemplo: <code>LargoxAnchoxAlto|Tarifa|Código de grupo de código postal/provincia (estado)/país separado por comas (,)</code>"
 
-#: apg-shipping.php:597
-#@ apg_shipping
-msgid "Please, update settings."
-msgstr "Por favor, actualice los ajustes."
-
-#. translators: plugin header field 'Version'
-#: apg-shipping.php:0
-#@ apg_shipping
-msgid "0.6.1"
-msgstr ""
-
 #: formulario.php:18
 #@ apg_shipping
 msgid "Follow us:"
@@ -329,4 +318,21 @@ msgstr "Más plugins:"
 #@ apg_shipping
 msgid "Contact with us:"
 msgstr "Contacta con nosotros:"
+
+#. translators: plugin header field 'Version'
+#: apg-shipping.php:0
+#@ apg_shipping
+msgid "0.6.2"
+msgstr ""
+
+#: apg-shipping.php:598
+#, php-format
+#@ apg_shipping
+msgid "Please, update your %s. It's very important!"
+msgstr "Por favor, actualice sus %s. ¡Es muy importante!"
+
+#: apg-shipping.php:598
+#@ apg_shipping
+msgid "settings"
+msgstr "ajustes"
 

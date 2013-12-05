@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.6.1
+Version: 0.6.2
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -594,6 +594,6 @@ function apg_shipping_muestra_mensaje() {
 add_action( 'admin_init', 'apg_shipping_muestra_mensaje' );
 
 function apg_shipping_actualizacion() {
-    echo '<div class="error fade" id="message"><h3>WooCommerce - APG Weight and Postcode/State/Country Shipping</h3><p>' . __('Please, update settings.', 'apg_shipping') . '</p><h4><a href="admin.php?page=woocommerce_settings&tab=shipping&section=apg_shipping" title="' . __('Settings', 'apg_shipping') . '">' . __('Settings', 'apg_shipping') . '</a></h4></div>';
+    echo '<div class="error fade" id="message"><h3>WooCommerce - APG Weight and Postcode/State/Country Shipping</h3><h4>' . sprintf(__("Please, update your %s. It's very important!", 'apg_shipping'), '<a href="admin.php?page=woocommerce_settings&tab=shipping&section=apg_shipping" title="' . __('Settings', 'apg_shipping') . '">' . __('settings', 'apg_shipping') . '</a>') . '</h4></div>';
 }
 ?>

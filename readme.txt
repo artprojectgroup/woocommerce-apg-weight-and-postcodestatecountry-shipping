@@ -4,11 +4,11 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Añade a tu tienda WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
+Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
 
 == Description ==
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** añade a tu tienda WooCommerce la posibilidad de calcular los gastos de envío basándose en el peso y en el código postal, provincia (estado) y/o país de la dirección de envío.
@@ -60,6 +60,8 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.6.2 =
+* Actualización de la traducción.
 = 0.6.1 =
 * Control de la existencia de los parámetros de configuración.
 * Añadidos nuevos enlaces.
@@ -84,9 +86,11 @@ Arreglo del archivo ZIP.
 * Actualización de los textos de información.
 * Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
 = 0.1 =
-Versión inicial.
+* Versión inicial.
 
 == Upgrade Notice ==
+= 0.6.2 =
+* Actualización de la traducción.
 = 0.6.1 =
 * Control de la existencia de los parámetros de configuración.
 * Añadidos nuevos enlaces.

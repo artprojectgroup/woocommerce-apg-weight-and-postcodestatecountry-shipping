@@ -70,9 +70,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Control de la existencia de los parámetros de configuración.
 * Añadidos nuevos enlaces.
 = 0.6 =
-Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
+* Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
-Arreglo del archivo ZIP.
+* Arreglo del archivo ZIP.
 = 0.5 =
 * Añadido soporte de medidas.
 * Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones.
@@ -103,9 +103,9 @@ Arreglo del archivo ZIP.
 * Control de la existencia de los parámetros de configuración.
 * Añadidos nuevos enlaces.
 = 0.6 =
-Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
+* Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
 = 0.5.1 =
-Arreglo del archivo ZIP.
+* Arreglo del archivo ZIP.
 = 0.5 =
 * Añadido soporte de medidas.
 * Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones.

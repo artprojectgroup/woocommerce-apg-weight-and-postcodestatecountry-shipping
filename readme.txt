@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,11 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.6.4 =
+* Modificación de la pantalla de configuración.
+* Modificación de los enlaces del plugin.
+* Actualización de la captura de pantalla.
+* Añadidos nuevos enlaces.
 = 0.6.3 =
 * Modificación de la pantalla de configuración.
 * Modificación de los enlaces del plugin.
@@ -93,6 +98,11 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Versión inicial.
 
 == Upgrade Notice ==
+= 0.6.4 =
+* Modificación de la pantalla de configuración.
+* Modificación de los enlaces del plugin.
+* Actualización de la captura de pantalla.
+* Añadidos nuevos enlaces.
 = 0.6.3 =
 * Modificación de la pantalla de configuración.
 * Modificación de los enlaces del plugin.

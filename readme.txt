@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 0.6.4
+Stable tag: 0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,8 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes crear las tarifas con un peso y/o dimensiones máximos.
 * Puedes elegir si aceptar excesos de peso o dimensiones.
 * Puedes aplicar un tipo de IVA diferente a cada grupo creado.
+* Puedes vincular el envío con una pasarela de pago específica.
+* Puedes asignar grupos de código postal/provincia (estado) donde no atender los pedidos.
 * Puedes crear un número ilimitado de empresas de transporte para utilizar este sistema de cálculo.
 * Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*.
 
@@ -60,6 +62,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.7 =
+* Añadida opción para seleccionar una pasarela de pago específica para el gasto de envío.
+* Añadida opción para indicar grupos de código postal y/o provincia (estado) donde no se atenderán los pedidos.
 = 0.6.4 =
 * Modificación de la pantalla de configuración.
 * Modificación de los enlaces del plugin.
@@ -98,6 +103,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Versión inicial.
 
 == Upgrade Notice ==
+= 0.7 =
+* Añadida opción para seleccionar una pasarela de pago específica para el gasto de envío.
+* Añadida opción para indicar grupos de código postal y/o provincia (estado) donde no se atenderán los pedidos.
 = 0.6.4 =
 * Modificación de la pantalla de configuración.
 * Modificación de los enlaces del plugin.

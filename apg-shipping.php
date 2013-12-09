@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.7
+Version: 0.7.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -624,7 +624,9 @@ function dame_medios_de_pago() {
 function filtra_medios_de_pago($medios){
 	global $woocommerce;
 	
-	$configuracion = get_option('woocommerce_apg_shipping_settings');
+	$envio = 'apg_shipping';
+	if (!empty( $woocommerce->session->chosen_shipping_method)) $envio = $woocommerce->session->chosen_shipping_method;
+	$configuracion = get_option('woocommerce_' . $envio . '_settings');
 	if ($configuracion['pago'] != 'todos')
 	{
 		foreach ($medios as $nombre => $medio)
@@ -632,20 +634,7 @@ function filtra_medios_de_pago($medios){
 			if ($nombre != $configuracion['pago']) unset($medios[$nombre]);
 		}
 	}
-	
-	/*
-	foreach ($woocommerce->cart->cart_contents as $key => $values ) 
-	{
-		//store product id's in array
-		$highpriceditems = array(1111,2232,4235);			
 
-  		if (in_array($values['product_id'],$highpriceditems))
-		{	
-			unset($gateways['paypal']);
-			break;
-		}
-	}
-	*/	
 	return $medios;
 }
 add_filter('woocommerce_available_payment_gateways', 'filtra_medios_de_pago');

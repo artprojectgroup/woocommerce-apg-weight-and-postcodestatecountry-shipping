@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.7.2
+Version: 0.8
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -79,17 +79,13 @@ function apg_shipping_inicio() {
 
 		//Inicializa los datos
         function init() {
-			$this->admin_page_heading       = __('Weight based shipping', 'apg_shipping');
-			$this->admin_page_description   = __('Define shipping by weight and postcode/state/country', 'apg_shipping');
-
 			add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
 			add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'sincroniza_paises'));
 
-			$this->init_form_fields();
 			$this->init_settings();
-			
-			$campos = array('enabled', 'title', 'postal_group_no', 'state_group_no', 'country_group_no', 'sync_countries', 'tax_status', 'fee', 'cargo', 'maximo', 'grupos_excluidos', 'options', 'pago');
+			$campos = array('enabled', 'title', 'postal_group_no', 'state_group_no', 'country_group_no', 'sync_countries', 'tax_status', 'fee', 'cargo', 'maximo', 'grupos_excluidos', 'options', 'pago', 'global');
 			foreach ($campos as $campo) $this->$campo = isset($this->settings[$campo]) ? $this->settings[$campo] : '';
+			$this->init_form_fields();
 			
 			$this->availability		= 'specific';
 			$this->type				= 'order';
@@ -204,6 +200,12 @@ function apg_shipping_inicio() {
 					'label'			=> __('Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="admin.php?page=woocommerce_settings&tab=general">General settings</a> tab.', 'apg_shipping'),
 					'default'		=> 'no',
 				),
+				'global' => array(
+					'title'			=> __('Add global group', 'apg_shipping'),
+					'type'			=> 'checkbox',
+					'label'			=> sprintf(__('Add group C%s for the other countries.', 'apg_shipping'), $this->country_group_no + 1),
+					'default'		=> 'no',
+				),
 				'grupos_excluidos' => array(
 					'title'			=> __('No shipping', 'apg_shipping'),
 					'type'			=> 'text',
@@ -311,8 +313,8 @@ function apg_shipping_inicio() {
 			global $woocommerce;
 
 			$grupo = $this->dame_grupos($paquete);
+			if (!$grupo) return false;
 			$tarifas = $this->dame_tarifas($grupo);
-			
 			$grupos_excluidos = explode(',', preg_replace('/\s+/', '', $this->grupos_excluidos));
 			foreach ($grupos_excluidos as $grupo_excluido) if ($grupo_excluido == $grupo) return false; //No atiende a los grupos excluidos
 
@@ -390,13 +392,16 @@ function apg_shipping_inicio() {
 					}
 					else 
 					{
-						if (in_array($paquete['destination'][$nombre], $this->settings[$letra . $contador])) $grupo = $letra . $contador;
+						if (isset($paquete['destination'][$nombre]) && in_array($paquete['destination'][$nombre], $this->settings[$letra . $contador])) $grupo = $letra . $contador;
 					}
 				    $contador++;
 				}
 	
     	        if (isset($grupo)) return $grupo;				
 			}
+			$grupo = 'C' . ($this->country_group_no + 1);
+			if (get_option('woocommerce_allowed_countries') == 'all' && $this->global == 'yes') return $grupo;
+			return NULL;
         }
 
 		//Devuelve la tarifa aplicable al grupo/s seleccionado/s

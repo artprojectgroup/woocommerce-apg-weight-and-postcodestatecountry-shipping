@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.7.2
-Stable tag: 0.7.1
+Stable tag: 0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes añadir un coste fijo de embalaje y/o manipulación por envío.
 * Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje.
 * Puedes crear un número ilimitado de grupos, tanto para los códigos postales, como para las provincias (estados), como para los países.
+* Puedes crear un grupo global que soporte todos los países no incluidos en los grupos de país que crees.
 * Puedes crear un número ilimitado de tarifas.
 * Puedes crear las tarifas con un peso y/o dimensiones máximos.
 * Puedes elegir si aceptar excesos de peso o dimensiones.
@@ -62,6 +63,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.8 =
+* Añadida opción para crear un grupo global, con soporte para todos los países no incluidos en el resto de grupos.
+* Arreglo de un error que mostraba un mensaje de error en países sin provincias (estados).
 = 0.7.2 =
 * Arreglo de error al mostrar todas las pasarelas de pago en el resto de envíos.
 = 0.7.1 =
@@ -107,6 +111,9 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Versión inicial.
 
 == Upgrade Notice ==
+= 0.8 =
+* Añadida opción para crear un grupo global, con soporte para todos los países no incluidos en el resto de grupos.
+* Arreglo de un error que mostraba un mensaje de error en países sin provincias (estados).
 = 0.7.2 =
 * Arreglo de error al mostrar todas las pasarelas de pago en el resto de envíos.
 = 0.7.1 =

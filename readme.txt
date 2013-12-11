@@ -65,7 +65,7 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 
 == Changelog ==
 = 0.9 =
-* Añadida nueva ocultar el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
+* Añadida nueva opción que oculta el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
 * Oculta o muestra las opciones *Añadir países a específicos* y *Añadir grupo global* en función de la configuración de WooCommerce.
 * Actualización de la captura de pantalla.
 = 0.8 =
@@ -118,7 +118,7 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 
 == Upgrade Notice ==
 = 0.9 =
-* Añadida nueva ocultar el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
+* Añadida nueva opción que oculta el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
 * Oculta o muestra las opciones *Añadir países a específicos* y *Añadir grupo global* en función de la configuración de WooCommerce.
 * Actualización de la captura de pantalla.
 = 0.8 =

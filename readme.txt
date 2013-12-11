@@ -3,8 +3,8 @@ Contributors: artprojectgroup
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LB54JTPQGW9ZW
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
-Tested up to: 3.7.2
-Stable tag: 0.8
+Tested up to: 3.7.1
+Stable tag: 0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,6 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes añadir un coste fijo de embalaje y/o manipulación por envío.
 * Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje.
 * Puedes crear un número ilimitado de grupos, tanto para los códigos postales, como para las provincias (estados), como para los países.
-* Puedes crear un grupo global que soporte todos los países no incluidos en los grupos de país que crees.
 * Puedes crear un número ilimitado de tarifas.
 * Puedes crear las tarifas con un peso y/o dimensiones máximos.
 * Puedes elegir si aceptar excesos de peso o dimensiones.
@@ -25,7 +24,9 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes vincular el envío con una pasarela de pago específica.
 * Puedes asignar grupos de código postal/provincia (estado) donde no atender los pedidos.
 * Puedes crear un número ilimitado de empresas de transporte para utilizar este sistema de cálculo.
-* Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*.
+* Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*. Disponible sólo si está configurada como *Países específicos* la opción *Países permitidos*. 
+* Puedes crear un grupo global que soporte todos los países no incluidos en los grupos de país que crees. Disponible sólo si están configurada como *Todos los países* la opción *Países permitidos* de la pestaña *Opciones generales*.
+* Puedes ocultar el coste del envío en caso de que disponible [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/). Disponible sólo si el plugin está instalado y activado.
 
 = Origen =
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** ha sido programado a partir del plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) de [Andy_P](http://profiles.wordpress.org/andy_p/) y la modificación de [Mantish](http://wordpress.org/support/profile/mantish) publicada en [GitHub](https://gist.github.com/Mantish/5658280), que, a pesar de su brillantez, no ofrecían todas las características que necesitábamos. Aún así su trabajo ha sido completamente imprescindible para la realización de este plugin.
@@ -63,9 +64,14 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 0.9 =
+* Añadida nueva ocultar el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
+* Oculta o muestra las opciones *Añadir países a específicos* y *Añadir grupo global* en función de la configuración de WooCommerce.
+* Actualización de la captura de pantalla.
 = 0.8 =
 * Añadida opción para crear un grupo global, con soporte para todos los países no incluidos en el resto de grupos.
 * Arreglo de un error que mostraba un mensaje de error en países sin provincias (estados).
+* Actualización de la captura de pantalla.
 = 0.7.2 =
 * Arreglo de error al mostrar todas las pasarelas de pago en el resto de envíos.
 = 0.7.1 =
@@ -111,9 +117,14 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Versión inicial.
 
 == Upgrade Notice ==
+= 0.9 =
+* Añadida nueva ocultar el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
+* Oculta o muestra las opciones *Añadir países a específicos* y *Añadir grupo global* en función de la configuración de WooCommerce.
+* Actualización de la captura de pantalla.
 = 0.8 =
 * Añadida opción para crear un grupo global, con soporte para todos los países no incluidos en el resto de grupos.
 * Arreglo de un error que mostraba un mensaje de error en países sin provincias (estados).
+* Actualización de la captura de pantalla.
 = 0.7.2 =
 * Arreglo de error al mostrar todas las pasarelas de pago en el resto de envíos.
 = 0.7.1 =

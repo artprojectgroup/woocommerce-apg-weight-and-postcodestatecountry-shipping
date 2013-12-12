@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 0.9
+Version: 1.0
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -96,7 +96,10 @@ function apg_shipping_inicio() {
 			$this->options				= (array) explode("\n", $this->options);
 			$this->apg_free_shipping	= false;
 			
-			for ($contador = 1; $this->postal_group_no >= $contador; $contador++) $this->procesa_codigo_postal($this->settings['P' . $contador], 'P' . $contador);
+			for ($contador = 1; $this->postal_group_no >= $contador; $contador++) 
+			{
+				if (isset($this->settings['P' . $contador])) $this->procesa_codigo_postal($this->settings['P' . $contador], 'P' . $contador);
+			}
 			$this->pinta_grupos_codigos_postales();
 			$this->pinta_grupos_estados();
 			$this->pinta_grupos_paises();        
@@ -601,7 +604,7 @@ function apg_shipping_nuevos_gastos_de_envio($configuracion) {
 				'desc_tip' => __('List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping'),
 				'id'       => 'woocommerce_apg_shipping',
 				'type'     => 'textarea',
-				'css'      => 'min-width:300px;',
+				'css'      => 'height: 150px;width: 100%;max-width:590px;',
 				'default'  => '',
       		);
     	}

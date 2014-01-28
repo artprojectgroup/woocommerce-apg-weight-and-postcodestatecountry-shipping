@@ -699,20 +699,21 @@ function apg_shipping_plugin($nombre) {
 	return get_object_vars($plugin);
 }
 
-//Comprueba si hay que mostrar el mensaje de configuración
+//Muestra el mensaje de actualización
 function apg_shipping_actualizacion() {
 	global $apg_shipping;
 	
     echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . sprintf(__("Please, update your %s. It's very important!", 'apg_shipping'), '<a href="' . $apg_shipping['ajustes'] . '" title="' . __('Settings', 'apg_shipping') . '">' . __('settings', 'apg_shipping') . '</a>') . '</h4></div>';
 }
 
+//Carga las hojas de estilo
 function apg_shipping_muestra_mensaje() {
 	wp_register_style('apg_shipping_hoja_de_estilo', plugins_url('style.css', __FILE__)); //Carga la hoja de estilo
 	wp_register_style('apg_shipping_fuentes', plugins_url('fonts/stylesheet.css', __FILE__)); //Carga la hoja de estilo global
 	wp_enqueue_style('apg_shipping_fuentes'); //Carga la hoja de estilo global
 
 	$configuracion = get_option('woocommerce_apg_shipping_settings');
-	if (!isset($configuracion['maximo'])) add_action('admin_notices', 'apg_shipping_actualizacion');
+	if (!isset($configuracion['maximo'])) add_action('admin_notices', 'apg_shipping_actualizacion'); //Comprueba si hay que mostrar el mensaje de actualización
 }
 add_action('admin_init', 'apg_shipping_muestra_mensaje');
 

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.0.2
+Version: 1.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -224,9 +224,10 @@ function apg_shipping_inicio() {
 			$this->form_fields['pago'] = array(
 					'title'			=> __('Payment gateway', 'apg_shipping'),
 					'desc_tip'		=> sprintf(__("Payment gateway available for %s", 'apg_shipping'), $this->method_title),
-					'css' 		=> 'min-width:150px;',
-					'default'		=> '',
-					'type'			=> 'select',
+					'css'		=> 'width: 450px;',
+					'default'		=> array('todos'),
+					'type'		=> 'multiselect',
+					'class'		=> 'chosen_select',
 					'options' 	=> array('todos' => __('All enabled payments', 'apg_shipping')) + dame_medios_de_pago(),
 			);
 			if (class_exists('apg_free_shipping')) $this->form_fields['muestra'] = array(
@@ -653,11 +654,18 @@ function filtra_medios_de_pago($medios){
 	$envio = 'apg_shipping';
 	if (!empty( $woocommerce->session->chosen_shipping_method)) $envio = $woocommerce->session->chosen_shipping_method;
 	$configuracion = get_option('woocommerce_' . $envio . '_settings');
-	if (isset($configuracion['pago']) && $configuracion['pago'] != 'todos')
+	if (isset($configuracion['pago']) && $configuracion['pago'][0] != 'todos')
 	{
 		foreach ($medios as $nombre => $medio)
 		{
-			if ($nombre != $configuracion['pago']) unset($medios[$nombre]);
+			if (is_array($configuracion['pago']))
+			{
+				if (!in_array($nombre, $configuracion['pago'])) unset($medios[$nombre]);
+			}
+			else
+			{ 
+				if ($nombre != $configuracion['pago']) unset($medios[$nombre]);
+			}
 		}
 	}
 

@@ -719,7 +719,7 @@ add_action('admin_init', 'apg_shipping_muestra_mensaje');
 
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {
-  delete_option( 'woocommerce_apg_shipping_settings' );
+  delete_option('woocommerce_apg_shipping_settings');
 }
 register_deactivation_hook( __FILE__, 'apg_shipping_desinstalar' );
 ?>

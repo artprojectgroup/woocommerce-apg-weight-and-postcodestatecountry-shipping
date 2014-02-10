@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.2
+Version: 1.3
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -91,10 +91,11 @@ function apg_shipping_inicio() {
 			$this->init_form_fields();
 			
 			$this->availability		= 'specific';
+			$this->countries			= get_option('woocommerce_specific_allowed_countries');
 			$this->type				= 'order';
 			$this->options				= (array) explode("\n", $this->options);
 			$this->apg_free_shipping	= false;
-			
+
 			for ($contador = 1; $this->postal_group_no >= $contador; $contador++) 
 			{
 				if (isset($this->settings['P' . $contador])) $this->procesa_codigo_postal($this->settings['P' . $contador], 'P' . $contador);
@@ -159,9 +160,10 @@ function apg_shipping_inicio() {
 				),
 				'fee' => array(
 					'title'			=> __('Handling Fee', 'apg_shipping'),
-					'type'			=> 'text',
+					'type'			=> 'price',
 					'desc_tip'		=> __('Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable.', 'apg_shipping'),
 					'default'		=> '',
+					'placeholder'	=> wc_format_localized_price(0)
 				),
 				'cargo' => array(
 					'title'			=> __('Additional Fee', 'apg_shipping'),
@@ -309,7 +311,7 @@ function apg_shipping_inicio() {
 					'css'		=> 'width: 450px;',
 					'desc_tip'	=> __('Select the countries for this group.', 'apg_shipping'),
 					'default'	=> '',
-					'options'	=> $woocommerce->countries->countries,
+					'options'	=> WC()->countries->get_shipping_countries(),
 				);
 				if ($this->tax_status != 'none') $this->form_fields['Tax_C' . $contador] =  array(
 					'title' 	=> sprintf(__('C%s Tax Class:', 'apg_shipping'), $contador),
@@ -504,7 +506,7 @@ function apg_shipping_inicio() {
 		function dame_paises_especificos() {  
 			$contador = 1;
 			$paises_iniciales = array();
-			while (is_array($this->settings['C' . $contador])) 
+			while (isset($this->settings['C' . $contador]) && is_array($this->settings['C' . $contador])) 
 			{
 				$paises_iniciales = array_merge($paises_iniciales, $this->settings['C' . $contador]);
 				$contador++;
@@ -514,12 +516,11 @@ function apg_shipping_inicio() {
 			$this->init_settings();
 			$contador = 1;
 			$paises_nuevos = array();
-			while (is_array($this->settings['C' . $contador])) 
+			while (isset($this->settings['C' . $contador]) && is_array($this->settings['C' . $contador])) 
 			{
 			    $paises_nuevos = array_merge($paises_nuevos, $this->settings['C' . $contador]);
 				$contador++;
 			}
-			
 			$allowed_countries = get_option('woocommerce_specific_allowed_countries');
 			if (is_array($allowed_countries)) $paises = array_merge($paises_nuevos, $allowed_countries);
 			$paises = array_unique($paises_nuevos);

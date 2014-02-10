@@ -4,13 +4,17 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, commerce, e-commerce, commerce, shop, virtual shop, shipping, weight, dimensions, zip, postcode, state, country, tax
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
 
 == Description ==
+[*Español*](http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/) - [*English*](http://goo.gl/6w4bWL) - [*Italiano*](http://goo.gl/4FVXUr) - [*Français*](http://goo.gl/2faaIA) - [*Deutsch*](http://goo.gl/Ih21KD) 
+
+**IMPORTANTE: *WooCommerce - APG Weight and Postcode/State/Country Shipping* requiere WooCommerce 2.1.0 o superior.**
+
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** añade a tu tienda WooCommerce la posibilidad de calcular los gastos de envío basándose en el peso y en el código postal, provincia (estado) y/o país de la dirección de envío.
 
 = Características =
@@ -64,6 +68,8 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 1.3 =
+* Actualización del código para que sea 100% compatible con la última versión de WooCommerce. **Ojo: No es compatible con versiones anteriores a WooCommerce 2.1.0.** 
 = 1.2 =
 * Añadida nueva función que limpia la base de datos al desinstalar el plugin.
 = 1.1 =
@@ -128,6 +134,8 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 * Versión inicial.
 
 == Upgrade Notice ==
+= 1.3 =
+* Actualización del código para que sea 100% compatible con la última versión de WooCommerce. **Ojo: No es compatible con versiones anteriores a WooCommerce 2.1.0.**
 = 1.2 =
 * Añadida nueva función que limpia la base de datos al desinstalar el plugin.
 = 1.1 =

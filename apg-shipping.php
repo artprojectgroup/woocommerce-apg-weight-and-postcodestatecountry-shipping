@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.3.3
+Version: 1.3.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -645,11 +645,12 @@ function apg_shipping_dame_medios_de_pago() {
 }
 
 //Recoge los medios de pago
-function apg_shipping_filtra_medios_de_pago($medios){
+function apg_shipping_filtra_medios_de_pago($medios) {
 	global $woocommerce;
 				
-	$envio = isset($woocommerce->session->chosen_shipping_method) ? $woocommerce->session->chosen_shipping_method : 'apg_shipping';
-	$configuracion = get_option('woocommerce_' . $envio . '_settings');
+	$configuracion = (isset($woocommerce->session->chosen_shipping_method) && $woocommerce->session->chosen_shipping_method == 'apg_shipping') ? get_option('woocommerce_' . $woocommerce->session->chosen_shipping_method . '_settings') : '';
+	$configuracion = (isset($_POST['shipping_method']) && $_POST['shipping_method'][0] == 'apg_shipping') ? get_option('woocommerce_' . $_POST['shipping_method'][0] . '_settings') : $configuracion;
+	if (isset($_POST['payment_method']) && !$medios) $medios = $_POST['payment_method'];
 
 	if (isset($configuracion['pago']) && $configuracion['pago'][0] != 'todos')
 	{
@@ -688,10 +689,13 @@ function apg_shipping_dame_impuestos() {
 function apg_shipping_plugin($nombre) {
 	$argumentos = (object) array('slug' => $nombre);
 	$consulta = array('action' => 'plugin_information', 'timeout' => 15, 'request' => serialize($argumentos));
-	$url = 'http://api.wordpress.org/plugins/info/1.0/';
-	$respuesta = wp_remote_post($url, array('body' => $consulta));
+	$respuesta = get_transient('apg_shipping_plugin');
+	if (false === $respuesta) 
+	{
+		$respuesta = wp_remote_post('http://api.wordpress.org/plugins/info/1.0/', array('body' => $consulta));
+		set_transient('apg_shipping_plugin', $respuesta, 24 * HOUR_IN_SECONDS);
+	}
 	$plugin = unserialize($respuesta['body']);
-	//echo '<pre>' . print_r($plugin, true) . '</pre>';
 	
 	return get_object_vars($plugin);
 }

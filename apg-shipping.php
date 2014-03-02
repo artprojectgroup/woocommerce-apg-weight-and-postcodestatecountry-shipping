@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.3.6
+Version: 1.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -347,13 +347,15 @@ function apg_shipping_inicio() {
 			$largo = $ancho = $alto = 0;
 			foreach ($woocommerce->cart->get_cart() as $identificador => $valores) 
 			{
-                $producto = $valores['data'];
+				$producto = $valores['data'];
 
-                if ($producto->length) $largo += ($producto->length * $valores['quantity']);
-                if ($producto->width) $ancho += ($producto->width * $valores['quantity']);
-                if ($producto->height) $alto += ($producto->height * $valores['quantity']);
+				if ($producto->length) $largo += ($producto->length * $valores['quantity']);
+				if ($producto->width) $ancho += ($producto->width * $valores['quantity']);
+				if ($producto->height) $alto += ($producto->height * $valores['quantity']);
+
+				if ($producto->is_virtual()) $peso -= $producto->get_weight() * $valores['quantity']; //Arregla un problema con los pesos en variaciones virtuales
      		}
-			
+	
 			$precio = $this->dame_tarifa_mas_barata($tarifas, $peso, $largo, $ancho, $alto);
 
 			if ($precio === false) return false;
@@ -369,7 +371,7 @@ function apg_shipping_inicio() {
 			if ($this->tax_status != 'none') 
 			{
 				$impuestos = new WC_Tax();
-				$impuestos = $impuestos->calc_shipping_tax($precio, $impuestos->get_rates($this->settings['Tax_' . $grupo]));
+				$impuestos = $impuestos->calc_shipping_tax($precio, $impuestos->get_shipping_tax_rates($this->settings['Tax_' . $grupo]));
 			}
 
 			$tarifa = array(
@@ -695,9 +697,10 @@ function apg_shipping_plugin($nombre) {
 		$respuesta = wp_remote_post('http://api.wordpress.org/plugins/info/1.0/', array('body' => $consulta));
 		set_transient('apg_shipping_plugin', $respuesta, 24 * HOUR_IN_SECONDS);
 	}
-	$plugin = unserialize($respuesta['body']);
+	if (isset($respuesta['body'])) $plugin = get_object_vars(unserialize($respuesta['body']));
+	else $plugin['rating'] = 100;
 	
-	return get_object_vars($plugin);
+	return $plugin;
 }
 
 //Muestra el mensaje de actualización

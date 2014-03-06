@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.4.1
+Version: 1.4.2
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -24,6 +24,7 @@ License: GPL2
 //Definimos las variables
 $apg_shipping = array('plugin' => 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
 						'plugin_uri' => 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
+						'donacion' => 'http://www.artprojectgroup.es/donacion',
 						'plugin_url' => 'http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 						'ajustes' => 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
 						'puntuacion' => 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping');
@@ -40,7 +41,7 @@ function apg_shipping_enlaces($enlaces, $archivo) {
 	if ($archivo == $plugin) 
 	{
 		$plugin = apg_shipping_plugin($apg_shipping['plugin_uri']);
-		$enlaces[] = '<a href="' . $apg_shipping['plugin_uri'] . '" target="_blank" title="' . __('Make a donation by ', 'apg_shipping') . 'APG"><span class="icon-bills"></span></a>';
+		$enlaces[] = '<a href="' . $apg_shipping['donacion'] . '" target="_blank" title="' . __('Make a donation by ', 'apg_shipping') . 'APG"><span class="icon-bills"></span></a>';
 		$enlaces[] = '<a href="'. $apg_shipping['plugin_url'] . '" target="_blank" title="' . $apg_shipping['plugin'] . '"><strong class="artprojectgroup">APG</strong></a>';
 		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . __('Follow us on ', 'apg_shipping') . 'Facebook" target="_blank"><span class="icon-facebook6"></span></a> <a href="https://twitter.com/artprojectgroup" title="' . __('Follow us on ', 'apg_shipping') . 'Twitter" target="_blank"><span class="icon-social19"></span></a> <a href="https://plus.google.com/+ArtProjectGroupES" title="' . __('Follow us on ', 'apg_shipping') . 'Google+" target="_blank"><span class="icon-google16"></span></a> <a href="http://es.linkedin.com/in/artprojectgroup" title="' . __('Follow us on ', 'apg_shipping') . 'LinkedIn" target="_blank"><span class="icon-logo"></span></a>';
 		$enlaces[] = '<a href="http://profiles.wordpress.org/artprojectgroup/" title="' . __('More plugins on ', 'apg_shipping') . 'WordPress" target="_blank"><span class="icon-wordpress2"></span></a>';

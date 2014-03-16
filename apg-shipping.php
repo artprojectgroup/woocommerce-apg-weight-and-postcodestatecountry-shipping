@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.4.2
+Version: 1.5
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -83,9 +83,14 @@ function apg_shipping_inicio() {
 			add_action('woocommerce_shipping_apg_free_shipping_is_available', array($this, 'chequea_apg_free_shipping'));
 
 			$this->init_settings();
+			if (isset($this->settings['global'])) 
+			{
+				$this->settings['global_countries'] = $this->settings['global'];
+				unset($this->settings['global']);
+			}
 			$campos = array('enabled', 'title', 'postal_group_no', 'state_group_no', 'country_group_no', 'tax_status', 'fee', 'cargo', 'maximo', 'grupos_excluidos', 'options', 'pago');
 			if (get_option('woocommerce_allowed_countries') == 'specific') $campos[] = 'sync_countries';
-			if (get_option('woocommerce_allowed_countries') == 'all') $campos[] = 'global';
+			if (get_option('woocommerce_allowed_countries') == 'all') $campos[] = 'global_countries';
 			if (class_exists('apg_free_shipping')) $campos[] = 'muestra';
 			foreach ($campos as $campo) $this->$campo = isset($this->settings[$campo]) ? $this->settings[$campo] : '';
 			$this->init_form_fields();
@@ -210,11 +215,19 @@ function apg_shipping_inicio() {
 					'label'			=> __('Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="admin.php?page=woocommerce_settings&tab=general">General settings</a> tab.', 'apg_shipping'),
 					'default'		=> 'no',
 			);
-			if (get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['global'] = array(
+			if (get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['global_countries'] = array(
 					'title'			=> __('Add global group', 'apg_shipping'),
 					'type'			=> 'checkbox',
 					'label'			=> sprintf(__('Add group C%s for the other countries.', 'apg_shipping'), $this->country_group_no + 1),
 					'default'		=> 'no',
+			);
+			if ($this->tax_status != 'none' && get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['Tax_C' . ($this->country_group_no + 1)] =  array(
+					'title' 	=> sprintf(__('C%s Tax Class:', 'apg_shipping'), $this->country_group_no + 1),
+					'desc_tip' => sprintf(__('Select the tax class for Country Group %s', 'apg_shipping'), $this->country_group_no + 1),
+					'css' 		=> 'min-width:150px;',
+					'default'	=> get_option('woocommerce_shipping_tax_class'),
+					'type' 		=> 'select',
+					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + apg_shipping_dame_impuestos(),
 			);
 			$this->form_fields['grupos_excluidos'] = array(
 					'title'			=> __('No shipping', 'apg_shipping'),
@@ -425,7 +438,7 @@ function apg_shipping_inicio() {
 	
     	        if (isset($grupo)) return $grupo;				
 			}
-			if (get_option('woocommerce_allowed_countries') == 'all' && $this->global == 'yes') return 'C' . ($this->country_group_no + 1);
+			if (get_option('woocommerce_allowed_countries') == 'all' && $this->global_countries == 'yes') return 'C' . ($this->country_group_no + 1);
 			
 			return NULL;
         }
@@ -721,8 +734,13 @@ add_action('admin_init', 'apg_shipping_muestra_mensaje');
 
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {
-  delete_option('woocommerce_apg_shipping_settings');
-  delete_transient('apg_shipping_plugin');
+	delete_option('woocommerce_apg_shipping_settings');
+	for ($i = 2; $i < 100; $i++)
+	{
+		$shipping = 'woocommerce_apg_shipping_' . $i . '_settings';
+		if (get_option($shipping)) delete_option($shipping);
+	}
+	delete_transient('apg_shipping_plugin');
 }
 register_deactivation_hook( __FILE__, 'apg_shipping_desinstalar' );
 ?>

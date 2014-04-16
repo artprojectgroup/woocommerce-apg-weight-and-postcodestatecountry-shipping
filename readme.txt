@@ -36,12 +36,12 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** ha sido programado a partir del plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) de [Andy_P](http://profiles.wordpress.org/andy_p/) y la modificación de [Mantish](http://wordpress.org/support/profile/mantish) publicada en [GitHub](https://gist.github.com/Mantish/5658280), que, a pesar de su brillantez, no ofrecían todas las características que necesitábamos. Aún así su trabajo ha sido completamente imprescindible para la realización de este plugin.
 
 = Más información =
-En nuestro sitio web oficial puede obtener más información sobre [**WooCommerce - APG Weight and Postcode/State/Country Shipping**](http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping). 
+En nuestro sitio web oficial puede obtener más información sobre [**WooCommerce - APG Weight and Postcode/State/Country Shipping**](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping). 
 
 = Comentarios =
 No olvides dejarnos tu comentario en:
 
-* [WooCommerce - APG Weight and Postcode/State/Country Shipping](http://www.artprojectgroup.es/plugins-para-wordpress/woocommerce-apg-weight-and-postcodestatecountry-shipping) en Art Project Group.
+* [WooCommerce - APG Weight and Postcode/State/Country Shipping](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping) en Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) en Facebook.
 * [@artprojectgroup](https://twitter.com/artprojectgroup) en Twitter.
 * [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) en Google+.

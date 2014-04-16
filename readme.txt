@@ -47,7 +47,7 @@ No olvides dejarnos tu comentario en:
 * [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) en Google+.
 
 = Más plugins =
-Recuerda que puedes encontrar más plugin para WordPress en [Art Project Group](http://www.artprojectgroup.es/plugins-para-wordpress/) y en nuestro perfil en [WordPress](http://profiles.wordpress.org/artprojectgroup/).
+Recuerda que puedes encontrar más [plugins para WordPress](http://www.artprojectgroup.es/plugins-para-wordpress) y más [plugins para WooCommerce](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce) en [Art Project Group](http://www.artprojectgroup.es) y en nuestro perfil en [WordPress](http://profiles.wordpress.org/artprojectgroup/).
 
 == Installation ==
 1. Puedes:

@@ -34,7 +34,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes ocultar el coste del envío en caso de que disponible [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/). Disponible sólo si el plugin está instalado y activado.
 
 = Soporte técnico =
-**Art Project Group** te ofrece [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) para configurar o instalar **WooCommerce - APG SMS Notifications**. 
+**Art Project Group** te ofrece [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**. 
 
 = Origen =
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** ha sido programado a partir del plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) de [Andy_P](http://profiles.wordpress.org/andy_p/) y la modificación de [Mantish](http://wordpress.org/support/profile/mantish) publicada en [GitHub](https://gist.github.com/Mantish/5658280), que, a pesar de su brillantez, no ofrecían todas las características que necesitábamos. Aún así su trabajo ha sido completamente imprescindible para la realización de este plugin.
@@ -68,7 +68,7 @@ Recuerda que puedes encontrar más [plugins para WordPress](http://www.artprojec
 Como la configuración del plugin es un poco compleja, hemos creado un tutorial donde explicamos paso a paso el proceso de configuración con un ejemplo real. Puedes visitarlo en [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](http://www.artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
 
 = Soporte técnico =
-Si necesitas ayuda para configurar o instalar **WooCommerce - APG SMS Notifications**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico). 
+Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico). 
 
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
@@ -283,7 +283,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG SMS Notificati
 * *Español*: por **Art Project Group**.
 
 == Soporte técnico ==
-Dado que **WooCommerce - APG SMS Notifications** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
+Dado que **WooCommerce - APG Weight and Postcode/State/Country Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
 
 == ¿Por qué está esta página en español? ==
 Mientras WordPress no nos permita a los desarrolladores realizar esta página en más de un idioma, elegiremos siempre el español.

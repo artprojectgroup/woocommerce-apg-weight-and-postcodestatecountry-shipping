@@ -80,7 +80,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 = 1.6.1 =
 * Arreglo de error que no tenía en cuenta los grupos a no atender.
 = 1.6 =
-* Permite vincular el envío con una, varias o todas las clases de envío del sistema. **Actualización patrocinada por [Benjamin Hammersholt](http://www.vandfilter.net/)**.
+* Permite vincular el envío con una, varias o todas las clases de envío del sistema.
 * Permite crear tarifas no ascendentes.
 * Nuevos enlaces e iconos.
 * Nueva captura de pantalla.
@@ -184,7 +184,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 = 1.6.1 =
 * Arreglo de error que no tenía en cuenta los grupos a no atender.
 = 1.6 =
-* Permite vincular el envío con una, varias o todas las clases de envío del sistema.**Actualización patrocinada por [Benjamin Hammersholt](http://www.vandfilter.net/)**.
+* Permite vincular el envío con una, varias o todas las clases de envío del sistema.
 * Permite crear tarifas no ascendentes.
 * Nuevos enlaces e iconos.
 * Nueva captura de pantalla.

@@ -1,0 +1,15 @@
+@charset "UTF-8";
+ @import url(fonts/stylesheet.css);
+/*Formularo*/
+.borrar, .ordenar {
+	width: 2% !important;
+}
+.nombre_envio {
+	width: 94% !important;
+}
+.button .genericon {
+	vertical-align: middle!important;
+}
+input.widefat[type="text"] {
+	width: 100% !important;
+}

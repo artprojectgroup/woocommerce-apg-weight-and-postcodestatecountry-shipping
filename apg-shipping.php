@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.6.3.2
+Version: 1.7
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -29,6 +29,7 @@ $apg_shipping = array('plugin' 		=> 'WooCommerce - APG Weight and Postcode/State
 						'plugin_url' 	=> 'http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 						'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
 						'puntuacion' 	=> 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping');
+$envios_adicionales = $limpieza = NULL	;
 
 //Carga el idioma
 load_plugin_textdomain('apg_shipping', null, dirname(plugin_basename(__FILE__)) . '/lang');
@@ -36,10 +37,8 @@ load_plugin_textdomain('apg_shipping', null, dirname(plugin_basename(__FILE__)) 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces($enlaces, $archivo) {
 	global $apg_shipping;
-	
-	$plugin = plugin_basename(__FILE__);
 
-	if ($archivo == $plugin) 
+	if ($archivo == plugin_basename(__FILE__)) 
 	{
 		$plugin = apg_shipping_plugin($apg_shipping['plugin_uri']);
 		$enlaces[] = '<a href="' . $apg_shipping['donacion'] . '" target="_blank" title="' . __('Make a donation by ', 'apg_shipping') . 'APG"><span class="genericon genericon-cart"></span></a>';
@@ -71,9 +70,16 @@ function apg_shipping_inicio() {
 	if (!class_exists('WC_Shipping_Method')) return;
 
 	class apg_shipping extends WC_Shipping_Method {				
+		//Variables
+		public	$clases_de_envio		= array();
+		public	$tipos_impuestos 		= array();
+		public	$medios_de_pago 		= array();
+		public	$paises_permitidos	= 'all';
+		public	$impuesto_de_envios	= '';
+
 		function __construct() {
-			$this->id 				= 'apg_shipping';
-			$this->method_title	= __("APG Shipping", 'apg_shipping');
+			$this->id 					= 'apg_shipping';
+			$this->method_title		= __("APG Shipping", 'apg_shipping');
 			$this->init();
 		}
 
@@ -83,25 +89,29 @@ function apg_shipping_inicio() {
 			add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'sincroniza_paises'));
 			add_action('woocommerce_shipping_apg_free_shipping_is_available', array($this, 'chequea_apg_free_shipping'));
 
-			$this->init_settings();
-			if (isset($this->settings['global'])) 
-			{
-				$this->settings['global_countries'] = $this->settings['global'];
-				unset($this->settings['global']);
-			}
-			$campos = array('enabled', 'title', 'postal_group_no', 'state_group_no', 'country_group_no', 'tax_status', 'fee', 'cargo', 'maximo', 'grupos_excluidos', 'options', 'pago');
-			if (get_option('woocommerce_allowed_countries') == 'specific') $campos[] = 'sync_countries';
-			if (get_option('woocommerce_allowed_countries') == 'all') $campos[] = 'global_countries';
-			if (class_exists('apg_free_shipping')) $campos[] = 'muestra';
-			foreach ($campos as $campo) $this->$campo = isset($this->settings[$campo]) ? $this->settings[$campo] : '';
-			$this->init_form_fields();
+			$this->init_settings(); //Recogemos todos los valores
 			
-			$this->availability		= 'specific';
-			$this->countries			= get_option('woocommerce_specific_allowed_countries');
-			$this->type				= 'order';
+			//Inicializamos variables
+			$this->impuesto_de_envios = get_option('woocommerce_shipping_tax_class');
+			$this->paises_permitidos = get_option('woocommerce_allowed_countries');
+			
+			$campos = array('enabled', 'title', 'postal_group_no', 'state_group_no', 'country_group_no', 'tax_status', 'fee', 'cargo', 'maximo', 'grupos_excluidos', 'options', 'pago');
+			if ($this->paises_permitidos == 'specific') $campos[] = 'sync_countries';
+			else if ($this->paises_permitidos == 'all') $campos[] = 'global_countries';
+			if (class_exists('apg_free_shipping')) $campos[] = 'muestra';
+			
+			foreach ($campos as $campo) $this->$campo = isset($this->settings[$campo]) ? $this->settings[$campo] : ''; //Creamos los campos que vamos a utilizar
+			
+			$this->apg_shipping_dame_medios_de_pago(); //Obtiene todos los medios de pago
+			$this->init_form_fields(); //Crea los campos de opciones
+
 			$this->options				= (array) explode("\n", $this->options);
 			$this->apg_free_shipping	= false;
-
+			
+			$this->apg_shipping_dame_impuestos(); //Obtiene todos los impuestos
+			$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
+			
+			//Pintamos los campos de los grupos
 			for ($contador = 1; $this->postal_group_no >= $contador; $contador++) 
 			{
 				if (isset($this->settings['P' . $contador])) $this->procesa_codigo_postal($this->settings['P' . $contador], 'P' . $contador);
@@ -210,34 +220,34 @@ function apg_shipping_inicio() {
 					'default'		=> '0',
 				),
 			);
-			if (get_option('woocommerce_allowed_countries') == 'specific') $this->form_fields['sync_countries'] = array(
+			if ($this->paises_permitidos == 'specific') $this->form_fields['sync_countries'] = array(
 					'title'			=> __('Add countries to allowed', 'apg_shipping'),
 					'type'			=> 'checkbox',
 					'label'			=> __('Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="admin.php?page=wc-settings&tab=general">General settings</a> tab.', 'apg_shipping'),
 					'default'		=> 'no',
 			);
-			if (get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['global_countries'] = array(
+			if ($this->paises_permitidos == 'all') $this->form_fields['global_countries'] = array(
 					'title'			=> __('Add global group', 'apg_shipping'),
 					'type'			=> 'checkbox',
 					'label'			=> sprintf(__('Add group C%s for the other countries.', 'apg_shipping'), $this->country_group_no + 1),
 					'default'		=> 'no',
 			);
-			if (WC()->shipping->get_shipping_classes() && get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['Class_C' . ($this->country_group_no + 1)] =  array(
+			if (WC()->shipping->get_shipping_classes() && $this->paises_permitidos == 'all') $this->form_fields['Class_C' . ($this->country_group_no + 1)] =  array(
 					'title' 		=> sprintf(__('C%s Shipping Class:', 'apg_shipping'), $this->country_group_no + 1),
 					'desc_tip' 	=> sprintf(__('Select the shipping class for Country Group %s', 'apg_shipping'), $this->country_group_no + 1),
 					'css'			=> 'width: 450px;',
 					'default'		=> array('todas'),
 					'type'			=> 'multiselect',
 					'class'			=> 'chosen_select',
-					'options' 		=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + apg_shipping_dame_clases_de_envio(),
+					'options' 		=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + $this->clases_de_envio,
 			);
-			if ($this->tax_status != 'none' && get_option('woocommerce_allowed_countries') == 'all') $this->form_fields['Tax_C' . ($this->country_group_no + 1)] =  array(
+			if ($this->tax_status != 'none' && $this->paises_permitidos == 'all') $this->form_fields['Tax_C' . ($this->country_group_no + 1)] =  array(
 					'title' 		=> sprintf(__('C%s Tax Class:', 'apg_shipping'), $this->country_group_no + 1),
 					'desc_tip' 	=> sprintf(__('Select the tax class for Country Group %s', 'apg_shipping'), $this->country_group_no + 1),
 					'css' 			=> 'min-width:150px;',
-					'default'		=> get_option('woocommerce_shipping_tax_class'),
+					'default'		=> $this->impuesto_de_envios,
 					'type' 			=> 'select',
-					'options' 		=> array('standard' => __('Standard', 'apg_shipping')) + apg_shipping_dame_impuestos(),
+					'options' 		=> array('standard' => __('Standard', 'apg_shipping')) + $this->tipos_impuestos,
 			);
 			$this->form_fields['grupos_excluidos'] = array(
 					'title'			=> __('No shipping', 'apg_shipping'),
@@ -253,7 +263,7 @@ function apg_shipping_inicio() {
 					'default'		=> array('todos'),
 					'type'			=> 'multiselect',
 					'class'			=> 'chosen_select',
-					'options' 		=> array('todos' => __('All enabled payments', 'apg_shipping')) + apg_shipping_dame_medios_de_pago(),
+					'options' 		=> array('todos' => __('All enabled payments', 'apg_shipping')) + $this->medios_de_pago,
 			);
 			if (class_exists('apg_free_shipping')) $this->form_fields['muestra'] = array(
 					'title'			=> __('Show only APG Free Shipping', 'apg_shipping'),
@@ -263,10 +273,37 @@ function apg_shipping_inicio() {
 			);
 		}
 
+		//Función que lee y devuelve los tipos de impuestos
+		function apg_shipping_dame_impuestos() {
+			$impuestos = array_filter(array_map('trim', explode("\n", get_option('woocommerce_tax_classes'))));
+			if ($impuestos)
+			{
+				foreach ($impuestos as $impuesto) $this->tipos_impuestos[sanitize_title($impuesto)] = esc_html($impuesto);
+			}
+		}
+
+		//Función que lee y devuelve los tipos de clases de envío
+		function apg_shipping_dame_clases_de_envio() {
+			if (WC()->shipping->get_shipping_classes()) 
+			{
+				foreach (WC()->shipping->get_shipping_classes() as $clase_de_envio) $this->clases_de_envio[esc_attr($clase_de_envio->slug)] = $clase_de_envio->name;
+			} 
+			else $this->clases_de_envio[] = __( 'Select a class&hellip;', 'apg_shipping' );
+		}	
+
+		//Función que lee y devuelve los tipos de medios de pago
+		function apg_shipping_dame_medios_de_pago() {
+			//if (WC()->payment_gateways()) echo WC()->payment_gateways()->get_available_payment_gateways();
+
+			foreach (get_option('woocommerce_gateway_order') as $medio_de_pago => $numero)
+			{
+				$configuracion = get_option('woocommerce_' . $medio_de_pago . '_settings');
+				if ($configuracion['enabled'] == 'yes') $this->medios_de_pago[$medio_de_pago] = $configuracion['title'];
+			}
+		}
+
 		//Muestra los campos para los grupos de códigos postales
 		function pinta_grupos_codigos_postales() {
-			global $woocommerce;
-
 			$numero = $this->postal_group_no;
 
 			for ($contador = 1; $numero >= $contador; $contador++) 
@@ -285,26 +322,24 @@ function apg_shipping_inicio() {
 					'default'	=> array('todas'),
 					'type'		=> 'multiselect',
 					'class'		=> 'chosen_select',
-					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + apg_shipping_dame_clases_de_envio(),
+					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + $this->clases_de_envio,
 				);
 				if ($this->tax_status != 'none') $this->form_fields['Tax_P' . $contador] =  array(
 					'title' 	=> sprintf(__('P%s Tax Class:', 'apg_shipping'), $contador),
 					'desc_tip' => sprintf(__('Select the tax class for Postcode Group %s', 'apg_shipping'), $contador),
 					'css' 		=> 'min-width:150px;',
-					'default'	=> get_option('woocommerce_shipping_tax_class'),
+					'default'	=> $this->impuesto_de_envios,
 					'type' 		=> 'select',
-					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + apg_shipping_dame_impuestos(),
+					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + $this->tipos_impuestos,
 				);
 			}
 		}
 
 		//Muestra los campos para los grupos de estados (provincias)
 		function pinta_grupos_estados() {
-			global $woocommerce;
-
 			$numero = $this->state_group_no;
 
-			$base_country = $woocommerce->countries->get_base_country();
+			$base_country = WC()->countries->get_base_country();
 
 			for ($contador = 1; $numero >= $contador; $contador++) 
 			{
@@ -315,7 +350,7 @@ function apg_shipping_inicio() {
 					'css'		=> 'width: 450px;',
 					'desc_tip'	=> __('Select the states for this group.', 'apg_shipping'),
 					'default'	=> '',
-					'options'	=> $woocommerce->countries->get_states($base_country),
+					'options'	=> WC()->countries->get_states($base_country),
 				);
 				if (WC()->shipping->get_shipping_classes()) $this->form_fields['Class_S' . $contador] = array(
 					'title'		=> sprintf(__('S%s Shipping Class:', 'apg_shipping'), $contador, $contador),
@@ -324,23 +359,21 @@ function apg_shipping_inicio() {
 					'default'	=> array('todas'),
 					'type'		=> 'multiselect',
 					'class'		=> 'chosen_select',
-					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + apg_shipping_dame_clases_de_envio(),
+					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + $this->clases_de_envio,
 				);
 				if ($this->tax_status != 'none') $this->form_fields['Tax_S' . $contador] =  array(
 					'title' 	=> sprintf(__('S%s Tax Class:', 'apg_shipping'), $contador),
 					'desc_tip' => sprintf(__('Select the tax class for State Group %s', 'apg_shipping'), $contador),
 					'css' 		=> 'min-width:150px;',
-					'default'	=> get_option('woocommerce_shipping_tax_class'),
+					'default'	=> $this->impuesto_de_envios,
 					'type' 		=> 'select',
-					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + apg_shipping_dame_impuestos(),
+					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + $this->tipos_impuestos,
 				);
 			}
 		}
 
 		//Muestra los campos para los grupos de países
 		function pinta_grupos_paises() {
-			global $woocommerce;  
-
 			$numero = $this->country_group_no;
 	        
 			for ($contador = 1; $numero >= $contador; $contador++) 
@@ -361,15 +394,15 @@ function apg_shipping_inicio() {
 					'default'	=> array('todas'),
 					'type'		=> 'multiselect',
 					'class'		=> 'chosen_select',
-					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + apg_shipping_dame_clases_de_envio(),
+					'options' 	=> array('todas' => __('All enabled shipping class', 'apg_shipping')) + $this->clases_de_envio,
 				);
 				if ($this->tax_status != 'none') $this->form_fields['Tax_C' . $contador] =  array(
 					'title' 	=> sprintf(__('C%s Tax Class:', 'apg_shipping'), $contador),
 					'desc_tip' => sprintf(__('Select the tax class for Country Group %s', 'apg_shipping'), $contador),
 					'css' 		=> 'min-width:150px;',
-					'default'	=> get_option('woocommerce_shipping_tax_class'),
+					'default'	=> $this->impuesto_de_envios,
 					'type' 		=> 'select',
-					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + apg_shipping_dame_impuestos(),
+					'options' 	=> array('standard' => __('Standard', 'apg_shipping')) + $this->tipos_impuestos,
 				);
 			}
 		}
@@ -383,15 +416,13 @@ function apg_shipping_inicio() {
 		
 		//Calcula el gasto de envío
 		function calculate_shipping($paquete = array()) {
-			global $woocommerce;
-			
 			//Peso total del pedido
-			$peso_total = $woocommerce->cart->cart_contents_weight;
-			
-			//Toma distintos datos de los productos
+			$peso_total = WC()->cart->cart_contents_weight;
+			//Variables
 			$largo = $ancho = $alto = 0;
 			$clases = array();
-			foreach ($woocommerce->cart->get_cart() as $identificador => $valores) 
+			//Toma distintos datos de los productos
+			foreach (WC()->cart->get_cart() as $identificador => $valores) 
 			{
 				$producto = $valores['data'];
 				$peso = $producto->get_weight() * $valores['quantity'];
@@ -413,7 +444,6 @@ function apg_shipping_inicio() {
 					else $clases[$clase] += $peso;
 				}
      		}
-			//$clases['todas'] = $peso_total;
 			
 			$grupos = $this->dame_grupos($paquete, $clases);
 			if (empty($grupos)) return false; //No hay resultados
@@ -523,7 +553,7 @@ function apg_shipping_inicio() {
 			}
 
 			//Grupo internacional
-			if (empty($grupo) && get_option('woocommerce_allowed_countries') == 'all' && $this->global_countries == 'yes')
+			if (empty($grupo) && $this->paises_permitidos == 'all' && $this->global_countries == 'yes')
 			{
 				$contador = ($this->country_group_no + 1);
 				
@@ -588,15 +618,13 @@ function apg_shipping_inicio() {
 						}
 						if (isset($tarifa[3])) $medidas = strtolower($tarifa[3]);
 					
-						//Son unas medidas
-						if (isset($medidas))
+						if (isset($medidas)) //Son medidas
 						{
 							$medidas = explode("x", $medidas);
 							if ($largo > $medidas[0] || $ancho > $medidas[1] || $alto > $medidas[2]) $tamano = true;
 						}
 					
-						//Es un peso
-						if (!$dimensiones && !$tamano)
+						if (!$dimensiones && !$tamano) //Es un peso
 						{
 							if (!$peso || ($tarifa[0] >= $peso_parcial && $peso_parcial > $peso)) $gasto_de_envio[$grupo] = $tarifa[1];
 							else if ($this->maximo == "yes" && (empty($gasto_de_envio[$grupo]) || $peso_parcial > $peso)) $gasto_de_envio[$grupo] = $tarifa[1];
@@ -623,7 +651,7 @@ function apg_shipping_inicio() {
 
 	    //Actualiza los países específicos
 		function sincroniza_paises() {
-			if (get_option('woocommerce_allowed_countries') == 'specific' && $this->settings['sync_countries'] == 'yes') 
+			if ($this->paises_permitidos == 'specific' && $this->settings['sync_countries'] == 'yes') 
 			{
 				$paises = $this->dame_paises_especificos();
 				update_option('woocommerce_specific_allowed_countries', $paises);
@@ -631,28 +659,28 @@ function apg_shipping_inicio() {
 		}
 		
 	    //Devuelve los países específicos
-		function dame_paises_especificos() {  
+		function dame_paises_especificos() {
+			$paises_iniciales = $paises_nuevos = array();
+			//Lee los países iniciales  
 			$contador = 1;
-			$paises_iniciales = array();
 			while (isset($this->settings['C' . $contador]) && is_array($this->settings['C' . $contador])) 
 			{
 				$paises_iniciales = array_merge($paises_iniciales, $this->settings['C' . $contador]);
 				$contador++;
 			}
-	
+			//Lee los países actuales
 			$this->settings = NULL;
 			$this->init_settings();
 			$contador = 1;
-			$paises_nuevos = array();
 			while (isset($this->settings['C' . $contador]) && is_array($this->settings['C' . $contador])) 
 			{
-			    $paises_nuevos = array_merge($paises_nuevos, $this->settings['C' . $contador]);
+				$paises_nuevos = array_merge($paises_nuevos, $this->settings['C' . $contador]);
 				$contador++;
 			}
-			$allowed_countries = get_option('woocommerce_specific_allowed_countries');
-			if (is_array($allowed_countries)) $paises = array_merge($paises_nuevos, $allowed_countries);
+			$paises_especificos_permitidos = get_option('woocommerce_specific_allowed_countries');
+			if (is_array($paises_especificos_permitidos)) $paises = array_merge($paises_nuevos, $paises_especificos_permitidos);
 			$paises = array_unique($paises_nuevos);
-			
+			//Limpia los países borrados
 			$paises_borrados = array_diff($paises_iniciales, $paises_nuevos);
 			if (!empty($paises_borrados))
 			{
@@ -661,7 +689,7 @@ function apg_shipping_inicio() {
 					if (($indice = array_search($pais_borrado, $paises)) !== false) unset($paises[$indice]);
 				}
 			}
-
+			
         	return $paises;
     	}
 
@@ -671,54 +699,100 @@ function apg_shipping_inicio() {
 			include('formulario.php');
 		}
 	}
-	
-	//Añade clases necesarias para nuevos gastos de envío
-	$contador = count(apg_shipping_lee_envios());
-	$cuenta = 2;
-	for ($i = 0; $i < $contador; $i++)
-	{
-		eval("
-		class apg_shipping_$cuenta extends apg_shipping {
+}
+add_action('plugins_loaded', 'apg_shipping_inicio', 0);
 
-        	function __construct() {
-				global \$woocommerce;
-			
+//Función que lee y devuelve los nuevos gastos de envío
+function apg_shipping_lee_envios() {
+	global $woocommerce, $envios_adicionales;
+
+	if (!is_array($envios_adicionales) || isset($_POST['subtab'])) $envios_adicionales = array_filter(array_map('trim', explode("\n", get_option('woocommerce_apg_shipping'))));
+
+	return $envios_adicionales;
+}
+
+//Función que convierte guiones en guiones bajos
+function apg_limpia_guiones($texto)
+{
+	return str_replace('-', '_', sanitize_title($texto));
+}
+
+//Añade clases necesarias para nuevos gastos de envío
+function apg_shipping_clases($metodos) {
+	foreach (apg_shipping_lee_envios() as $clave => $envio)
+	{
+		$limpio = apg_limpia_guiones($envio);
+		if (!class_exists("apg_shipping_$limpio")) eval("
+		class apg_shipping_$limpio extends apg_shipping {
+        	public function __construct() {
 				\$shipping = apg_shipping_lee_envios();
 	
-				\$this->id 			= \"apg_shipping_$cuenta\";
-        	    \$this->method_title	= __(\$shipping[$i], 'apg_shipping');
+				\$this->id 			= \"apg_shipping_$limpio\";
+        	    \$this->method_title	= __(\$shipping[$clave], 'apg_shipping');
+				add_action('woocommerce_update_options_shipping_' . \$this->id, array(\$this, 'process_admin_options'));
 
 				parent::init();
 	        }
 		}
 		");
-		$cuenta++;
-	}
+	}	
+
+	return $metodos;
 }
-add_action('plugins_loaded', 'apg_shipping_inicio', 0);
+add_filter('woocommerce_shipping_methods', 'apg_shipping_clases', 0);
 
 //Añade APG Shipping a WooCommerce
-function apg_shipping_anade_gastos_de_envio($methods) {
-	$methods[] = 'apg_shipping';
-
-	$cuenta = 2;
-	$contador = count(apg_shipping_lee_envios());
-	for ($i = 0; $i < $contador; $i++)
+function apg_shipping_anade_gastos_de_envio($metodos) {
+	global $limpieza;
+	
+	//Creamos los medios de envío
+	$metodos[] = 'apg_shipping';
+	foreach (apg_shipping_lee_envios() as $envio) 
 	{
-		$shipping = 'apg_shipping_' . $cuenta;
-		$methods[] = $shipping;
-		$cuenta++;
+		$metodo = "apg_shipping_" . apg_limpia_guiones($envio);
+		$metodos[] = $metodo;
 	}
 
-	for ($i = $cuenta; $i < 100; $i++)
-	{
-		$shipping = 'woocommerce_apg_shipping_' . $i . '_settings';
-		if (get_option($shipping)) delete_option($shipping);
-	}
-
-	return $methods;
+	if (!$limpieza && isset($_POST['subtab'])) apg_limpiamos_opciones();
+	
+	return $metodos;
 }
-add_filter('woocommerce_shipping_methods', 'apg_shipping_anade_gastos_de_envio');
+add_filter('woocommerce_shipping_methods', 'apg_shipping_anade_gastos_de_envio', 10);
+
+//Controlamos las opciones de WooCommerce para mantenerlas limpias
+function apg_limpiamos_opciones($limpia = false) {
+	global $limpieza;
+	
+	$apg_opciones = $encontrados = array();
+
+	//Vemos las opciones que existen
+	foreach (wp_load_alloptions() as $nombre => $valor) 
+	{
+		if (stristr($nombre, 'woocommerce_apg_shipping_')) $apg_opciones[] = $nombre;
+	}
+	
+	//Vemos las opciones que usamos
+	$envios = apg_shipping_lee_envios();
+	$encontrados[] = "woocommerce_apg_shipping_settings";
+	foreach($envios as $envio) 
+	{
+		foreach($apg_opciones as $opcion)
+		{
+			if (strpos($opcion, apg_limpia_guiones($envio)) !== false) $encontrados[] = apg_limpia_guiones($opcion);
+		}
+	}
+	
+	//Borramos las no necesarias
+	if (!$limpia) $borrar = array_diff($apg_opciones, $encontrados);
+	else $borrar = $apg_opciones;
+	foreach($borrar as $borrame) 
+	{
+		if (preg_match('/woocommerce_apg_shipping_(\d)_settings/', $borrame, $valor)) update_option("woocommerce_apg_shipping_" . apg_limpia_guiones($envios[($valor[1] - 1)]) . "_settings", get_option($borrame));
+		delete_option($borrame);
+	}
+	
+	$limpieza = true; //Cambiamos la variable global para que sólo se ejecute una vez
+}
 
 //Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
 function apg_shipping_nuevos_gastos_de_envio($configuracion) {
@@ -728,12 +802,18 @@ function apg_shipping_nuevos_gastos_de_envio($configuracion) {
 	{
 		if ((isset($seccion['id']) && $seccion['id'] == 'shipping_options') && (isset($seccion['type']) && $seccion['type'] == 'sectionend')) 
 		{
+    		$anadir_seccion[] = array( 
+				'name'     => __('Additional Shipping', 'apg_shipping'),
+				'desc_tip' => __('List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping'),
+				'id'       => 'campos_apg_shipping',
+				'type' 		=> 'shipping_apg_shipping_envios',
+      		);
+			//Este lo usamos para rellenar
 			$anadir_seccion[] = array(
 				'name'     => __('Additional Shipping', 'apg_shipping'),
 				'desc_tip' => __('List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping'),
 				'id'       => 'woocommerce_apg_shipping',
 				'type'     => 'textarea',
-				'css'      => 'height: 150px;width: 100%;max-width:590px;',
 				'default'  => '',
       		);
     	}
@@ -745,50 +825,101 @@ function apg_shipping_nuevos_gastos_de_envio($configuracion) {
 }
 add_filter('woocommerce_shipping_settings', 'apg_shipping_nuevos_gastos_de_envio');
 
-//Función que lee y devuelve los nuevos gastos de envío
-function apg_shipping_lee_envios() {
-	global $woocommerce;
+//Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
+function apg_shipping_campos_nuevos_gastos_de_envio($opciones) {
+	wp_enqueue_style('apg_shipping_hoja_de_estilo_shipping'); //Carga la hoja de estilo
 	
-	$shippings = array_filter(array_map('trim', explode("\n", get_option('woocommerce_apg_shipping'))));
+	$envios = apg_shipping_lee_envios();
+?>
+		<tr valign="top">
+			<th scope="row" class="titledesc"><?php echo $opciones['name']; ?> <img class="help_tip" data-tip="<?php echo $opciones['desc_tip']; ?>" src="<?php echo WC()->plugin_url(); ?>/assets/images/help.png" height="16" width="16" /></th>
+		    <td class="forminp">
+				<table id="envios" class="wc_shipping widefat" cellspacing="0">
+					<thead>
+						<tr>
+							<th class="borrar"></th>
+							<th class="nombre_envio"><?php _e('Shipping Methods', 'woocommerce'); ?></th>
+							<th class="ordenar"></th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th class="default"><span><a id="nueva_fila" class="button" href="#envio"><span class="genericon genericon-edit"></span></a></span></td></th>
+							<th colspan="2" class="default">&nbsp;</th>
+						</tr>
+					</tfoot>
+					<tbody>
+          <?php
+	if ( $envios ) :
+		foreach ( $envios as $envio ) {
+          ?>
+						<tr>
+							<td><a class="button borrar_fila" href="#envio"><span class="genericon genericon-trash"></span></a></td>
+							<td><input type="text" class="widefat" name="<?php echo $opciones['id']; ?>[]" value="<?php if (!empty($envio)) echo esc_attr( $envio ); ?>" /></td>
+							<td><a class="ordenar"><span class="genericon genericon-draggable"></span></a></td>
+						</tr>
+          <?php
+		}
+	else :
+          ?>
+						<tr>
+							<td><a class="button borrar_fila" href="#envio"><span class="genericon genericon-trash"></span></a></td>
+							<td><input type="text" class="widefat" name="<?php echo $opciones['id']; ?>[]" /></td>
+							<td><a class="ordenar"><span class="genericon genericon-draggable"></span></a></td>
+						</tr>
+          <?php endif; ?>
+						<!-- empty hidden one for jQuery -->
+						<tr id="clonable" class="fila_vacia screen-reader-text">
+							<td><a class="button borrar_fila" href="#envio"><span class="genericon genericon-trash"></span></a></td>
+							<td><input type="text" class="widefat" name="<?php echo $opciones['id']; ?>[]" /></td>
+							<td><a class="ordenar"><span class="genericon genericon-draggable"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	$( "table.form-table tr:last" ).css({ display: "none" });
 	
-	return $shippings;
+	$('#nueva_fila').on('click', function() {
+		var row = $('.fila_vacia.screen-reader-text').clone(true);
+		row.removeClass('fila_vacia screen-reader-text');
+		row.removeAttr('id');
+		row.removeAttr('style');
+		row.insertBefore('#envios #clonable');
+		return false;
+	});
+	
+	$('.borrar_fila').on('click', function() {
+		$(this).closest('tr').remove();
+		return false;
+	});
+
+	$('#envios tbody').sortable({
+		opacity: 0.6,
+		revert: true,
+		cursor: 'move',
+		handle: '.ordenar'
+	});
+
+	$('form').submit(function(e){   
+		$('#woocommerce_apg_shipping').val('');
+		$("input[name='<?php echo $opciones['id']; ?>\\[\\]']").map(function(){
+			if ($(this).val())$('#woocommerce_apg_shipping').val($('#woocommerce_apg_shipping').val() + $(this).val() + "\n");
+		}).get();
+	});	
+});
+</script>
+<?php
 }
-
-//Función que lee y devuelve los tipos de medios de pago
-function apg_shipping_dame_medios_de_pago() {
-	global $woocommerce;
-
-	$medios = array();
-	
-	foreach (get_option('woocommerce_gateway_order') as $medio_de_pago => $numero)
-	{
-		$configuracion = get_option('woocommerce_' . $medio_de_pago . '_settings');
-		if ($configuracion['enabled'] == 'yes') $medios[$medio_de_pago] = $configuracion['title'];
-	}
-
-	return $medios;
-}
-
-//Función que lee y devuelve los tipos de clases de envío
-function apg_shipping_dame_clases_de_envio() {
-	global $woocommerce;
-
-	$clases = array();
-
-	if ( WC()->shipping->get_shipping_classes() ) 
-	{
-		foreach ( WC()->shipping->get_shipping_classes() as $shipping_class ) $clases[esc_attr($shipping_class->slug)] = $shipping_class->name;
-	} 
-	else $clases[] = __( 'Select a class&hellip;', 'apg_shipping' );
-	
-	return $clases;
-}	
+add_filter('woocommerce_admin_field_shipping_apg_shipping_envios', 'apg_shipping_campos_nuevos_gastos_de_envio');
 
 //Recoge los medios de pago
 function apg_shipping_filtra_medios_de_pago($medios) {
 	global $woocommerce;
 
-	if (isset($woocommerce->session->chosen_shipping_method)) $configuracion = get_option('woocommerce_' . $woocommerce->session->chosen_shipping_method . '_settings');
+	if (isset(WC()->session->chosen_shipping_method)) $configuracion = get_option('woocommerce_' . WC()->session->chosen_shipping_method . '_settings');
 	else if (isset($_POST['shipping_method'])) $configuracion = get_option('woocommerce_' . $_POST['shipping_method'][0] . '_settings');
 	
 	if (isset($_POST['payment_method']) && !$medios) $medios = $_POST['payment_method'];
@@ -811,20 +942,6 @@ function apg_shipping_filtra_medios_de_pago($medios) {
 	return $medios;
 }
 add_filter('woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago');
-
-//Función que lee y devuelve los tipos de impuestos
-function apg_shipping_dame_impuestos() {
-	global $woocommerce;
-	
-	$impuestos = array_filter(array_map('trim', explode("\n", get_option('woocommerce_tax_classes'))));
-	$tipos_impuestos = array();
-	if ($impuestos)
-	{
-		foreach ($impuestos as $impuesto) $tipos_impuestos[sanitize_title($impuesto)] = esc_html($impuesto);
-	}
-	
-	return $tipos_impuestos;
-}
 
 //Obtiene toda la información sobre el plugin
 function apg_shipping_plugin($nombre) {
@@ -852,22 +969,18 @@ function apg_shipping_actualizacion() {
 //Carga las hojas de estilo
 function apg_shipping_muestra_mensaje() {
 	wp_register_style('apg_shipping_hoja_de_estilo', plugins_url('style.css', __FILE__)); //Carga la hoja de estilo
+	wp_register_style('apg_shipping_hoja_de_estilo_shipping', plugins_url('style-shipping.css', __FILE__));
 	wp_register_style('apg_shipping_fuentes', plugins_url('fonts/stylesheet.css', __FILE__)); //Carga la hoja de estilo global
 	wp_enqueue_style('apg_shipping_fuentes'); //Carga la hoja de estilo global
 
 	$configuracion = get_option('woocommerce_apg_shipping_settings');
-	if (!isset($configuracion['maximo'])) add_action('admin_notices', 'apg_shipping_actualizacion'); //Comprueba si hay que mostrar el mensaje de actualización
+	//if (!isset($configuracion['maximo'])) add_action('admin_notices', 'apg_shipping_actualizacion'); //Comprueba si hay que mostrar el mensaje de actualización
 }
 add_action('admin_init', 'apg_shipping_muestra_mensaje');
 
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {
-	delete_option('woocommerce_apg_shipping_settings');
-	for ($i = 2; $i < 100; $i++)
-	{
-		$shipping = 'woocommerce_apg_shipping_' . $i . '_settings';
-		if (get_option($shipping)) delete_option($shipping);
-	}
+	apg_limpiamos_opciones(true);
 	delete_transient('apg_shipping_plugin');
 }
 register_uninstall_hook( __FILE__, 'apg_shipping_desinstalar' );

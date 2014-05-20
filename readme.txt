@@ -1,10 +1,10 @@
 === WooCommerce - APG Weight and Postcode/State/Country Shipping ===
 Contributors: artprojectgroup
 Donate link: http://www.artprojectgroup.es/donacion
-Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax
+Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 1.6.3.2
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 1.7 =
+* Arreglo de un error que se producía al crear gastos de envío adicionales.
+* Nueva interfaz y función de gestión de la opción Gastos de envío adicionales.
+* Optimización del código de **WooCommerce - APG Weight and Postcode/State/Country Shipping** para que consuma la menor cantidad de recursos posibles. Gracias *Óscar de la Mata Casasola* por el aviso.
+* Nueva captura de pantalla.
 = 1.6.3.2 =
 * Arreglo de error en los cálculos de las tarifas para envíos que superan el máximo de peso introducido.
 = 1.6.3.1 =
@@ -189,6 +194,11 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Versión inicial.
 
 == Upgrade Notice ==
+= 1.7 =
+* Arreglo de un error que se producía al crear gastos de envío adicionales.
+* Nueva interfaz y función de gestión de la opción Gastos de envío adicionales.
+* Optimización del código de **WooCommerce - APG Weight and Postcode/State/Country Shipping** para que consuma la menor cantidad de recursos posibles. Gracias *Óscar de la Mata Casasola* por el aviso.
+* Nueva captura de pantalla.
 = 1.6.3.2 =
 * Arreglo de error en los cálculos de las tarifas para envíos que superan el máximo de peso introducido.
 = 1.6.3.1 =

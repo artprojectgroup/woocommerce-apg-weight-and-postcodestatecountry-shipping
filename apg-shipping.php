@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7
+Version: 1.7.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -515,31 +515,33 @@ function apg_shipping_inicio() {
 
 				while (isset($this->settings[$letra . $contador]) && $this->settings[$letra . $contador]) 
 				{
-				    if ($nombre == 'postcode')
+				    if ($nombre == 'postcode' && WC()->countries->get_base_country() == $paquete['destination']['country'])
 					{
 						$grupos = explode(";", $this->settings[$letra . $contador]);
 						foreach ($codigos_postales as $codigo_postal) 
 						{
 							foreach ($grupos as $grupo_postal)
 							{
-								if ($codigo_postal == $grupo_postal && isset($this->settings["Class_" . $letra . $contador][0]))
+								if ($codigo_postal == $grupo_postal)
 								{
-									foreach ($clases as $clase)
+									if (isset($this->settings["Class_" . $letra . $contador][0]))
 									{
-										if ($this->settings["Class_" . $letra . $contador][0] == $clase) $grupo[$clase] = $letra . $contador;
+										foreach ($clases as $clase => $peso)
+										{
+											if ($this->settings["Class_" . $letra . $contador][0] == $clase) $grupo[$clase] = $letra . $contador;
+										}
 									}
+									else $grupo['sin_clase'] = $letra . $contador;
 								}
-								else if ($codigo_postal == $grupo_postal) $grupo['sin_clase'] = $letra . $contador;
 							}
 						}
 					}
-					else 
+					else if (($nombre == 'state' && WC()->countries->get_base_country() == $paquete['destination']['country']) || $nombre == 'country')
 					{
 						if (isset($paquete['destination'][$nombre]) && in_array($paquete['destination'][$nombre], $this->settings[$letra . $contador])) 
 						{
 							if (isset($this->settings["Class_" . $letra . $contador][0]))
 							{
-								if ($this->settings["Class_" . $letra . $contador][0] == 'todas') $grupo['todas'] = $letra . $contador;
 								foreach ($clases as $clase => $peso)
 								{
 									if ($this->settings["Class_" . $letra . $contador][0] == $clase) $grupo[$clase] = $letra . $contador;

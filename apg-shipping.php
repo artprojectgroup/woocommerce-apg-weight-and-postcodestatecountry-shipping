@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.2
+Version: 1.7.2.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -103,13 +103,14 @@ function apg_shipping_inicio() {
 			foreach ($campos as $campo) $this->$campo = isset($this->settings[$campo]) ? $this->settings[$campo] : ''; //Creamos los campos que vamos a utilizar
 			
 			$this->apg_shipping_dame_medios_de_pago(); //Obtiene todos los medios de pago
-			$this->init_form_fields(); //Crea los campos de opciones
 
 			$this->options				= (array) explode("\n", $this->options);
 			$this->apg_free_shipping	= false;
 			
 			$this->apg_shipping_dame_impuestos(); //Obtiene todos los impuestos
 			$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
+	
+			$this->init_form_fields(); //Crea los campos de opciones
 			
 			//Pintamos los campos de los grupos
 			for ($contador = 1; $this->postal_group_no >= $contador; $contador++) 

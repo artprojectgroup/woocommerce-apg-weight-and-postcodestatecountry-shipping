@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.2.2
+Version: 1.7.3
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -294,12 +294,13 @@ function apg_shipping_inicio() {
 
 		//Función que lee y devuelve los tipos de medios de pago
 		function apg_shipping_dame_medios_de_pago() {
-			//if (WC()->payment_gateways()) echo WC()->payment_gateways()->get_available_payment_gateways();
-
-			foreach (get_option('woocommerce_gateway_order') as $medio_de_pago => $numero)
+			if (get_option('woocommerce_gateway_order'))
 			{
-				$configuracion = get_option('woocommerce_' . $medio_de_pago . '_settings');
-				if ($configuracion['enabled'] == 'yes') $this->medios_de_pago[$medio_de_pago] = $configuracion['title'];
+				foreach (get_option('woocommerce_gateway_order') as $medio_de_pago => $numero)
+				{
+					$configuracion = get_option('woocommerce_' . $medio_de_pago . '_settings');
+					if ($configuracion['enabled'] == 'yes') $this->medios_de_pago[$medio_de_pago] = $configuracion['title'];
+				}
 			}
 		}
 
@@ -604,7 +605,7 @@ function apg_shipping_inicio() {
 			$gasto_de_envio = $tarifa_gasto_de_envio = array();
 			if (!empty($grupos)) foreach ($grupos as $clase => $grupo) 
 			{
-				$peso = 0;
+				$peso_anterior = $largo_anterior = 0;
 				if (isset($clases[$clase])) $peso_parcial = $clases[$clase];
 				else if (isset($clases['todas'])) $peso_parcial = $clases['todas'];
 				else $peso_parcial = $peso_total;
@@ -629,14 +630,20 @@ function apg_shipping_inicio() {
 					
 						if (!$dimensiones && !$tamano) //Es un peso
 						{
-							if (!$peso || ($tarifa[0] >= $peso_parcial && $peso_parcial > $peso)) $gasto_de_envio[$grupo] = $tarifa[1];
-							else if ($this->maximo == "yes" && (empty($gasto_de_envio[$grupo]) || $peso_parcial > $peso)) $gasto_de_envio[$grupo] = $tarifa[1];
-							$peso = $tarifa[0];
+							if (!$peso_anterior || ($tarifa[0] >= $peso_parcial && $peso_parcial > $peso_anterior)) $gasto_de_envio[$grupo] = $tarifa[1];
+							else if ($this->maximo == "yes" && (empty($gasto_de_envio[$grupo]) || $peso_parcial > $peso_anterior)) $gasto_de_envio[$grupo] = $tarifa[1];
+							$peso_anterior = $tarifa[0];
 						}
-						else
+						else if ($dimensiones && !$tamano) //Es una medida
 						{
-							if (!$tamano || ($tamano && $this->maximo == "yes")) $gasto_de_envio[$grupo] = $tarifa[1];
+							if (!$largo_anterior || (($medidas[0] >= $largo && $largo > $largo_anterior) && ($medidas[1] >= $ancho && $ancho > $ancho_anterior) && ($medidas[2] >= $alto && $alto > $alto_anterior))) $gasto_de_envio[$grupo] = $tarifa[1];
+							else if ($this->maximo == "yes" && (empty($gasto_de_envio[$grupo]) || ($largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior))) $gasto_de_envio[$grupo] = $tarifa[1];
+							$largo_anterior = $medidas[0];
+							$ancho_anterior = $medidas[1];
+							$alto_anterior = $medidas[2];
 						}
+						else if ($this->maximo == "yes" && (empty($gasto_de_envio[$grupo]))) $gasto_de_envio[$grupo] = $tarifa[1];
+						
 						$tarifa_gasto_de_envio[$tarifa[2]] = $tarifa[1];
 					}
 				}

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.3.3
+Version: 1.7.3.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -465,11 +465,19 @@ function apg_shipping_inicio() {
 			$precio_total = $impuestos_totales = 0;
 			$impuestos_parciales = $impuestos_totales = array();
 			if ($this->tax_status != 'none') $impuestos = new WC_Tax();
+
+			//Cargos adicionales
+			if ($this->fee > 0) $precio_total += $this->fee;			
+			if ($this->cargo > 0) 
+			{
+				if (strpos($this->cargo, '%')) $precio_total += $precio_total * (str_replace('%', '',$this->cargo) / 100);
+				else $precio_total += $this->cargo;
+			}
 			
 			foreach ($precios as $grupo => $precio)
 			{
 				$precio_total += $precio;
-				if ($this->tax_status != 'none') $impuestos_parciales[] = $impuestos->calc_shipping_tax($precio, $impuestos->get_shipping_tax_rates($this->settings['Tax_' . $grupo]));
+				if ($this->tax_status != 'none') $impuestos_parciales[] = $impuestos->calc_shipping_tax($precio_total, $impuestos->get_shipping_tax_rates($this->settings['Tax_' . $grupo]));
 			}
 
 			foreach ($impuestos_parciales as $impuesto_parcial)
@@ -477,16 +485,8 @@ function apg_shipping_inicio() {
 				foreach ($impuesto_parcial as $clave => $impuesto) $impuestos_totales[$clave] = $impuesto;
 			}
 
-			//Cargos adicionales
-			if ($this->fee > 0) $precio_total += $this->fee;			
-			if ($this->cargo > 0) 
-			{
-				if (strpos($this->cargo, '%')) $precio_total += $precio_total * (str_replace('%', '',$this->cargo) / 100);
-				else $precio += $this->cargo;
-			}
-
 			$tarifa = array(
-				'id'		=> $this->id,
+				'id'			=> $this->id,
 				'label'		=> $this->title,
 				'cost'		=> $precio_total,
 				'taxes'		=> $impuestos_totales,

@@ -1,9 +1,9 @@
 === WooCommerce - APG Weight and Postcode/State/Country Shipping ===
 Contributors: artprojectgroup
-Donate link: http://www.artprojectgroup.es/donacion
+Donate link: http://www.artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.5
-Tested up to: 3.9.1
+Tested up to: 3.9.2
 Stable tag: 1.7.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -60,7 +60,7 @@ Recuerda que puedes encontrar más [plugins para WordPress](http://www.artprojec
  * Buscar **WooCommerce - APG Weight and Postcode/State/Country Shipping** en el buscador disponible en *Plugins -> Añadir nuevo* y pulsar el botón *Instalar ahora*.
 2. Activar el plugin a través del menú *Plugins* en el Panel de Administración de WordPress.
 3. Configurar el plugin en *WooCommerce -> Ajustes -> Envío* o a través del botón *Ajustes*.
-4. Listo, ahora ya puedes disfrutar de él, y si te gusta y te resulta útil, hacer una [*donación*](http://www.artprojectgroup.es/donacion).
+4. Listo, ahora ya puedes disfrutar de él, y si te gusta y te resulta útil, hacer una [*donación*](http://www.artprojectgroup.es/tienda/donacion).
 
 
 == Frequently asked questions ==
@@ -379,7 +379,7 @@ Por ello regalamos a esa gran comunidad hispana nuestros plugins con interfaces,
 Esperamos que os guste nuestra iniciativa.
 
 == Donación ==
-¿Te ha gustado y te ha resultado útil **WooCommerce - APG Weight and Postcode/State/Country Shipping** en tu sitio web? Te agradeceríamos una [pequeña donación](http://www.artprojectgroup.es/donacion) que nos ayudará a seguir mejorando este plugin y a crear más plugins totalmente gratuitos para toda la comunidad WordPress.
+¿Te ha gustado y te ha resultado útil **WooCommerce - APG Weight and Postcode/State/Country Shipping** en tu sitio web? Te agradeceríamos una [pequeña donación](http://www.artprojectgroup.es/tienda/donacion) que nos ayudará a seguir mejorando este plugin y a crear más plugins totalmente gratuitos para toda la comunidad WordPress.
 
 == Gracias ==
 * A [Andy_P](http://profiles.wordpress.org/andy_p/) y [Mantish](http://wordpress.org/support/profile/mantish) por el gran plugin y la modificación que han inspirado **WooCommerce - APG Weight and Postcode/State/Country Shipping**.

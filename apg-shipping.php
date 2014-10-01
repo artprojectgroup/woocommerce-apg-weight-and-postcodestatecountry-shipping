@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.3.9
+Version: 1.7.3.10
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -22,13 +22,13 @@ License: GPL2
 */
 
 //Definimos las variables
-$apg_shipping = array('plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
-					'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-					'donacion' 		=> 'http://www.artprojectgroup.es/tienda/donacion',
-					'soporte' 		=> 'http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico',
-					'plugin_url' 	=> 'http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-					'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
-					'puntuacion' 	=> 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping');
+$apg_shipping = array(	'plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
+						'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
+						'donacion' 		=> 'http://www.artprojectgroup.es/tienda/donacion',
+						'soporte' 		=> 'http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico',
+						'plugin_url' 	=> 'http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
+						'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
+						'puntuacion' 	=> 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping');
 $envios_adicionales = $limpieza = NULL	;
 
 //Carga el idioma
@@ -479,7 +479,7 @@ function apg_shipping_inicio() {
 
 			foreach ($impuestos_parciales as $impuesto_parcial)
 			{
-				foreach ($impuesto_parcial as $clave => $impuesto) $impuestos_totales[$clave] = $impuesto;
+				foreach ($impuesto_parcial as $impuesto) $impuestos_totales[] = $impuesto;
 			}
 
 			$tarifa = array(

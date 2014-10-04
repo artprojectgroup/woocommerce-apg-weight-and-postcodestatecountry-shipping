@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.3.10
+Version: 1.7.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -462,24 +462,25 @@ function apg_shipping_inicio() {
 			if (empty($precios)) return false; //No hay tarifa
 
 			//Calculamos el precio
-			$precio_total = $impuestos_totales = 0;
+			$precio_total = 0;
 			$impuestos_parciales = $impuestos_totales = array();
 			if ($this->tax_status != 'none') $impuestos = new WC_Tax();
 
 			//Cargos adicionales
 			if ($this->fee > 0) $precio_total += $this->fee;			
 			if ($this->cargo > 0 && !strpos($this->cargo, '%')) $precio_total += $this->cargo;
-			
+
 			foreach ($precios as $grupo => $precio)
 			{
 				if ($this->cargo > 0 && strpos($this->cargo, '%')) $precio += $precio * (str_replace('%', '', $this->cargo) / 100); //Cargos adicionales
 				$precio_total += $precio;
-				if ($this->tax_status != 'none') $impuestos_parciales[] = $impuestos->calc_shipping_tax($precio, $impuestos->get_shipping_tax_rates($this->settings['Tax_' . $grupo]));
+				if ($this->tax_status != 'none') $impuestos_parciales[$grupo] = $impuestos->calc_shipping_tax($precio, $impuestos->get_shipping_tax_rates($this->settings['Tax_' . $grupo]));
 			}
 
+			$impuestos_totales[1] = 0;
 			foreach ($impuestos_parciales as $impuesto_parcial)
 			{
-				foreach ($impuesto_parcial as $impuesto) $impuestos_totales[] = $impuesto;
+				foreach ($impuesto_parcial as $impuesto) $impuestos_totales[1] += $impuesto;
 			}
 
 			$tarifa = array(
@@ -515,7 +516,25 @@ function apg_shipping_inicio() {
 
 				while (isset($this->settings[$letra . $contador]) && $this->settings[$letra . $contador]) 
 				{
-				    if ($nombre == 'postcode' && WC()->countries->get_base_country() == $paquete['destination']['country'])
+					if ($nombre == 'country' || ($nombre == 'state' && WC()->countries->get_base_country() == $paquete['destination']['country']))
+					{
+						if (isset($paquete['destination'][$nombre]) && in_array($paquete['destination'][$nombre], $this->settings[$letra . $contador])) 
+						{
+							if (isset($this->settings["Class_" . $letra . $contador][0]))
+							{
+								foreach ($clases as $clase => $peso)
+								{
+									if (in_array($clase, $this->settings["Class_" . $letra . $contador])) 
+									{
+										$grupo[$clase] = $letra . $contador;
+										if ($letra != 'C' && $clase != 'todas' && isset($grupo['todas']) && strpos($grupo['todas'], 'C') !== false) unset($grupo['todas']);
+									}
+								}
+							}
+							else $grupo['sin_clase'] = $letra . $contador;
+						}
+					}
+				    else if ($nombre == 'postcode' && WC()->countries->get_base_country() == $paquete['destination']['country'])
 					{
 						$grupos = explode(";", $this->settings[$letra . $contador]);
 						foreach ($codigos_postales as $codigo_postal) 
@@ -528,32 +547,22 @@ function apg_shipping_inicio() {
 									{
 										foreach ($clases as $clase => $peso)
 										{
-											if (in_array($clase, $this->settings["Class_" . $letra . $contador])) $grupo[$clase] = $letra . $contador;
+											if (in_array($clase, $this->settings["Class_" . $letra . $contador])) 
+											{
+												$grupo[$clase] = $letra . $contador;
+												if ($clase != 'todas' && isset($grupo['todas']) && (strpos($grupo['todas'], 'C') !== false || strpos($grupo['todas'], 'S') !== false)) unset($grupo['todas']);
+											}
 										}
 									}
 									else $grupo['sin_clase'] = $letra . $contador;
 								}
 							}
-						}
-					}
-					else if (($nombre == 'state' && WC()->countries->get_base_country() == $paquete['destination']['country']) || $nombre == 'country')
-					{
-						if (isset($paquete['destination'][$nombre]) && in_array($paquete['destination'][$nombre], $this->settings[$letra . $contador])) 
-						{
-							if (isset($this->settings["Class_" . $letra . $contador][0]))
-							{
-								foreach ($clases as $clase => $peso)
-								{
-									if (in_array($clase, $this->settings["Class_" . $letra . $contador])) $grupo[$clase] = $letra . $contador;
-								}
-							}
-							else $grupo['sin_clase'] = $letra . $contador;
-						}
+						}						
 					}
 				    $contador++;
 				}
 			}
-
+			
 			//Grupo internacional
 			if (empty($grupo) && $this->paises_permitidos == 'all' && $this->global_countries == 'yes')
 			{
@@ -571,7 +580,7 @@ function apg_shipping_inicio() {
 
 			return $grupo;
         }
-
+		
 		//Devuelve la tarifa aplicable al grupo/s seleccionado/s
 		function dame_tarifas($grupos = array()) {
 			$tarifas = $tarifa_de_grupo = array();

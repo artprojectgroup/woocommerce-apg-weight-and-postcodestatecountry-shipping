@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.7.5.1
+Version: 1.7.5.2
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -559,7 +559,7 @@ function apg_shipping_inicio() {
 			}
 
 			//Calculamos el precio
-			$precio_total = $suma_impuestos = 0;
+			$precio_total = $suma_impuestos = $suma_cargos = 0;
 			$impuestos_parciales = $impuestos_totales = array();
 			if ( $this->tax_status != 'none' ) {
 				$impuestos = new WC_Tax();
@@ -567,19 +567,20 @@ function apg_shipping_inicio() {
 
 			//Cargos adicionales
 			if ( $this->fee > 0 ) {
-				$precio_total += $this->fee;			
+				$suma_cargos += $this->fee;			
 			}
 			if ( $this->cargo > 0 && !strpos( $this->cargo, '%' ) ) {
-				$precio_total += $this->cargo;
+				$suma_cargos += $this->cargo;
 			}
 
 			foreach ( $precios as $grupo => $precio ) {
 				if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) ) {
-					$precio += $precio * ( str_replace( '%', '', $this->cargo ) / 100 ); //Cargos adicionales
+					$suma_cargos += $precio * ( str_replace( '%', '', $this->cargo ) / 100 ); //Cargos adicionales
 				}
+				$precio += $suma_cargos;
 				$precio_total += $precio;
 				if ( $this->tax_status != 'none' ) {
-					$impuestos_parciales[$grupo] = $impuestos->calc_shipping_tax( $precio_total, $impuestos->get_shipping_tax_rates( $this->settings['Tax_' . $grupo] ) );
+					$impuestos_parciales[$grupo] = $impuestos->calc_shipping_tax( $precio, $impuestos->get_shipping_tax_rates( $this->settings['Tax_' . $grupo] ) );
 				}
 			}
 			

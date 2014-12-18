@@ -7,7 +7,7 @@ Description: Add to WooCommerce the calculation of shipping costs based on the o
 Author URI: http://www.artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.0.1
+Tested up to: 4.1
 
 Text Domain: apg_shipping
 Domain Path: /i18n/languages
@@ -38,7 +38,7 @@ $apg_shipping = array(
 $envios_adicionales = $limpieza = NULL;
 
 //Carga el idioma
-load_plugin_textdomain( 'apg_shipping', null, dirname( plugin_basename( __FILE__ ) ) . '/i18n/languages' );
+load_plugin_textdomain( 'apg_shipping', null, dirname( DIRECCION_apg_shipping ) . '/i18n/languages' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {

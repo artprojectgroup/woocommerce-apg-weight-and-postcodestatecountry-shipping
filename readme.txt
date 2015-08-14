@@ -35,6 +35,12 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes crear un grupo global que soporte todos los países no incluidos en los grupos de país que crees. Disponible sólo si están configurada como *Todos los países* la opción *Países permitidos* de la pestaña *Opciones generales*.
 * Puedes ocultar el coste del envío en caso de que disponible [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/). Disponible sólo si el plugin está instalado y activado.
 
+= Traducciones =
+* Español ([**Art Project Group**](http://www.artprojectgroup.es/)).
+* English ([**Art Project Group**](http://www.artprojectgroup.es/)).
+* Français ([**Guillaume**](http://guillaume-thibord.com/)).
+* Português (Brasil) ([**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/))
+
 = Soporte técnico =
 **Art Project Group** te ofrece [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**. 
 

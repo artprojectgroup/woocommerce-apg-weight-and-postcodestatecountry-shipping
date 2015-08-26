@@ -442,8 +442,8 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
 
 ==Traducciones ==
-* *English*: by **Art Project Group** (default language).
-* *Español*: por **Art Project Group**.
+* *English*: by [**Art Project Group**](http://www.artprojectgroup.es/) (default language).
+* *Español*: por [**Art Project Group**](http://www.artprojectgroup.es/).
 * *Français*: par [**Guillaume**](http://guillaume-thibord.com/).
 * *Português (Brasil)*: por [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
 * *Italiano*: da [**Angelo Lazzari**](http://www.redtulp.com/).

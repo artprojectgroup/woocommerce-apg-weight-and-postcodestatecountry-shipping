@@ -445,6 +445,8 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * *English*: by **Art Project Group** (default language).
 * *Español*: por **Art Project Group**.
 * *Français*: par [**Guillaume**](http://guillaume-thibord.com/).
+* *Português (Brasil)*: por [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
+* * Italiano*: da [**Angelo Lazzari**](http://www.redtulp.com/).
 
 == Soporte técnico ==
 Dado que **WooCommerce - APG Weight and Postcode/State/Country Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.

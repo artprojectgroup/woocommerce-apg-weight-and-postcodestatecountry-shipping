@@ -4,7 +4,7 @@ Donate link: http://www.artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
 Tested up to: 4.3
-Stable tag: 1.8.0.4
+Stable tag: 1.9
 WC requires at least: 2.1
 WC tested up to: 2.4.6
 License: GPLv3
@@ -86,6 +86,10 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 1.9 =
+* Actualización del formulario que permite crear nuevos métodos de envío APG y creación de nuevas funciones que permiten sincronizarlo con las nuevas funcionalidades de WooCommerce 2.4.
+* Actualización de idiomas.
+* Actualización de la captura de pantalla.
 = 1.8.0.4 =
 * Eliminación de Warning que aparecía en determinadas instalaciones.
 = 1.8.0.3 =
@@ -99,7 +103,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Arreglo del cálculo de medidas.
 * Arreglo de error que mostraba clases de envío en blanco.
 * Arreglo de error detectado al actualizar los países específicos.
-* Añadida nueva opción no realizar envíos a determinadas clases de envío.
+* Añadida nueva opción para no realizar envíos a determinadas clases de envío.
 * Actualización de las traducciones.
 * Nueva hoja de estilo sensible.
 * Actualización de la captura de pantalla.
@@ -267,6 +271,10 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Versión inicial.
 
 == Upgrade Notice ==
+= 1.9 =
+* Actualización del formulario que permite crear nuevos métodos de envío APG y creación de nuevas funciones que permiten sincronizarlo con las nuevas funcionalidades de WooCommerce 2.4.
+* Actualización de idiomas.
+* Actualización de la captura de pantalla.
 = 1.8.0.4 =
 * Eliminación de Warning que aparecía en determinadas instalaciones.
 = 1.8.0.3 =
@@ -280,7 +288,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Arreglo del cálculo de medidas.
 * Arreglo de error que mostraba clases de envío en blanco.
 * Arreglo de error detectado al actualizar los países específicos.
-* Añadida nueva opción no realizar envíos a determinadas clases de envío.
+* Añadida nueva opción para no realizar envíos a determinadas clases de envío.
 * Actualización de las traducciones.
 * Nueva hoja de estilo sensible.
 * Actualización de la captura de pantalla.

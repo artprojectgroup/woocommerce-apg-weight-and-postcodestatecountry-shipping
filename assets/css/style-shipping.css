@@ -1,15 +1,25 @@
 @charset "UTF-8";
  @import url(../fonts/stylesheet.css);
 /*Formularo*/
-.borrar, .ordenar {
+.ordenar {
+	width: 1% !important;
+}
+.borrar {
 	width: 2% !important;
 }
 .nombre_envio {
-	width: 94% !important;
+	width: 95% !important;
 }
 .button .genericon {
 	vertical-align: middle!important;
 }
 input.widefat[type="text"] {
 	width: 100% !important;
+}
+#envios td.sort::before {
+    position: relative;
+    top: 13px !important;
+}
+.anadir {
+	float:right;
 }

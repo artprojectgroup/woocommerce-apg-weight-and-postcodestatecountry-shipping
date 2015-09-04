@@ -4,7 +4,7 @@ msgstr ""
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Thu Sep 03 2015 18:44:19 GMT+0200 (CEST)\n"
-"PO-Revision-Date: Thu Sep 03 2015 19:11:15 GMT+0200 (CEST)\n"
+"PO-Revision-Date: Fri Sep 04 2015 12:17:15 GMT+0200 (CEST)\n"
 "Last-Translator: Art Project Group <info@artprojectgroup.com>\n"
 "Language-Team: \n"
 "Language: Portuguese (Brazil)\n"
@@ -54,7 +54,7 @@ msgid "Settings of "
 msgstr "Configurações de "
 
 # @ apg_shipping
-#: ../../apg-shipping.php:66 ../../apg-shipping.php:1151
+#: ../../apg-shipping.php:66 ../../apg-shipping.php:1161
 msgid "Settings"
 msgstr "Configurações"
 
@@ -99,34 +99,34 @@ msgid "Tax Status"
 msgstr "Situação Fiscal"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:203
+#: ../../apg-shipping.php:204
 msgid "Taxable"
 msgstr "Tributável"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:204
+#: ../../apg-shipping.php:205
 msgid "None"
 msgstr "Não Tributável"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:208
+#: ../../apg-shipping.php:209
 msgid "Handling Fee"
 msgstr "Taxa de Manuseio"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:210
+#: ../../apg-shipping.php:211
 msgid "Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable."
 msgstr ""
 "Taxa de manuseio excluindo impostos. Digite um valor, por exemplo, 2.50. "
 "Deixe em branco para desabilitar."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:215
+#: ../../apg-shipping.php:216
 msgid "Additional Fee"
 msgstr "Taxas Adicionais"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:217
+#: ../../apg-shipping.php:218
 msgid ""
 "Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g."
 " 6%. Leave blank to disable."
@@ -135,12 +135,12 @@ msgstr ""
 "porcentagem, por exemplo, 6%. Deixe em branco para desabilitar."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:221
+#: ../../apg-shipping.php:222
 msgid "Shipping Rates"
 msgstr "Tarifas de envío"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:223
+#: ../../apg-shipping.php:224
 msgid ""
 "Set your weight based rates for postcode/state/country groups (one per line)."
 " You may optionally add the maximum dimensions. Example: <code>Max "
@@ -159,28 +159,28 @@ msgstr ""
 "(,)<code>"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:226
+#: ../../apg-shipping.php:227
 #, php-format
 msgid "Remember your weight unit: %s, and dimensions unit: %s."
 msgstr "Lembre-se que sua unidade de peso é: %s, e sua unidade de medida é: %s."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:229
+#: ../../apg-shipping.php:230
 msgid "Overweight/over dimensions"
 msgstr "Peso e/ou dimensões acima do definido"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:231
+#: ../../apg-shipping.php:232
 msgid "Return the maximum price."
 msgstr "Retorne o preço máximo."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:235
+#: ../../apg-shipping.php:236
 msgid "Number of postcode groups"
 msgstr "Número de grupos de CEP/códigos postais"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:237
+#: ../../apg-shipping.php:238
 msgid ""
 "Number of groups of ZIP/Postcode sharing delivery rates. (Hit \"Save changes\" "
 "button after you have changed this setting)."
@@ -190,12 +190,12 @@ msgstr ""
 "configuração)."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:241
+#: ../../apg-shipping.php:242
 msgid "Number of state groups"
 msgstr "Número de grupos de estados"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:243
+#: ../../apg-shipping.php:244
 msgid ""
 "Number of groups of states sharing delivery rates. (Hit \"Save changes\" "
 "button after you have changed this setting)."
@@ -204,12 +204,12 @@ msgstr ""
 "botão \"Salvar alterações\" depois de ter alterado essa configuração)."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:247
+#: ../../apg-shipping.php:248
 msgid "Number of country groups"
 msgstr "Número de grupos de países"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:249
+#: ../../apg-shipping.php:250
 msgid ""
 "Number of groups of countries sharing delivery rates. (Hit \"Save changes\" "
 "button after you have changed this setting)."
@@ -218,12 +218,12 @@ msgstr ""
 "\"Salvar alterações\" depois de ter alterado essa configuração)."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:255
+#: ../../apg-shipping.php:256
 msgid "Add countries to allowed"
 msgstr "Autorizar a venda para os países dos grupos de países cadastrados?"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:257
+#: ../../apg-shipping.php:258
 msgid ""
 "Countries added to country groups will be automatically added to <em>Allowed "
 "Countries</em> in <a href=\"admin.php?page=wc-settings&tab=general\">General "
@@ -234,59 +234,59 @@ msgstr ""
 "settings&tab=general\">Geral</a> nas configurações do Woocommerce."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:263
+#: ../../apg-shipping.php:264
 msgid "Add global group"
 msgstr "Adicionar ao grupo global"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:265
+#: ../../apg-shipping.php:266
 #, php-format
 msgid "Add group C%s for the other countries."
 msgstr "Adicionar o grupo C%s para os outros países."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:271 ../../apg-shipping.php:475
+#: ../../apg-shipping.php:272 ../../apg-shipping.php:478
 #, php-format
 msgid "C%s Shipping Class"
 msgstr "Classe de envío para C%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:272 ../../apg-shipping.php:476
+#: ../../apg-shipping.php:273 ../../apg-shipping.php:479
 #, php-format
 msgid "Select the shipping class for Country Group %s"
 msgstr "Selecione os tipos de envio para o grupo de países %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:280 ../../apg-shipping.php:312 ../../apg-shipping.php:
-#: 394 ../../apg-shipping.php:440 ../../apg-shipping.php:484
+#: ../../apg-shipping.php:281 ../../apg-shipping.php:314 ../../apg-shipping.php:
+#: 395 ../../apg-shipping.php:442 ../../apg-shipping.php:487
 msgid "All enabled shipping class"
 msgstr "Todas as classes de envio disponíveis"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:286 ../../apg-shipping.php:490
+#: ../../apg-shipping.php:287 ../../apg-shipping.php:493
 #, php-format
 msgid "C%s Tax Class"
 msgstr "Tipo de imposto para C%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:287 ../../apg-shipping.php:491
+#: ../../apg-shipping.php:288 ../../apg-shipping.php:494
 #, php-format
 msgid "Select the tax class for Country Group %s"
 msgstr "Selecione o tipo de imposto para o grupo de países %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:292 ../../apg-shipping.php:406 ../../apg-shipping.php:
-#: 452 ../../apg-shipping.php:496
+#: ../../apg-shipping.php:294 ../../apg-shipping.php:408 ../../apg-shipping.php:
+#: 455 ../../apg-shipping.php:500
 msgid "Standard"
 msgstr "Padrão"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:297
+#: ../../apg-shipping.php:299
 msgid "No shipping"
 msgstr "Sem frete"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:299
+#: ../../apg-shipping.php:301
 #, php-format
 msgid ""
 "Group/s of ZIP/Postcode/State where %s doesn't accept shippings. Example: "
@@ -296,39 +296,39 @@ msgstr ""
 "<code>Código de grupo de CEP/estado separados por vírgulas (,)</code>."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:305
+#: ../../apg-shipping.php:307
 msgid "No shipping (Shipping class)"
 msgstr "Sem envio (Classe de envio)"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:306
+#: ../../apg-shipping.php:308
 #, php-format
 msgid "Select the shipping class where %s doesn't accept shippings."
 msgstr "Selecione a classe de envios onde %s no ceitará envios."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:317
+#: ../../apg-shipping.php:319
 msgid "Payment gateway"
 msgstr "Métodos de pagamento aceitos"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:318
+#: ../../apg-shipping.php:320
 #, php-format
 msgid "Payment gateway available for %s"
 msgstr "Métodos de pagamento aceitos pela %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:326
+#: ../../apg-shipping.php:328
 msgid "All enabled payments"
 msgstr "Todos os métodos de pagamento habilitados"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:332
+#: ../../apg-shipping.php:333
 msgid "Show only APG Free Shipping"
 msgstr "Exibe apenas o APG entrega gratuita"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:334
+#: ../../apg-shipping.php:335
 msgid ""
 "Don't show shipping cost if <a href=\"http://wordpress."
 "org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/\" "
@@ -341,13 +341,13 @@ msgstr ""
 "grupo de CEP/Estado/País</a> esta disponível."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:377
+#: ../../apg-shipping.php:378
 #, php-format
 msgid "Postcode Group %s (P%s)"
 msgstr "Grupo de CEP %s (P%s)"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:379
+#: ../../apg-shipping.php:380
 msgid ""
 "Add the postcodes for this group. Semi-colon (;) separate multiple values. "
 "Wildcards (*) can be used. Example: <code>07*</code>. Ranges for numeric "
@@ -360,72 +360,72 @@ msgstr ""
 "códigos postais individuais. Exemplo: <code>12345-1235</ code>."
 
 # @ apg_shipping
-#: ../../apg-shipping.php:385
+#: ../../apg-shipping.php:386
 #, php-format
 msgid "P%s Shipping Class"
 msgstr "Classes de envio para P%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:386
+#: ../../apg-shipping.php:387
 #, php-format
 msgid "Select the shipping class for Postcode Group %s"
 msgstr "Selecione os tipos de envio para o grupo de CEP %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:400
+#: ../../apg-shipping.php:401
 #, php-format
 msgid "P%s Tax Class"
 msgstr "Tipo de imposto para P%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:401
+#: ../../apg-shipping.php:402
 #, php-format
 msgid "Select the tax class for Postcode Group %s"
 msgstr "Selecione as classes de impostos para o Grupo de CEP %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:421
+#: ../../apg-shipping.php:423
 #, php-format
 msgid "State Group %s (S%s)"
 msgstr "Grupo de estado %s (S%s)"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:425
+#: ../../apg-shipping.php:427
 msgid "Select the states for this group."
 msgstr "Selecione os estados para este grupo"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:431
+#: ../../apg-shipping.php:433
 #, php-format
 msgid "S%s Shipping Class"
 msgstr "Classes de envio para S%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:432
+#: ../../apg-shipping.php:434
 #, php-format
 msgid "Select the shipping class for State Group %s"
 msgstr "Selecione os tipos de envio para o grupo de estado %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:446
+#: ../../apg-shipping.php:448
 #, php-format
 msgid "S%s Tax Class"
 msgstr "Tipo de imposto para S%s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:447
+#: ../../apg-shipping.php:449
 #, php-format
 msgid "Select the tax class for State Group %s"
 msgstr "Selecione o tipo de imposto para o estado %s"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:465
+#: ../../apg-shipping.php:468
 #, php-format
 msgid "Country Group %s (C%s)"
 msgstr "Grupo de países %s (C%s)"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:469
+#: ../../apg-shipping.php:472
 msgid "Select the countries for this group."
 msgstr "Selecione os países para este grupo"
 
@@ -445,20 +445,34 @@ msgstr ""
 "Liste as classes de gastos de envio adicionais (1 por linha). Eles são "
 "adicionados à taxa de envio <code>Calculadora de frete APG</ code>."
 
+#: ../../apg-shipping.php:1115
+msgid "This plugin require WooCommerce active to run!"
+msgstr ""
+"Este plugin\n"
+" \n"
+"requer\n"
+" \n"
+"WooCommerce\n"
+" \n"
+"ativa\n"
+" \n"
+"para executar\n"
+"!"
+
 # @ apg_shipping
-#: ../../apg-shipping.php:1144 ../../includes/cuadro-informacion.php:44
+#: ../../apg-shipping.php:1154 ../../includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr "Por favor, qualifique %s:"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:1151
+#: ../../apg-shipping.php:1161
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Por favor, actualize seu %s. É muito importante!"
 
 # @ apg_shipping
-#: ../../apg-shipping.php:1151
+#: ../../apg-shipping.php:1161
 msgid "settings"
 msgstr "configurações"
 

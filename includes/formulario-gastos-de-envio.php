@@ -80,6 +80,7 @@ jQuery( document ).ready( function( $ ) {
 				$( '#woocommerce_apg_shipping' ).val( $( '#woocommerce_apg_shipping' ).val() + $( this ).val() + "\n" );
 			}
 		} ).get();
+		$( "input[name='<?php echo $opciones['id']; ?>\\[\\]']" ).removeAttr( 'name' );
 	} );	
 } );
 </script> 

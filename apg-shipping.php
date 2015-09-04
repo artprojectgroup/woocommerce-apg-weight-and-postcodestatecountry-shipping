@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9
+Version: 1.9.0.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -198,6 +198,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'tax_status' => array(
 						'title'			=> __( 'Tax Status', 'apg_shipping' ),
 						'type'			=> 'select',
+						'class'			=> 'wc-enhanced-select',
 						'default'		=> 'taxable',
 						'options'		=> array(
 							'taxable'		=> __( 'Taxable', 'apg_shipping' ),
@@ -275,7 +276,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'todas' 
 						),
 						'type'			=> 'multiselect',
-						'class'			=> 'chosen_select',
+						'class'			=> 'wc-enhanced-select',
 						'options' 		=> array( 
 							'todas' 			=> __( 'All enabled shipping class', 'apg_shipping' ) 
 						) + $this->clases_de_envio,
@@ -288,6 +289,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'css' 			=> 'min-width:150px;',
 						'default'		=> $this->impuesto_de_envios,
 						'type' 			=> 'select',
+						'class'			=> 'wc-enhanced-select',
 						'options' 		=> array( 
 							'standard' 		=> __( 'Standard', 'apg_shipping' )
 						) + $this->tipos_impuestos,
@@ -307,7 +309,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'css'		=> 'width: 450px;',
 						'default'	=> '',
 						'type'		=> 'multiselect',
-						'class'		=> 'chosen_select',
+						'class'		=> 'wc-enhanced-select',
 						'options' 	=> array( 
 							'todas' => __( 'All enabled shipping class', 'apg_shipping' ) 
 						) + $this->clases_de_envio,
@@ -321,13 +323,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'todos' 
 						),
 						'type'			=> 'multiselect',
-						'class'			=> 'chosen_select',
+						'class'			=> 'wc-enhanced-select',
 						'options' 		=> array( 
 							'todos' 			=> __( 'All enabled payments', 'apg_shipping' )
 						) + $this->medios_de_pago,
 				);
-				if ( class_exists( 'apg_free_shipping' ) ) 
-				{
+				if ( class_exists( 'apg_free_shipping' ) ) {
 					$this->form_fields['muestra'] = array(
 						'title'			=> __( 'Show only APG Free Shipping', 'apg_shipping' ),
 						'type'			=> 'checkbox',
@@ -389,7 +390,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 								'todas'
 							),
 							'type'		=> 'multiselect',
-							'class'		=> 'chosen_select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'todas' 		=> __( 'All enabled shipping class', 'apg_shipping' )
 							) + $this->clases_de_envio,
@@ -402,6 +403,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'css' 		=> 'min-width:150px;',
 							'default'	=> $this->impuesto_de_envios,
 							'type' 		=> 'select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'standard'	=> __( 'Standard', 'apg_shipping' )
 							) + $this->tipos_impuestos,
@@ -420,7 +422,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$this->form_fields['S' . $contador] =  array(
 						'title'		=> sprintf( __( 'State Group %s (S%s)', 'apg_shipping' ), $contador, $contador ),
 						'type'		=> 'multiselect',
-						'class'		=> 'chosen_select',
+						'class'		=> 'wc-enhanced-select',
 						'css'		=> 'width: 450px;',
 						'desc_tip'	=> __( 'Select the states for this group.', 'apg_shipping' ),
 						'default'	=> '',
@@ -435,7 +437,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 								'todas' 
 							),
 							'type'		=> 'multiselect',
-							'class'		=> 'chosen_select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'todas' 		=> __( 'All enabled shipping class', 'apg_shipping' )
 							) + $this->clases_de_envio,
@@ -448,6 +450,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'css' 		=> 'min-width:150px;',
 							'default'	=> $this->impuesto_de_envios,
 							'type' 		=> 'select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'standard'	=> __( 'Standard', 'apg_shipping' )
 							) + $this->tipos_impuestos,
@@ -464,7 +467,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$this->form_fields['C' . $contador] =  array(
 						'title'		=> sprintf( __( 'Country Group %s (C%s)', 'apg_shipping' ), $contador, $contador ),
 						'type'		=> 'multiselect',
-						'class'		=> 'chosen_select',
+						'class'		=> 'wc-enhanced-select',
 						'css'		=> 'width: 450px;',
 						'desc_tip'	=> __( 'Select the countries for this group.', 'apg_shipping' ),
 						'default'	=> '',
@@ -473,13 +476,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					if ( WC()->shipping->get_shipping_classes() ) {
 						$this->form_fields['Class_C' . $contador] = array(
 							'title'		=> sprintf( __( 'C%s Shipping Class', 'apg_shipping' ), $contador, $contador ),
-							'desc_tip' => sprintf( __( 'Select the shipping class for Country Group %s', 'apg_shipping' ), $contador ),
+							'desc_tip'	=> sprintf( __( 'Select the shipping class for Country Group %s', 'apg_shipping' ), $contador ),
 							'css'		=> 'width: 450px;',
 							'default'	=> array( 
 								'todas' 
 							),
 							'type'		=> 'multiselect',
-							'class'		=> 'chosen_select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'todas'		=> __( 'All enabled shipping class', 'apg_shipping' )
 							) + $this->clases_de_envio,
@@ -492,6 +495,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 							'css' 		=> 'min-width:150px;',
 							'default'	=> $this->impuesto_de_envios,
 							'type' 		=> 'select',
+							'class'		=> 'wc-enhanced-select',
 							'options' 	=> array( 
 								'standard'	=> __( 'Standard', 'apg_shipping' )
 							) + $this->tipos_impuestos,
@@ -803,8 +807,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 									} else if ( $this->maximo == "yes" && ( empty( $gasto_de_envio[$grupo] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) {
 										$gasto_de_envio[$grupo] = $tarifa[1];
 									}
-echo $largo_anterior." || ( ( ".$volumen." > ".$volumen_total." ) || ( ".$medida_maxima[0]." >= ".$largo." && ".$largo." > ".$largo_anterior." ) && ( ".$medida_maxima[1]." >= ".$ancho." && ".$ancho." > ".$ancho_anterior." ) && ( ".$medida_maxima[2]." >= ".$alto." && ".$alto." > ".$alto_anterior.PHP_EOL;
-print_r($gasto_de_envio);
 
 									$largo_anterior = $medida_maxima[0];
 									$ancho_anterior = $medida_maxima[1];
@@ -896,13 +898,12 @@ print_r($gasto_de_envio);
 		if ( !is_array( $envios_adicionales ) || isset( $_POST['subtab'] ) ) {
 			$envios_adicionales = array_filter( array_map( 'trim', explode( "\n", get_option( 'woocommerce_apg_shipping' ) ) ) );
 		}
-	
+
 		return $envios_adicionales;
 	}
 	
 	//Función que convierte guiones en guiones bajos
-	function apg_limpia_guiones( $texto )
-	{
+	function apg_limpia_guiones( $texto ) {
 		return str_replace( '-', '_', sanitize_title( $texto ) );
 	}
 	
@@ -937,7 +938,7 @@ print_r($gasto_de_envio);
 		
 		//Creamos los medios de envío
 		$metodos[] = 'apg_shipping';
-		$envios_apg = apg_shipping_lee_envios();
+		$envios_apg = (array) apg_shipping_lee_envios();
 		foreach ( $envios_apg as $envio ) {
 			$metodo = "apg_shipping_" . apg_limpia_guiones( $envio );
 			$metodos[] = $metodo;
@@ -947,7 +948,7 @@ print_r($gasto_de_envio);
 			apg_limpiamos_opciones();
 		}
 		
-		//Reordenamos los medios de envío en WooCommerce		
+		//Reordenamos los medios de envío en WooCommerce
 		$envios_woocommerce = (array) get_option( 'woocommerce_shipping_method_order' );
 		$orden = array_keys( $envios_woocommerce );
 	
@@ -980,8 +981,8 @@ print_r($gasto_de_envio);
 			$contador++;
 		}
 		asort( $envios_woocommerce );
-		update_option( 'woocommerce_shipping_method_order', $envios_woocommerce );
-				
+		update_option( 'woocommerce_shipping_method_order', $envios_woocommerce );	
+			
 		return $metodos;
 	}
 	add_filter( 'woocommerce_shipping_methods', 'apg_shipping_anade_gastos_de_envio', 10 );
@@ -1013,7 +1014,7 @@ print_r($gasto_de_envio);
 		}
 		
 		//Vemos las opciones que usamos
-		$envios = apg_shipping_lee_envios();
+		$envios = (array) apg_shipping_lee_envios();
 		$encontrados[] = "woocommerce_apg_shipping_settings";
 		foreach ( $envios as $envio ) {
 			foreach ( $apg_opciones as $opcion ) {
@@ -1025,8 +1026,7 @@ print_r($gasto_de_envio);
 		
 		//Borramos las no necesarias
 		$borrar = ( !$limpia ) ? array_diff( $apg_opciones, $encontrados ) : $apg_opciones;
-		foreach( $borrar as $borrame ) 
-		{
+		foreach( $borrar as $borrame ) {
 			if ( preg_match( '/woocommerce_apg_shipping_(\d)_settings/', $borrame, $valor ) ) {
 				update_option( "woocommerce_apg_shipping_" . apg_limpia_guiones( $envios[($valor[1] - 1)] ) . "_settings", get_option( $borrame ) );
 			}

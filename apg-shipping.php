@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.0.2
+Version: 1.9.0.4
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.3
+Tested up to: 4.3.1
 
 Text Domain: apg_shipping
 Domain Path: /i18n/languages
@@ -884,7 +884,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	
 			//Pinta el formulario
 			public function admin_options() {
-				wp_enqueue_style( 'apg_shipping_hoja_de_estilo' ); //Carga la hoja de estilo
 				include( 'includes/formulario.php' );
 			}
 		}
@@ -1067,8 +1066,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	
 	//Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
 	function apg_shipping_campos_nuevos_gastos_de_envio( $opciones ) {
-		wp_enqueue_style( 'apg_shipping_hoja_de_estilo_shipping' ); //Carga la hoja de estilo
-
 		include( 'includes/formulario-gastos-de-envio.php' );
 	}
 	add_filter( 'woocommerce_admin_field_shipping_apg_shipping_envios', 'apg_shipping_campos_nuevos_gastos_de_envio' );
@@ -1171,7 +1168,9 @@ function apg_shipping_muestra_mensaje() {
 	wp_enqueue_style( 'apg_shipping_fuentes' ); //Carga la hoja de estilo global
 
 	$configuracion = get_option( 'woocommerce_apg_shipping_settings' );
-	//if ( !isset( $configuracion['maximo'] ) ) add_action( 'admin_notices', 'apg_shipping_actualizacion' ); //Comprueba si hay que mostrar el mensaje de actualización
+	/*if ( !isset( $configuracion['maximo'] ) ) {
+		add_action( 'admin_notices', 'apg_shipping_actualizacion' ); //Comprueba si hay que mostrar el mensaje de actualización
+	}*/
 }
 add_action( 'admin_init', 'apg_shipping_muestra_mensaje' );
 

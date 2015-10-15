@@ -4,8 +4,8 @@ msgstr ""
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Thu Sep 03 2015 18:44:19 GMT+0200 (CEST)\n"
-"PO-Revision-Date: Fri Sep 04 2015 12:15:11 GMT+0200 (CEST)\n"
-"Last-Translator: Art Project Group <info@artprojectgroup.com>\n"
+"PO-Revision-Date: Thu Oct 15 2015 11:18:47 GMT+0200 (CEST)\n"
+"Last-Translator: Herves-Vida <info@herves-vida.com>\n"
 "Language-Team: \n"
 "Language: French (France)\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
@@ -26,6 +26,37 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Textdomain-Support: yes\n"
 "X-Loco-Target-Locale: fr_FR"
+
+#. Name of the plugin
+msgid "WooCommerce - APG Weight and Postcode/State/Country Shipping"
+msgstr ""
+
+#. URI of the plugin
+msgid ""
+"http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-"
+"shipping"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Add to WooCommerce the calculation of shipping costs based on the order "
+"weight and postcode, province (state) and country of customer's address. "
+"Lets you add an unlimited shipping rates. Created from <a href=\"http:"
+"//profiles.wordpress.org/andy_p/\" target=\"_blank\">Andy_P</a> <a href=\"http:"
+"//wordpress.org/plugins/awd-weightcountry-shipping/\" "
+"target=\"_blank\"><strong>AWD Weight/Country Shipping</strong></a> plugin and "
+"the modification of <a href=\"http://wordpress.org/support/profile/mantish\" "
+"target=\"_blank\">Mantish</a> publicada en <a href=\"https://gist.github."
+"com/Mantish/5658280\" target=\"_blank\">GitHub</a>."
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://www.artprojectgroup.es"
+msgstr ""
+
+#. Author of the plugin
+msgid "Art Project Group"
+msgstr ""
 
 #: ../../apg-shipping.php:49 ../../includes/cuadro-informacion.php:7
 msgid "Make a donation by "
@@ -51,7 +82,7 @@ msgstr "Contactez-nous"
 msgid "Settings of "
 msgstr "Paramètres de"
 
-#: ../../apg-shipping.php:66 ../../apg-shipping.php:1161
+#: ../../apg-shipping.php:66 ../../apg-shipping.php:1158
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -367,11 +398,11 @@ msgstr "Groupe Pays %s (C%s)"
 msgid "Select the countries for this group."
 msgstr "Sélectionnez les Pays pour ce groupe."
 
-#: ../../apg-shipping.php:1046 ../../apg-shipping.php:1053
+#: ../../apg-shipping.php:1045 ../../apg-shipping.php:1052
 msgid "Additional Shipping"
 msgstr "Frais de port additionnel"
 
-#: ../../apg-shipping.php:1047 ../../apg-shipping.php:1054
+#: ../../apg-shipping.php:1046 ../../apg-shipping.php:1053
 msgid ""
 "List additonal shipping classes below (1 per line). This is in addition to "
 "the default <code>APG shipping</code>."
@@ -379,7 +410,7 @@ msgstr ""
 "Ajout de classes de livraison ci-dessous (1 par ligne). Cela s'ajoute à la "
 "valeur par défaut <code>APG Frais de port</code>."
 
-#: ../../apg-shipping.php:1115
+#: ../../apg-shipping.php:1112
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
 "Ce plugin\n"
@@ -392,17 +423,17 @@ msgstr ""
 " \n"
 "courir!"
 
-#: ../../apg-shipping.php:1154 ../../includes/cuadro-informacion.php:44
+#: ../../apg-shipping.php:1151 ../../includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr "Notez-nous, s'il vous plaît %s:"
 
-#: ../../apg-shipping.php:1161
+#: ../../apg-shipping.php:1158
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Merci de mettre à jour votre %s. Ceci est très important !"
 
-#: ../../apg-shipping.php:1161
+#: ../../apg-shipping.php:1158
 msgid "settings"
 msgstr "paramètres"
 

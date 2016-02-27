@@ -94,7 +94,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
-## Changeloghttp://www.wcprojectgroup.es/tienda/ticket-de-soporte
+## Changelog
 ### 1.9.0.6
 * Actualización de enlaces de soporte y pequeñas actualizaciones.
 

@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.0.5
+Version: 1.9.0.6
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.4
+Tested up to: 4.4.2
 
 Text Domain: apg_shipping
 Domain Path: /i18n/languages
@@ -30,7 +30,7 @@ $apg_shipping = array(
 	'plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'donacion' 		=> 'http://www.artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'http://www.artprojectgroup.es/tienda/soporte-tecnico',
+	'soporte' 		=> 'http://www.wcprojectgroup.es/tienda/ticket-de-soporte',
 	'plugin_url' 	=> 'http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
 	'puntuacion' 	=> 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
@@ -91,14 +91,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			public $paises_permitidos	= 'all';
 			public $impuesto_de_envios	= '';
 	
-			function __construct() {
+			public function __construct() {
 				$this->id				= 'apg_shipping';
 				$this->method_title		= __( "APG Shipping", 'apg_shipping' );
 				$this->init();
 			}
 	
 			//Inicializa los datos
-			function init() {
+			public function init() {
 				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'sincroniza_paises' ) );
 				add_action( 'woocommerce_shipping_apg_free_shipping_is_available', array( $this, 'chequea_apg_free_shipping' ) );
@@ -155,7 +155,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 			
 			//Procesa el código postal
-			function procesa_codigo_postal( $codigo_postal, $id ) {
+			public function procesa_codigo_postal( $codigo_postal, $id ) {
 				if ( strstr( $codigo_postal, '-' ) ) {
 					$codigos_postales 		= explode( ';', $codigo_postal );
 					$numeros_codigo_postal 	= array();
@@ -181,7 +181,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 			
 			//Formulario de datos
-			function init_form_fields() {
+			public function init_form_fields() {
 				$this->form_fields = array(
 					'enabled' => array(
 						'title'			=> __( 'Enable/Disable', 'apg_shipping' ),
@@ -339,7 +339,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Función que lee y devuelve los tipos de impuestos
-			function apg_shipping_dame_impuestos() {
+			public function apg_shipping_dame_impuestos() {
 				$impuestos = array_filter( array_map( 'trim', explode( "\n", get_option( 'woocommerce_tax_classes' ) ) ) );
 				if ( $impuestos ) {
 					foreach ( $impuestos as $impuesto ) {
@@ -349,7 +349,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Función que lee y devuelve los tipos de clases de envío
-			function apg_shipping_dame_clases_de_envio() {
+			public function apg_shipping_dame_clases_de_envio() {
 				foreach ( get_terms( 'product_shipping_class', array( 'hide_empty' => '0' ) ) as $clase_de_envio ) {
 					if ( is_object( $clase_de_envio ) ) {
 						$this->clases_de_envio[esc_attr( $clase_de_envio->slug )] = $clase_de_envio->name;
@@ -358,7 +358,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}	
 
 			//Función que lee y devuelve los tipos de medios de pago
-			function apg_shipping_dame_medios_de_pago() {
+			public function apg_shipping_dame_medios_de_pago() {
 				if ( get_option( 'woocommerce_gateway_order' ) ) {
 					foreach ( get_option( 'woocommerce_gateway_order' ) as $medio_de_pago => $numero ) {
 						$configuracion = get_option( 'woocommerce_' . $medio_de_pago . '_settings' );
@@ -370,7 +370,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Muestra los campos para los grupos de códigos postales
-			function pinta_grupos_codigos_postales() {
+			public function pinta_grupos_codigos_postales() {
 				$numero = $this->postal_group_no;
 	
 				for ( $contador = 1; $numero >= $contador; $contador++ ) {
@@ -413,7 +413,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Muestra los campos para los grupos de estados (provincias)
-			function pinta_grupos_estados() {
+			public function pinta_grupos_estados() {
 				$numero = $this->state_group_no;
 	
 				$base_country = WC()->countries->get_base_country();
@@ -460,7 +460,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Muestra los campos para los grupos de países
-			function pinta_grupos_paises() {
+			public function pinta_grupos_paises() {
 				$numero = $this->country_group_no;
 				
 				for ( $contador = 1; $numero >= $contador; $contador++ ) {
@@ -505,14 +505,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Comprueba el estado de apg_free_shipping
-			function chequea_apg_free_shipping( $valores ) {
+			public function chequea_apg_free_shipping( $valores ) {
 				$this->apg_free_shipping = $valores;
 				
 				return $valores;
 			}
 			
 			//Calcula el gasto de envío
-			function calculate_shipping( $paquete = array() ) {
+			public function calculate_shipping( $paquete = array() ) {
 				//Peso total del pedido
 				$peso_total = WC()->cart->cart_contents_weight;
 				//Variables
@@ -645,7 +645,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Selecciona el/los grupo/s según la dirección de envío del cliente
-			function dame_grupos( $paquete = array(), $clases = array() ) {
+			public function dame_grupos( $paquete = array(), $clases = array() ) {
 				$grupo 					= array();
 				$codigo_postal			= strtoupper( woocommerce_clean( $paquete['destination']['postcode'] ) );
 				$codigos_postales		= array(
@@ -728,7 +728,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 			
 			//Devuelve la tarifa aplicable al grupo/s seleccionado/s
-			function dame_tarifas( $grupos = array() ) {
+			public function dame_tarifas( $grupos = array() ) {
 				$tarifas = $tarifa_de_grupo = array();
 				
 				//Recoge las tarifas programadas
@@ -760,7 +760,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Selecciona la tarifa más barata
-			function dame_tarifa_mas_barata( $tarifas, $peso_total, $volumen_total, $largo, $ancho, $alto, $grupos, $medidas, $clases ) {
+			public function dame_tarifa_mas_barata( $tarifas, $peso_total, $volumen_total, $largo, $ancho, $alto, $grupos, $medidas, $clases ) {
 				$gasto_de_envio = $tarifa_gasto_de_envio = array();
 				
 				if ( !empty( $grupos ) ) {
@@ -838,7 +838,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 	
 			//Actualiza los países específicos
-			function sincroniza_paises() {
+			public function sincroniza_paises() {
 				if ( $this->paises_permitidos == 'specific' && $this->settings['sync_countries'] == 'yes' ) {
 					$paises = $this->dame_paises_especificos();
 					if ( !empty( $paises ) ) {
@@ -849,7 +849,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 			
 			//Devuelve los países específicos
-			function dame_paises_especificos() {
+			public function dame_paises_especificos() {
 				$paises_iniciales = $paises_nuevos = array();
 				//Lee los países iniciales  
 				$contador = 1;
@@ -1165,8 +1165,6 @@ function apg_shipping_muestra_mensaje() {
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo' ); //Carga la hoja de estilo global
 	wp_register_style( 'apg_shipping_hoja_de_estilo_shipping', plugins_url( 'assets/css/style-shipping.css', __FILE__ ) );
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo_shipping' ); //Carga la hoja de estilo global
-	wp_register_style( 'apg_shipping_fuentes', plugins_url( 'assets/fonts/stylesheet.css', __FILE__ ) ); //Carga la hoja de estilo global
-	wp_enqueue_style( 'apg_shipping_fuentes' ); //Carga la hoja de estilo global
 
 	$configuracion = get_option( 'woocommerce_apg_shipping_settings' );
 	/*if ( !isset( $configuracion['maximo'] ) ) {

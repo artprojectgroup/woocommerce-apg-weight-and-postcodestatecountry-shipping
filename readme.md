@@ -7,13 +7,13 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 4.4
+Tested up to: 4.4.2
 
-Stable tag: 1.9.0.5
+Stable tag: 1.9.0.6
 
 WC requires at least: 2.1
 
-WC tested up to: 2.4.12
+WC tested up to: 2.5.2
 
 License: GPLv3
 
@@ -53,7 +53,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Italiano ([**Angelo Lazzari**](http://www.redtulp.com/)).
 
 ### Soporte técnico
-**Art Project Group** te ofrece [**Soporte técnico**](http://www.artprojectgroup.es/tienda/soporte-tecnico) para configurar o instalar ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
+**Art Project Group** te ofrece [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) para configurar o instalar ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
 
 ### Origen
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** ha sido programado a partir del plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) de [Andy_P](http://profiles.wordpress.org/andy_p/) y la modificación de [Mantish](http://wordpress.org/support/profile/mantish) publicada en [GitHub](https://gist.github.com/Mantish/5658280), que, a pesar de su brillantez, no ofrecían todas las características que necesitábamos. Aún así su trabajo ha sido completamente imprescindible para la realización de este plugin.
@@ -90,11 +90,14 @@ Puedes seguir el desarrollo de este plugin en [Github](https://github.com/artpro
 Como la configuración del plugin es un poco compleja, hemos creado un tutorial donde explicamos paso a paso el proceso de configuración con un ejemplo real. Puedes visitarlo en [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](http://www.artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
 
 ### Soporte técnico
-Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico). 
+Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte). 
 
-*En ningún caso __Art Project Group__ proporciona ningún tipo de soporte técnico gratuito.*
+*En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
-## Changelog
+## Changeloghttp://www.wcprojectgroup.es/tienda/ticket-de-soporte
+### 1.9.0.6
+* Actualización de enlaces de soporte y pequeñas actualizaciones.
+
 ### 1.9.0.5
 * Arreglo de error con las medidas reportado y solucionado por [DJ Team Digital](http://www.teamdigital.com.au/).
 
@@ -372,7 +375,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * *Italiano*: da [**Angelo Lazzari**](http://www.redtulp.com/).
 
 ## Soporte técnico
-Dado que **WooCommerce - APG Weight and Postcode/State/Country Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.artprojectgroup.es/servicios/servicios-para-wordpress-y-woocommerce/soporte-tecnico) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
+Dado que **WooCommerce - APG Weight and Postcode/State/Country Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
 
 ## ¿Por qué está esta página en español?
 Mientras WordPress no nos permita a los desarrolladores realizar esta página en más de un idioma, elegiremos siempre el español.

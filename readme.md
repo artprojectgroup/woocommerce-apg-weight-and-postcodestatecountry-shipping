@@ -7,13 +7,13 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 4.4.2
+Tested up to: 4.5
 
 Stable tag: 1.9.0.6
 
 WC requires at least: 2.1
 
-WC tested up to: 2.5.2
+WC tested up to: 2.5.5
 
 License: GPLv3
 

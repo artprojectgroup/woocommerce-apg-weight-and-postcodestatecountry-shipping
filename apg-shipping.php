@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.0.6
+Version: 1.9.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.5
+Tested up to: 4.5.2
 
 Text Domain: apg_shipping
 Domain Path: /i18n/languages
@@ -1042,6 +1042,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	
 		foreach ( $configuracion as $seccion ) {
 			if ( ( isset( $seccion['id'] ) && $seccion['id'] == 'shipping_options' ) && ( isset( $seccion['type'] ) && $seccion['type'] == 'sectionend' ) ) {
+				$anadir_seccion[] = array(
+					'type'		=> 'sectionend',
+					'id'		=> 'shipping_methods' 
+				);
+				$anadir_seccion[] = array( 
+					'title'		=> __( 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 'apg_shipping' ),
+					'type'		=> 'title',
+					'id'		=> 'apg_shipping' 
+				);
 				$anadir_seccion[] = array( 
 					'name'		=> __( 'Additional Shipping', 'apg_shipping' ),
 					'desc_tip'	=> __( 'List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping' ),
@@ -1055,6 +1064,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'id'		=> 'woocommerce_apg_shipping',
 					'type'		=> 'textarea',
 					'default'	=> '',
+					'class'		=> 'borrame_apg_shipping',					
+				);
+				$anadir_seccion[] = array(
+					'type'		=> 'sectionend',
+					'id'		=> 'apg_shipping' 
 				);
 			}
 	

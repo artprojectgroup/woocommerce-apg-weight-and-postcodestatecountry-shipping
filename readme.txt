@@ -3,39 +3,39 @@ Contributors: artprojectgroup
 Donate link: http://www.artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
-Tested up to: 4.5
-Stable tag: 1.9.0.6
+Tested up to: 4.5.2
+Stable tag: 1.9.1
 WC requires at least: 2.1
 WC tested up to: 2.5.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
+Add to WooCommerce shipping costs calculating based on weight, size and post code, state (province) and/or customer’s country.
 
 == Description ==
 [*Español*](http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/) - [*English*](http://goo.gl/6w4bWL) - [*Italiano*](http://goo.gl/4FVXUr) - [*Français*](http://goo.gl/2faaIA) - [*Deutsch*](http://goo.gl/Ih21KD) 
 
-**IMPORTANTE: *WooCommerce - APG Weight and Postcode/State/Country Shipping* requiere WooCommerce 2.1.0 o superior.**
+** IMPORTANT: *WooCommerce - APG Weight and Postcode/State/Country Shipping* required WooCommerce 2.1.0 or higher.**
 
-**WooCommerce - APG Weight and Postcode/State/Country Shipping** añade a tu tienda WooCommerce la posibilidad de calcular los gastos de envío basándose en el peso y en el código postal, provincia (estado) y/o país de la dirección de envío.
+**WooCommerce - APG Weight and Postcode/State/Country Shipping** add to your WooCommerce store the ability to calculate shipping costs based on weight and postcode, state (province) and/or country address shipping.
 
-= Características =
-* Puedes añadir un coste fijo de embalaje y/o manipulación por envío.
-* Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje.
-* Puedes crear un número ilimitado de grupos, tanto para los códigos postales, como para las provincias (estados), como para los países.
-* Puedes crear un número ilimitado de tarifas.
-* Puedes crear las tarifas con un peso y/o dimensiones máximos.
-* Puedes elegir si aceptar excesos de peso o dimensiones.
-* Puedes aplicar un tipo de IVA diferente a cada grupo creado.
-* Puedes vincular el envío con una, varias o todas las clases de envío del sistema.
-* Puedes vincular el envío con una o varias pasarelas de pago específicas.
-* Puedes asignar grupos de código postal/provincia (estado) donde no atender los pedidos.
-* Puedes crear un número ilimitado de empresas de transporte para utilizar este sistema de cálculo.
-* Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*. Disponible sólo si está configurada como *Países específicos* la opción *Países permitidos*. 
-* Puedes crear un grupo global que soporte todos los países no incluidos en los grupos de país que crees. Disponible sólo si están configurada como *Todos los países* la opción *Países permitidos* de la pestaña *Opciones generales*.
-* Puedes ocultar el coste del envío en caso de que disponible [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/). Disponible sólo si el plugin está instalado y activado.
+= Features =
+* You can add a fixed cost of packing and/or handling per shipping.
+* You can add, also cost of packing, an additional fixed cost as amount or percentage.
+* You can create an unlimited number of groups, both for post codes, for states (province) and countries.
+* You can create an unlimited number of rates.
+* You can create rates with maximum weight and/or dimensions.
+* You can choose accept or not weight or dimensions excess.
+* You can apply a different tax by group.
+* You can link shipping with one, several or all shipping classes.
+* You can link shipping with one or more specific gateways.
+* You can assign postcode/state (province) groups where they don’t meet orders.
+* You can create an unlimited number of shipping companies.
+* Countries configured in groups of countries will automatically be added, if desired, to *Specific countries* field on *General Options* tab. Available only if *Allowed countries* option are configured as *Specific countries*. 
+* You can create a global group that supports all countries not included in the country groups than you have set up. Available only if *Allowed countries* option are configured as *All countries* on * General Options* tab.
+* You can hide shipping cost if [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/) is available. Available only if the plugin is installed and activated.
 
-= Traducciones =
+= Translations =
 * Español ([**Art Project Group**](http://www.artprojectgroup.es/)).
 * English ([**Art Project Group**](http://www.artprojectgroup.es/)).
 * Français ([**Guillaume**](http://guillaume-thibord.com/)).
@@ -43,254 +43,260 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Português (Brasil) ([**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/)).
 * Italiano ([**Angelo Lazzari**](http://www.redtulp.com/)).
 
-= Soporte técnico =
-**Art Project Group** te ofrece [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) para configurar o instalar ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
+= Technical support =
+**Art Project Group** offers [** Technical support**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) to configure or install ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
 
-= Origen =
-**WooCommerce - APG Weight and Postcode/State/Country Shipping** ha sido programado a partir del plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) de [Andy_P](http://profiles.wordpress.org/andy_p/) y la modificación de [Mantish](http://wordpress.org/support/profile/mantish) publicada en [GitHub](https://gist.github.com/Mantish/5658280), que, a pesar de su brillantez, no ofrecían todas las características que necesitábamos. Aún así su trabajo ha sido completamente imprescindible para la realización de este plugin.
+= Origin =
+**WooCommerce - APG Weight and Postcode/State/Country Shipping** has been programmed from plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) from [Andy_P](http://profiles.wordpress.org/andy_p/) and [Mantish](http://wordpress.org/support/profile/mantish) modification published on [GitHub](https://gist.github.com/Mantish/5658280), who, despite his brilliance, didn’t offer all the features we needed. Even so their work has been absolutely essential for the realization of this plugin.
 
-= Más información =
-En nuestro sitio web oficial puede obtener más información sobre [**WooCommerce - APG Weight and Postcode/State/Country Shipping**](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping). 
+= More information =
+On our official website you can learn more about [**WooCommerce - APG Weight and Postcode/State/Country Shipping**](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping). 
 
-= Comentarios =
-No olvides dejarnos tu comentario en:
+= Comments =
+Don’t forget to leave us your comment on:
 
-* [WooCommerce - APG Weight and Postcode/State/Country Shipping](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping) en Art Project Group.
-* [Art Project Group](https://www.facebook.com/artprojectgroup) en Facebook.
-* [@artprojectgroup](https://twitter.com/artprojectgroup) en Twitter.
-* [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) en Google+.
+* [WooCommerce - APG Free Postcode/State/Country Shipping](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-free-postcodestatecountry-shipping) on Art Project Group.
+* [Art Project Group](https://www.facebook.com/artprojectgroup) on Facebook.
+* [@artprojectgroup](https://twitter.com/artprojectgroup) on Twitter.
+* [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) on Google+.
 
-= Más plugins =
-Recuerda que puedes encontrar más [plugins para WordPress](http://www.artprojectgroup.es/plugins-para-wordpress) y más [plugins para WooCommerce](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce) en [Art Project Group](http://www.artprojectgroup.es) y en nuestro perfil en [WordPress](http://profiles.wordpress.org/artprojectgroup/).
+= More plugins =
+Remember that you can find more [plugins for WordPress](http://www.artprojectgroup.es/plugins-para-wordpress) and more [plugins for WooCommerce](http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce) on [Art Project Group](http://www.artprojectgroup.es) and our profile on [WordPress](http://profiles.wordpress.org/artprojectgroup/).
 
 = GitHub =
-Puedes seguir el desarrollo de este plugin en [Github](https://github.com/artprojectgroup/woocommerce-apg-weight-and-postcodestatecountry-shipping).
+You can follow the development of this plugin on [Github](https://github.com/artprojectgroup/woocommerce-apg-weight-and-postcodestatecountry-shipping).
 
 == Installation ==
-1. Puedes:
- * Subir la carpeta `woocommerce-apg-weight-and-postcodestatecountry-shipping` al directorio `/wp-content/plugins/` vía FTP. 
- * Subir el archivo ZIP completo vía *Plugins -> Añadir nuevo -> Subir* en el Panel de Administración de tu instalación de WordPress.
- * Buscar **WooCommerce - APG Weight and Postcode/State/Country Shipping** en el buscador disponible en *Plugins -> Añadir nuevo* y pulsar el botón *Instalar ahora*.
-2. Activar el plugin a través del menú *Plugins* en el Panel de Administración de WordPress.
-3. Configurar el plugin en *WooCommerce -> Ajustes -> Envío* o a través del botón *Ajustes*.
-4. Listo, ahora ya puedes disfrutar de él, y si te gusta y te resulta útil, hacer una [*donación*](http://www.artprojectgroup.es/tienda/donacion).
+1. You can:
+ * Upload the `woocommerce-apg-weight-and-postcodestatecountry-shipping` folder to `/wp-content/plugins/` directory via FTP. 
+ * Upload the full ZIP file via *Plugins -> Add New -> Upload* on your WordPress Administration Panel.
+ * Search **WooCommerce - APG Weight and Postcode/State/Country Shipping** in the search engine available on *Plugins -> Add New* and press *Install Now* button.
+2. Activate plugin through *Plugins* menu on WordPress Administration Panel.
+3. Set up plugin on *WooCommerce -> Settings -> Shipping* or through *Settings* button.
+4. Ready, now you can enjoy it, and if you like it and find it useful, make a [*donation*](http://www.artprojectgroup.es/tienda/donacion).
 
 
 == Frequently asked questions ==
-= ¿Cómo se configura? =
-Como la configuración del plugin es un poco compleja, hemos creado un tutorial donde explicamos paso a paso el proceso de configuración con un ejemplo real. Puedes visitarlo en [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](http://www.artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
+= How do you set up? =
+As the plugin configuration is a bit complex, we have created a tutorial where we explain setup process step by step with a real example. You can visit it on [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](http://www.artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
 
-= Soporte técnico =
-Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Postcode/State/Country Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte). 
+= Support =
+If you need help to configuring or installing **WooCommerce - APG Weight and Postcode/State/Country Shipping**, **Art Project Group** offers its service [**Technical Support**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte). 
 
-*En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
+*In any case **Art Project Group** provides any kind of free technical support.*
 
 == Screenshots ==
-1. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Opciones de Envío.
-2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
+1. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. Shipping Options Tab.
+2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
-http://www.wcprojectgroup.es/tienda/ticket-de-soporte 1.9.0.5 =
-* Arreglo de error con las medidas reportado y solucionado por [DJ Team Digital](http://www.teamdigital.com.au/).
+= 1.9.1 =
+* Updated code to maintain compatibility with the new version of **WooCommerce - APG Free Postcode/State/Country Shipping**.
+* Updated the first screenshot.
+= 1.9.0.6 =
+* Updated support links and small updates.
+= 1.9.0.5 =
+* Fixed bug with sizes reported and fixed by [DJ Team Digital](http://www.teamdigital.com.au/).
 = 1.9.0.4 =
-* Actualización del paquete de fuentes. Nuevo icono de Google+.
-* Actualización de las traducciones.
+* Updated font package. New Google+ icon.
+* Updated translations.
 = 1.9.0.3 =
-* Traducción al idioma portugués gracias a [**Alain Aubry**](http://www.casa-indigo.com/).
+* Portuguese translation by [**Alain Aubry**](http://www.casa-indigo.com/).
 = 1.9.0.2 =
-* Control de activación de WooCommerce.
+* WooCommerce activation control.
 = 1.9.0.1 =
-* Eliminación de Warning que aparecía al crear nuevos gastos de envío.
-* Actualización de la captura de pantalla.
+* Warning deleted when added a new shipping.
+* Updated screenshot.
 = 1.9 =
-* Actualización del formulario que permite crear nuevos métodos de envío APG y creación de nuevas funciones que permiten sincronizarlo con las nuevas funcionalidades de WooCommerce 2.4.
-* Actualización de idiomas.
-* Actualización de la captura de pantalla.
+* Updated form that allows create new APG Shipping and creating new functions to synchronize it with WooCommerce 2.4 new features.
+* Updated translations.
+* Updated screenshot.
 = 1.8.0.4 =
-* Eliminación de Warning que aparecía en determinadas instalaciones.
+* Warning deleted showed on particular settings.
 = 1.8.0.3 =
-* Traducción al idioma italiano gracias a [**Angelo Lazzari**](http://www.redtulp.com/).
-* Actualización del idioma francés.
+* Italian translation by [**Angelo Lazzari**](http://www.redtulp.com/).
+* Updated french translation.
 = 1.8.0.2 =
-* Traducción al idioma portugués (Brasil) gracias a [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
+* Portuguese (Brasil) translation by [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
 = 1.8.0.1 =
-* Eliminación de mensaje que aparecía en el checkout.
+* Deleted message showed on checkout.
 = 1.8 =
-* Arreglo del cálculo de medidas.
-* Arreglo de error que mostraba clases de envío en blanco.
-* Arreglo de error detectado al actualizar los países específicos.
-* Añadida nueva opción para no realizar envíos a determinadas clases de envío.
-* Actualización de las traducciones.
-* Nueva hoja de estilo sensible.
-* Actualización de la captura de pantalla.
+* Size calculation fix.
+* Fixed error showed with blank shipping classes.
+* Fixed bug detected when updating specific countries.
+* Added new option to not ship to certain shipping classes.
+* Updated translations.
+* New responsive stylesheet.
+* Updated screenshot.
 = 1.7.5.2 =
-* Arreglo de error detectado en el cálculo de los impuestos.
+* Fixed bug in taxes calculation.
 = 1.7.5.1 =
-* Arreglo de error detectado en el cálculo de los impuestos.
+* Fixed bug in taxes calculation.
 = 1.7.5 =
-* Arreglo de error en el manejo de códigos postales. Error descrito en [Support](https://wordpress.org/support/topic/order-of-post-code-wildcards-may-produce-wrong-results).
-* Modificación de la estructura interna del plugin para ajustarse a los estándares de WordPress.
+* Fixed bug with postcodes. Bug reported on [Support](https://wordpress.org/support/topic/order-of-post-code-wildcards-may-produce-wrong-results).
+* Changing the internal structure of the plug to fit WordPress standards.
 = 1.7.4.2 =
-* Arreglo de error detectado en el cálculo de los impuestos.
+* Fixed bug detected in taxes calculation.
 = 1.7.4.1 =
-* Arreglo de error que impedía realizar la compra en configuraciones sin impuestos.
+* Fixed bug that prevents purchase without tax setting.
 = 1.7.4 =
-* Arreglo de error que impedía realizar la compra.
-* Mejora en el cálculo de totales con clases de envío múltiples.
+* Fixed bug that prevents purchase.
+* Improved totaling with multiple shipping classes.
 = 1.7.3.10 =
-* Arreglo de error detectado en el cálculo de los impuestos.
+* Fixed bug detected in taxes calculation.
 = 1.7.3.9 =
-* Traducción al idioma francés gracias a [**Guillaume**](http://guillaume-thibord.com/).
+* French translation by [**Guillaume**](http://guillaume-thibord.com/).
 = 1.7.3.8 =
-* Arreglo de error detectado en la lectura de las clases de envío múltiples.
+* Fixed bug detected in multiple shipping classes reading.
 = 1.7.3.7 =
-* Arreglo de error detectado en el cálculo de los impuestos parciales.
+* Fixed bug detected in partial taxes calculating.
 = 1.7.3.6 =
-* Arreglo de error detectado en el cálculo del cargo adicional.
-* Arreglo de error detectado en el cálculo de los impuestos parciales.
+* Fixed bug detected in additional fee calculating.
+* Fixed bug detected in partial taxes calculating.
 = 1.7.3.5 =
-* Arreglo de error detectado en el cálculo del cargo adicional.
-* Arreglo de error detectado en la devolución del precio máximo.
+* Fixed bug detected in additional fee calculation.
+* Fixed bug detected in maximum price returning.
 = 1.7.3.4 =
-* Arreglo de error detectado en el cálculo de los impuestos.
+* Fixed bug detected in taxes calculation.
 = 1.7.3.3 =
-* Arreglo de error detectado en el cálculo de tarifas con clases de envío.
+* Fixed bug detected in rates with shipping classes calculation.
 = 1.7.3.2 =
-* Arreglo de error detectado en el cálculo de tarifas con clases de envío.
+* Fixed bug detected in rates with shipping classes calculation.
 = 1.7.3.1 =
-* Arreglo de error detectado en el cálculo de tarifas al desactivar la devolución del precio máximo.
+* Fixed bug detected in rates calculation when Return the maximum price is disabled.
 = 1.7.3 =
-* Arreglo de error detectado en el cálculo de tarifas por medidas.
-* Control de error provocado por WooCommerce al leer los medios de cobro.
+* Fixed bug detected in size rates calculation.
+* Error control when WooCommerce read gateways.
 = 1.7.2.2 =
-* Arreglo de error detectado en las tarifas mixtas (peso y medidas).
+* Fixed bug detected in mixed rates (weight and size).
 = 1.7.2.1 =
-* Arreglo de error detectado en el listado de clases de envío del grupo global.
+* Fixed bud detected in shipping classes list from global group.
 = 1.7.2 =
-* Arreglo de error detectado en las tarifas mixtas (peso y medidas).
+* Fixed bug detected in mixed rates (weight and size).
 = 1.7.1 =
-* Arreglo de error que no tenía en cuenta el país de origen en los grupos de códigos postales y provincias o estados.
+* Fixed bug that didn’t consider the origin country in post codes and states or provinces groups.
 = 1.7 =
-* Arreglo de un error que se producía al crear gastos de envío adicionales.
-* Nueva interfaz y función de gestión de la opción Gastos de envío adicionales.
-* Optimización del código de **WooCommerce - APG Weight and Postcode/State/Country Shipping** para que consuma la menor cantidad de recursos posibles. Gracias *Óscar de la Mata Casasola* por el aviso.
-* Nueva captura de pantalla.
+* Fixed an error that occurred when creating additional shipping.
+* New interface and management function to add additional shipping.
+* Optimization code of **WooCommerce - APG Weight and Postcode/State/Country Shipping** to consume minimum resources amount possible. Thanks *Óscar de la Mata Casasola* for the warning.
+* Updated screenshot.
 = 1.6.3.2 =
-* Arreglo de error en los cálculos de las tarifas para envíos que superan el máximo de peso introducido.
+* Fixed bug in shipments that exceed maximum weight entered rates calculations.
 = 1.6.3.1 =
-* Arreglo de error en los cálculos de las tarifas.
+* Fixed bug in rates calculations.
 = 1.6.3 =
-* Arreglo de error en los cálculos de las tarifas para el grupo de países global.
+* Fixed bug in global countries group rates calculations.
 = 1.6.2 =
-* Arreglo de error en los cálculos de las tarifas.
+* Fixed bug in rates calculations.
 = 1.6.1 =
-* Arreglo de error que no tenía en cuenta los grupos a no atender.
+* Fixed bug using no attend groups.
 = 1.6 =
-* Permite vincular el envío con una, varias o todas las clases de envío del sistema.
-* Permite crear tarifas no ascendentes.
-* Nuevos enlaces e iconos.
-* Nueva captura de pantalla.
+* Allows shipping with one, several or all shipping classes.
+* Allows creating non-rising rates.
+* New links and icons.
+* Stylesheet updates.
 = 1.5.1.1 =
-* Modificación de la URL del plugin en Art Project Group.
+* Changing the URL of the plugin in Art Project Group.
 = 1.5.1 =
-* Arreglo de error que borraba toda la configuración al desactivar el plugin.
-* Corrección menor que evita la aparición de un código de error al recopilar información sobre el plugin.
+* Fixed bug that erased all settings with plugin deactivation.
+* Minor fix that prevents an error when collecting information about the plugin.
 = 1.5 =
-* Arreglo de error detectado en el campo grupo global.
-* Añadida selección de impuestos para el campo grupo global.
+* Fixed bug detected in global group.
+* Added tax selection for global group field.
 = 1.4.2 =
-* Cambio del enlace de donación.
+* Donation link update.
 = 1.4.1 =
-* Arreglo de error que aparecía al recopilar información sobre los medios de cobro.
+* Minor fix that prevents error code showed when collecting gateways.
 = 1.4 =
-* Arreglo de error en el cálculo del peso del pedido con variaciones de productos virtuales.
-* Arreglo de error en el cálculo del impuesto.
-* Corrección menor que evita la aparición de un código de error al recopilar información sobre el plugin.
+* Fixed bug in weight calculation with virtual products variations.
+* Fixed bug in tax calculation.
+* Minor fix that prevents an error when collecting information about the plugin.
 = 1.3.6 =
-* Arreglo que muestra correctamente los medios de cobro en todos los gastos de envío.
-* Corrección del icono y enlace del botón de donación.
+* Fix to show gateways list correctly in all shipping.
+* Donation button icon and link correction.
 = 1.3.5 =
-* Corrección menor que evita la aparición de un código de error al recopilar los medios de pago.
+* Minor fix that prevents error code showed when collecting gateways.
 = 1.3.4 =
-* Arreglo que muestra correctamente los medios de cobro en todos los gastos de envío.
-* Añadida caché para los datos externos.
-* Cambio del botón de donación.
+* Fix for gateway list in all shipping.
+* Added cache for external data.
+* Donation button changed.
 = 1.3.3 =
-* Arreglo de compatibilidad a WooCommerce 2.1.2 con los medios de cobro disponibles para cada gasto envío.
+* Fixed WooCommerce 2.1.2 compatibility with the gateway available for each shipping.
 = 1.3.2 =
-* Eliminación de mensaje de error que aparecía con WooCommerce configurado para vender en todos los países.
+* Deleting error message that appeared with WooCommerce set to sell in all countries.
 = 1.3.1 =
-* Actualización del enlace de Ajustes.
+* Updated Settings link.
 = 1.3 =
-* Actualización del código para que sea 100% compatible con la última versión de WooCommerce. **Ojo: No es compatible con versiones anteriores a WooCommerce 2.1.0.** 
+* Update code to be 100% compatible with the latest version of WooCommerce. **Note: Not compatible with WooCommerce versions earlier than 2.1.0.**
 = 1.2 =
-* Añadida nueva función que limpia la base de datos al desinstalar el plugin.
+* New feature to clean database with uninstallation.
 = 1.1 =
-* Añadida opción para seleccionar múltiples pasarelas de pago específicas para el gasto de envío.
+* Added option to select multiple gateways for specific shipping.
 = 1.0.2 =
-* Añadido control de error que aparece al dejar campos vacíos.
+* Added error showed with empty fields.
 = 1.0.1 =
-* Eliminación de imagen externa por otra local.
+* Replace external image by local image.
 = 1.0 =
-* Actualización de las hojas de estilo acorde al nuevo WordPress 8.
-* Arreglo de pequeños errores en el código.
+* Updated style sheets with new WordPress style.
+* Fixed small bugs in the code.
 = 0.9 =
-* Añadida nueva opción que oculta el coste del envío en caso de estar habilitado WooCommerce - APG Free Postcode/State/Country Shipping.
-* Oculta o muestra las opciones *Añadir países a específicos* y *Añadir grupo global* en función de la configuración de WooCommerce.
-* Actualización de la captura de pantalla.
+* Added new option to hide shipping cost when WooCommerce - APG Free Postcode/State/Country Shipping is enabled.
+* Hide or show options *Add countries to specific* and *Add global group* depending WooCommerce settings.
+* Updated screenshot.
 = 0.8 =
-* Añadida opción para crear un grupo global, con soporte para todos los países no incluidos en el resto de grupos.
-* Arreglo de un error que mostraba un mensaje de error en países sin provincias (estados).
-* Actualización de la captura de pantalla.
+* Added option to create a global group, with support for all countries not included in the other groups.
+* Fixed bug that showed an error message in countries without states (provinces).
+* Updated screenshot.
 = 0.7.2 =
-* Arreglo de error al mostrar todas las pasarelas de pago en el resto de envíos.
+* Fixed bug displaying all gateways in the other shipping.
 = 0.7.1 =
-* Arreglo de error en la selección de la pasarela de pago específica.
+* Fixed bug with specific gateway selection.
 = 0.7 =
-* Añadida opción para seleccionar una pasarela de pago específica para el gasto de envío.
-* Añadida opción para indicar grupos de código postal y/o provincia (estado) donde no se atenderán los pedidos.
+* Added option to select specific gateway per shipping.
+* Added option to indicate post code and/or state (province) groups where orders can’t be attended.
 = 0.6.4 =
-* Modificación de la pantalla de configuración.
-* Modificación de los enlaces del plugin.
-* Actualización de la captura de pantalla.
-* Añadidos nuevos enlaces.
+* Updated setting screen.
+* Updated plugin links.
+* Updated screenshot.
+* Added new links.
 = 0.6.3 =
-* Modificación de la pantalla de configuración.
-* Modificación de los enlaces del plugin.
-* Actualización de la captura de pantalla.
+* Updated setting screen.
+* Updated plugin links.
+* Updated screenshot.
 = 0.6.2 =
-* Actualización de la traducción.
+* Updated translations.
 = 0.6.1 =
-* Control de la existencia de los parámetros de configuración.
-* Añadidos nuevos enlaces.
+* Setting configuration existence control.
+* Added new links.
 = 0.6 =
-* Añadida opción de crear tarifas basadas exclusivamente en dimensiones.
+* Added option to create size rates.
 = 0.5.1 =
-* Arreglo del archivo ZIP.
+* ZIP file fixed.
 = 0.5 =
-* Añadido soporte de medidas.
-* Añadida opción para devolver, o no, el precio máximo en caso de exceso de peso o dimensiones.
-* Rediseño de la pantalla de configuración.
-* Arreglos menores en el código.
+* Added measures support.
+* Added option to return, or not, the maximum price when order excess weight or size.
+* Screen settings redesign.
+* Minor fixes in the code.
 = 0.4 =
-* Arreglo de fallo en el guardado de configuraciones de gastos de envío adicionales.
-* Arreglo de fallo en el idioma español.
+* Fixed bug with additional shipping configurations saving.
+* Fixed bug in Spanish language.
 = 0.3 =
-* Añadido campo Coste adicional.
-* Añadidos tipos de impuestos por grupos.
+* Added Additional fee field.
+* Added tax types per group.
 = 0.2 =
-* Pequeñas modificaciones y arreglos de código.
-* Inclusión de enlaces.
-* Actualización de los textos de información.
-* Añadido campo Gastos de envío adicionales para poder crear nuevos Gastos de envío.
+* Small code modifications and arrangements.
+* Inclusion of links.
+* Updated information texts.
+* New additional shipping field to create new shipping.
 = 0.1 =
-* Versión inicial.
+* Initial version.
 
 == Upgrade Notice ==
-= 1.9.0.6 =
-* Actualización de enlaces de soporte y pequeñas actualizaciones.
+= 1.9.1 =
+* Updated code to maintain compatibility with the new version of **WooCommerce - APG Free Postcode/State/Country Shipping**.
+* Updated the first screenshot.
 
-==Traducciones ==
+== Translations ==
 * *English*: by [**Art Project Group**](http://www.artprojectgroup.es/) (default language).
 * *Español*: por [**Art Project Group**](http://www.artprojectgroup.es/).
 * *Français*: par [**Guillaume**](http://guillaume-thibord.com/).
@@ -298,26 +304,17 @@ http://www.wcprojectgroup.es/tienda/ticket-de-soporte 1.9.0.5 =
 * *Português (Brasil)*: por [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
 * *Italiano*: da [**Angelo Lazzari**](http://www.redtulp.com/).
 
-== Soporte técnico ==
-Dado que **WooCommerce - APG Weight and Postcode/State/Country Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
+== Support ==
+Since **WooCommerce - APG Weight and Postcode/State/Country Shipping** is totally free, **Art Project Group** only provides payment [**Technical Support**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) service. In any case **Art Project Group** provide any kind of free technical support.
 
-== ¿Por qué está esta página en español? ==
-Mientras WordPress no nos permita a los desarrolladores realizar esta página en más de un idioma, elegiremos siempre el español.
+== Donation ==
+Did you liked and you have proved useful **WooCommerce - APG Weight and Postcode/State/Country Shipping** on your website? We would appreciate a [small donation](http://www.artprojectgroup.es/tienda/donacion) that will help us to continue improving this plugin and create more plugins totally free for the entire WordPress community.
 
-A pesar de que es una apuesta muy arriesgada y de que reduce mucho las posibilidades de propagación de nuestros plugins, creemos que la comunidad hispana de WordPress es lo suficientemente amplia como para abocarla al idioma inglés hasta el final de los tiempos.
+== Thanks ==
+* To [Andy_P](http://profiles.wordpress.org/andy_p/) and [Mantish](http://wordpress.org/support/profile/mantish) for the great plugin and modification that have inspired **WooCommerce - APG Weight and Postcode/State/Country Shipping**.
+* To all that use it.
+* All that you help to improve it.
+* All you made donations.
+* All that you encourage us with your comments.
 
-Por ello regalamos a esa gran comunidad hispana nuestros plugins con interfaces, instrucciones, tutoriales, soporte y páginas web en *WordPress.org* en español.
-
-Esperamos que os guste nuestra iniciativa.
-
-== Donación ==
-¿Te ha gustado y te ha resultado útil **WooCommerce - APG Weight and Postcode/State/Country Shipping** en tu sitio web? Te agradeceríamos una [pequeña donación](http://www.artprojectgroup.es/tienda/donacion) que nos ayudará a seguir mejorando este plugin y a crear más plugins totalmente gratuitos para toda la comunidad WordPress.
-
-== Gracias ==
-* A [Andy_P](http://profiles.wordpress.org/andy_p/) y [Mantish](http://wordpress.org/support/profile/mantish) por el gran plugin y la modificación que han inspirado **WooCommerce - APG Weight and Postcode/State/Country Shipping**.
-* A todos los que lo usáis.
-* A todos los que ayudáis a mejorarlo.
-* A todos los que realizáis donaciones.
-* A todos los que nos animáis con vuestros comentarios.
-
-¡Muchas gracias a todos!
+Thank you very much to all!

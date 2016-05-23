@@ -54,12 +54,12 @@
 </tr>
 <script type="text/javascript">
 jQuery( document ).ready( function( $ ) {
-	$( "table.form-table tr:last" ).css( { 
+	$( ".borrame_apg_shipping" ).closest( "tr" ).css( { 
 		display: "none" 
 	} );
 	
 	$( '#nueva_fila' ).on( 'click', function() {
-		var row = $( '.fila_vacia.screen-reader-text' ).clone( true );
+		var row = $( '#clonable' ).clone( true );
 		row.removeClass( 'fila_vacia screen-reader-text' );
 		row.removeAttr( 'id' );
 		row.removeAttr( 'style' );

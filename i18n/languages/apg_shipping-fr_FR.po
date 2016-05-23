@@ -4,8 +4,8 @@ msgstr ""
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Thu Sep 03 2015 18:44:19 GMT+0200 (CEST)\n"
-"PO-Revision-Date: Thu Oct 15 2015 11:18:47 GMT+0200 (CEST)\n"
-"Last-Translator: Herves-Vida <info@herves-vida.com>\n"
+"PO-Revision-Date: Thu May 19 2016 13:25:36 GMT+0200 (CEST)\n"
+"Last-Translator: admin <info@localhost>\n"
 "Language-Team: \n"
 "Language: French (France)\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
@@ -29,13 +29,15 @@ msgstr ""
 
 #. Name of the plugin
 msgid "WooCommerce - APG Weight and Postcode/State/Country Shipping"
-msgstr ""
+msgstr "WooCommerce - APG Weight and Postcode/State/Country Shipping"
 
 #. URI of the plugin
 msgid ""
 "http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-"
 "shipping"
 msgstr ""
+"http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-"
+"shipping"
 
 #. Description of the plugin
 msgid ""
@@ -52,11 +54,11 @@ msgstr ""
 
 #. Author URI of the plugin
 msgid "http://www.artprojectgroup.es"
-msgstr ""
+msgstr "http://www.artprojectgroup.es"
 
 #. Author of the plugin
 msgid "Art Project Group"
-msgstr ""
+msgstr "Art Project Group"
 
 #: ../../apg-shipping.php:49 ../../includes/cuadro-informacion.php:7
 msgid "Make a donation by "
@@ -82,7 +84,7 @@ msgstr "Contactez-nous"
 msgid "Settings of "
 msgstr "Paramètres de"
 
-#: ../../apg-shipping.php:66 ../../apg-shipping.php:1158
+#: ../../apg-shipping.php:66 ../../apg-shipping.php:1173
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -398,11 +400,11 @@ msgstr "Groupe Pays %s (C%s)"
 msgid "Select the countries for this group."
 msgstr "Sélectionnez les Pays pour ce groupe."
 
-#: ../../apg-shipping.php:1045 ../../apg-shipping.php:1052
+#: ../../apg-shipping.php:1055 ../../apg-shipping.php:1062
 msgid "Additional Shipping"
 msgstr "Frais de port additionnel"
 
-#: ../../apg-shipping.php:1046 ../../apg-shipping.php:1053
+#: ../../apg-shipping.php:1056 ../../apg-shipping.php:1063
 msgid ""
 "List additonal shipping classes below (1 per line). This is in addition to "
 "the default <code>APG shipping</code>."
@@ -410,7 +412,7 @@ msgstr ""
 "Ajout de classes de livraison ci-dessous (1 par ligne). Cela s'ajoute à la "
 "valeur par défaut <code>APG Frais de port</code>."
 
-#: ../../apg-shipping.php:1112
+#: ../../apg-shipping.php:1127
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
 "Ce plugin\n"
@@ -423,17 +425,17 @@ msgstr ""
 " \n"
 "courir!"
 
-#: ../../apg-shipping.php:1151 ../../includes/cuadro-informacion.php:44
+#: ../../apg-shipping.php:1166 ../../includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr "Notez-nous, s'il vous plaît %s:"
 
-#: ../../apg-shipping.php:1158
+#: ../../apg-shipping.php:1173
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Merci de mettre à jour votre %s. Ceci est très important !"
 
-#: ../../apg-shipping.php:1158
+#: ../../apg-shipping.php:1173
 msgid "settings"
 msgstr "paramètres"
 

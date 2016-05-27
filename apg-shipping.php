@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.1
+Version: 1.9.1.1
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -623,16 +623,19 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						$impuestos_parciales[$grupo] = $impuestos->calc_shipping_tax( $precio, $impuestos->get_shipping_tax_rates( $this->settings['Tax_' . $grupo] ) );
 					}
 				}
-				
 				if ( $this->tax_status != 'none' ) {
 					foreach ( $impuestos_parciales as $impuesto_parcial ) {
 						foreach ( $impuesto_parcial as $clave => $impuesto ) {
 							$suma_impuestos += $impuesto;
-							$impuestos_totales[$clave] = $suma_impuestos;
+							if ( $impuesto > 0 ) { //Prevenimos sumar impuestos a 0 
+								$impuestos_totales[$clave] = $suma_impuestos;
+							} else {
+								$impuestos_totales[$clave] = $impuesto;
+							}	
 						}
 					}
 				}
-	
+
 				$tarifa = array(
 					'id'		=> $this->id,
 					'label'		=> $this->title,

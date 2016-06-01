@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.1.1
+Version: 1.9.2
 Plugin URI: http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://www.artprojectgroup.es/
@@ -36,6 +36,8 @@ $apg_shipping = array(
 	'puntuacion' 	=> 'http://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 );
 $envios_adicionales = $limpieza = NULL;
+$medios_de_pago = array();
+
 
 //Carga el idioma
 load_plugin_textdomain( 'apg_shipping', null, dirname( DIRECCION_apg_shipping ) . '/i18n/languages' );
@@ -359,14 +361,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			//Función que lee y devuelve los tipos de medios de pago
 			public function apg_shipping_dame_medios_de_pago() {
-				if ( get_option( 'woocommerce_gateway_order' ) ) {
-					foreach ( get_option( 'woocommerce_gateway_order' ) as $medio_de_pago => $numero ) {
-						$configuracion = get_option( 'woocommerce_' . $medio_de_pago . '_settings' );
-						if ( $configuracion['enabled'] == 'yes' ) {
-							$this->medios_de_pago[$medio_de_pago] = $configuracion['title'];
-						}
-					}
-				}
+				global $medios_de_pago;
+				
+				$this->medios_de_pago = $medios_de_pago;
 			}
 	
 			//Muestra los campos para los grupos de códigos postales
@@ -1089,9 +1086,19 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	add_filter( 'woocommerce_admin_field_shipping_apg_shipping_envios', 'apg_shipping_campos_nuevos_gastos_de_envio' );
 	
 	//Recoge los medios de pago
-	function apg_shipping_filtra_medios_de_pago( $medios ) {
-		global $woocommerce;
+	function apg_shipping_dame_medios_de_pago() {
+		global $medios_de_pago;
+		
+		if ( $medios_de_pago_activos = WC()->payment_gateways->get_available_payment_gateways() ) {
+			foreach ( $medios_de_pago_activos as $medio_de_pago_activo => $objeto ) {
+				$medios_de_pago[$medio_de_pago_activo] = $objeto->title;
+			}
+		}
+	}
+	add_action( 'admin_init', 'apg_shipping_dame_medios_de_pago' );
 	
+	//Filtra los medios de pago
+	function apg_shipping_filtra_medios_de_pago( $medios ) {
 		if ( isset( WC()->session->chosen_shipping_method ) ) {
 			$configuracion = get_option( 'woocommerce_' . WC()->session->chosen_shipping_method . '_settings' );
 		} else if ( isset( $_POST['shipping_method'] ) ) {
@@ -1115,7 +1122,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 			}
 		}
-	
+
 		return $medios;
 	}
 	add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago' );

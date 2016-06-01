@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.5.2
 
-Stable tag: 1.9.1.1
+Stable tag: 1.9.2
 
 WC requires at least: 2.1
 
@@ -95,6 +95,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 1.9.2
+* Arreglo de error en el listado de medios de pago.
+
 ### 1.9.1.1
 * Arreglo de error con el cálculo de impuestos al 0%.
 

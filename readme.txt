@@ -15,7 +15,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 == Description ==
 [*Español*](http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/) - [*English*](http://goo.gl/6w4bWL) - [*Italiano*](http://goo.gl/4FVXUr) - [*Français*](http://goo.gl/2faaIA) - [*Deutsch*](http://goo.gl/Ih21KD) 
 
-** IMPORTANT: *WooCommerce - APG Weight and Postcode/State/Country Shipping* required WooCommerce 2.1.0 or higher.**
+**IMPORTANT: *WooCommerce - APG Weight and Postcode/State/Country Shipping* required WooCommerce 2.1.0 or higher.**
 
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** add to your WooCommerce store the ability to calculate shipping costs based on weight and postcode, state (province) and/or country address shipping.
 
@@ -31,7 +31,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can assign postcode/state (province) groups where they don’t meet orders.
 * You can create an unlimited number of shipping companies.
 * Countries configured in groups of countries will automatically be added, if desired, to *Specific countries* field on *General Options* tab. Available only if *Allowed countries* option are configured as *Specific countries*. 
-* You can create a global group that supports all countries not included in the country groups than you have set up. Available only if *Allowed countries* option are configured as *All countries* on * General Options* tab.
+* You can create a global group that supports all countries not included in the country groups than you have set up. Available only if *Allowed countries* option are configured as *All countries* on *General Options* tab.
 * You can hide shipping cost if [**WooCommerce - APG Free Postcode/State/Country Shipping**](http://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/) is available. Available only if the plugin is installed and activated.
 
 = Translations =
@@ -43,7 +43,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * Italiano ([**Angelo Lazzari**](http://www.redtulp.com/)).
 
 = Technical support =
-**Art Project Group** offers [** Technical support**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) to configure or install ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
+**Art Project Group** offers [**Technical support**](http://www.wcprojectgroup.es/tienda/ticket-de-soporte) to configure or install ***WooCommerce - APG Weight and Postcode/State/Country Shipping***.
 
 = Origin =
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** has been programmed from plugin [*AWD Weight/Country Shipping*](http://wordpress.org/plugins/awd-weightcountry-shipping/) from [Andy_P](http://profiles.wordpress.org/andy_p/) and [Mantish](http://wordpress.org/support/profile/mantish) modification published on [GitHub](https://gist.github.com/Mantish/5658280), who, despite his brilliance, didn’t offer all the features we needed. Even so their work has been absolutely essential for the realization of this plugin.

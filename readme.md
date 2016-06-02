@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.5.2
 
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 
 WC requires at least: 2.1
 
@@ -37,7 +37,6 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes elegir si aceptar excesos de peso o dimensiones.
 * Puedes aplicar un tipo de IVA diferente a cada grupo creado.
 * Puedes vincular el envío con una, varias o todas las clases de envío del sistema.
-* Puedes vincular el envío con una o varias pasarelas de pago específicas.
 * Puedes asignar grupos de código postal/provincia (estado) donde no atender los pedidos.
 * Puedes crear un número ilimitado de empresas de transporte para utilizar este sistema de cálculo.
 * Los países configurados en los grupos de países se añadirán automáticamente, si así lo deseas, al campo *Países específicos* en la pestaña *Opciones generales*. Disponible sólo si está configurada como *Países específicos* la opción *Países permitidos*. 
@@ -95,6 +94,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 1.9.3
+* Eliminada la posibilidad de vincular con medios de pago.
+
 ### 1.9.2
 * Arreglo de error en el listado de medios de pago.
 

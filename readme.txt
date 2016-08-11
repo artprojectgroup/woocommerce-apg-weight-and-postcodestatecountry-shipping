@@ -4,7 +4,7 @@ Donate link: http://www.artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
 Tested up to: 4.6
-Stable tag: 1.9.3
+Stable tag: 1.9.3.1
 WC requires at least: 2.1
 WC tested up to: 2.6.4
 License: GPLv3
@@ -13,8 +13,6 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Add to WooCommerce shipping costs calculating based on weight, size and post code, state (province) and/or customer’s country.
 
 == Description ==
-[*Español*](http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/) - [*English*](http://goo.gl/6w4bWL) - [*Italiano*](http://goo.gl/4FVXUr) - [*Français*](http://goo.gl/2faaIA) - [*Deutsch*](http://goo.gl/Ih21KD) 
-
 **IMPORTANT: *WooCommerce - APG Weight and Postcode/State/Country Shipping* required WooCommerce 2.1.0 or higher.**
 
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** add to your WooCommerce store the ability to calculate shipping costs based on weight and postcode, state (province) and/or country address shipping.
@@ -89,6 +87,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 1.9.3.1 =
+* Created a security alert for the next version 2.0.
 = 1.9.3 =
 * Removed links to gateways option.
 = 1.9.2 =
@@ -297,8 +297,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 * Initial version.
 
 == Upgrade Notice ==
-= 1.9.3 =
-* Removed links to gateways option.
+= 1.9.3.1 =
+* Created a security alert for the next version 2.0.
 
 == Translations ==
 * *English*: by [**Art Project Group**](http://www.artprojectgroup.es/) (default language).

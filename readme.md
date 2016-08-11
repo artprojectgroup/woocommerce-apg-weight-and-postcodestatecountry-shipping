@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.6
 
-Stable tag: 1.9.3
+Stable tag: 1.9.3.1
 
 WC requires at least: 2.1
 
@@ -22,8 +22,6 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
 
 ## Description
-[*Español*](http://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/) - [*English*](http://goo.gl/6w4bWL) - [*Italiano*](http://goo.gl/4FVXUr) - [*Français*](http://goo.gl/2faaIA) - [*Deutsch*](http://goo.gl/Ih21KD) 
-
 **IMPORTANTE: *WooCommerce - APG Weight and Postcode/State/Country Shipping* requiere WooCommerce 2.1.0 o superior.**
 
 **WooCommerce - APG Weight and Postcode/State/Country Shipping** añade a tu tienda WooCommerce la posibilidad de calcular los gastos de envío basándose en el peso y en el código postal, provincia (estado) y/o país de la dirección de envío.
@@ -94,6 +92,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 1.9.3.1
+* Creación de alerta de seguridad para la próxima versión 2.0.
+
 ### 1.9.3
 * Eliminada la posibilidad de vincular con medios de pago.
 

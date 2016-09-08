@@ -1,16 +1,16 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 1.9.3.1
+Version: 2.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
-Author URI: http://www.artprojectgroup.es/
+Author URI: http://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.6
+Tested up to: 4.6.1
 
 Text Domain: apg_shipping
-Domain Path: /i18n/languages
+Domain Path: /languages
 
 @package WooCommerce - APG Weight and Postcode/State/Country Shipping
 @category Core
@@ -29,16 +29,16 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
 $apg_shipping = array(	
 	'plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-	'donacion' 		=> 'http://www.artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'http://www.wcprojectgroup.es/tienda/ticket-de-soporte',
-	'plugin_url' 	=> 'http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
+	'donacion' 		=> 'http://artprojectgroup.es/tienda/donacion',
+	'soporte' 		=> 'http://wcprojectgroup.es/tienda/ticket-de-soporte',
+	'plugin_url' 	=> 'http://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 );
 $envios_adicionales = $limpieza = NULL;
 
 //Carga el idioma
-load_plugin_textdomain( 'apg_shipping', null, dirname( DIRECCION_apg_shipping ) . '/i18n/languages' );
+load_plugin_textdomain( 'apg_shipping', null, dirname( DIRECCION_apg_shipping ) . '/languages' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {
@@ -95,416 +95,103 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			return;
 		}
 	
-		class apg_shipping extends WC_Shipping_Method {				
+		class WC_apg_shipping extends WC_Shipping_Method {				
 			//Variables
-			public $clases_de_envio		= array();
-			public $tipos_impuestos 		= array();
-			public $paises_permitidos	= 'all';
-			public $impuesto_de_envios	= '';
+			public $clases_de_envio			= array();
+			public $clases_de_envio_tarifas	= "";
 	
-			public function __construct() {
-				$this->id				= 'apg_shipping';
-				$this->method_title		= __( "APG Shipping", 'apg_shipping' );
+			public function __construct( $instance_id = 0 ) {
+				$this->id					= 'apg_shipping';
+				$this->instance_id			= absint( $instance_id );
+				$this->method_title			= __( "APG Shipping", 'apg_shipping' );
+				$this->method_description	= __( 'Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands.', 'apg_shipping' );
+				$this->supports				= array(
+					'shipping-zones',
+					'instance-settings',
+					'instance-settings-modal',
+				);
 				$this->init();
 			}
-	
+
 			//Inicializa los datos
 			public function init() {
-				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
-				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'sincroniza_paises' ) );
-				add_action( 'woocommerce_shipping_apg_free_shipping_is_available', array( $this, 'chequea_apg_free_shipping' ) );
+				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
 	
+				$this->init_form_fields(); //Crea los campos de opciones
 				$this->init_settings(); //Recogemos todos los valores
 				
 				//Inicializamos variables
-				$this->impuesto_de_envios 	= get_option( 'woocommerce_shipping_tax_class' );
-				$this->paises_permitidos 	= get_option( 'woocommerce_allowed_countries' );
-				
 				$campos = array(
-					'enabled', 
 					'title', 
-					'postal_group_no', 
-					'state_group_no', 
-					'country_group_no', 
 					'tax_status', 
 					'fee', 
-					'cargo', 
+					'cargo',
+					'tipo_cargo', 
+					'tarifas', 
+					'tipo_tarifas', 
 					'maximo', 
-					'grupos_excluidos', 
 					'clases_excluidas', 
-					'options', 
 				);
-				$campos[] = ( $this->paises_permitidos == 'specific' ) ? 'sync_countries' : 'global_countries';
-				if ( class_exists( 'apg_free_shipping' ) ) {
-					$campos[] = 'muestra';
-				}
-				
 				foreach ( $campos as $campo ) {
-					$this->$campo = isset( $this->settings[$campo] ) ? $this->settings[$campo] : ''; //Creamos los campos que vamos a utilizar
+					$this->$campo = $this->get_option( $campo );
 				}
-	
-				$this->options				= (array) explode( "\n", $this->options );
-				$this->apg_free_shipping	= false;
+				$this->tarifas = (array) explode( "\n", $this->tarifas );
 				
-				$this->apg_shipping_dame_impuestos(); //Obtiene todos los impuestos
-				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
-		
-				$this->init_form_fields(); //Crea los campos de opciones
-				
-				//Pintamos los campos de los grupos
-				for ( $contador = 1; $this->postal_group_no >= $contador; $contador++ ) {
-					if ( isset( $this->settings['P' . $contador] ) ) {
-						$this->procesa_codigo_postal( $this->settings['P' . $contador], 'P' . $contador );
-					}
-				}
-				$this->pinta_grupos_codigos_postales();
-				$this->pinta_grupos_estados();
-				$this->pinta_grupos_paises(); 
-			}
-			
-			//Procesa el código postal
-			public function procesa_codigo_postal( $codigo_postal, $id ) {
-				if ( strstr( $codigo_postal, '-' ) ) {
-					$codigos_postales 		= explode( ';', $codigo_postal );
-					$numeros_codigo_postal 	= array();
-					foreach ( $codigos_postales as $codigo_postal ) {
-						if ( strstr( $codigo_postal, '-' ) ) {
-							$partes_codigo_postal = explode( '-', $codigo_postal );
-							if ( is_numeric( $partes_codigo_postal[0] ) && is_numeric( $partes_codigo_postal[1] ) && $partes_codigo_postal[1] > $partes_codigo_postal[0] ) {
-								for ( $i = $partes_codigo_postal[0]; $i <= $partes_codigo_postal[1]; $i++ ) {
-									if ( $i ) {
-										if ( strlen( $i ) < 5 ) {
-											$i = str_pad( $i, 5, "0", STR_PAD_LEFT );
-										}
-										$numeros_codigo_postal[] = $i;
-									}
-								}
-							}
-						} else { 
-							$numeros_codigo_postal[] = $codigo_postal;
-						}
-					}
-					$this->settings[$id] = implode( ';', $numeros_codigo_postal );
-				}
+				//Acción
+				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 			}
 			
 			//Formulario de datos
 			public function init_form_fields() {
-				$this->form_fields = array(
-					'enabled' => array(
-						'title'			=> __( 'Enable/Disable', 'apg_shipping' ),
-						'type'			=> 'checkbox',
-						'label'			=> __( 'Enable this shipping method', 'apg_shipping' ),
-						'default'		=> 'no',
-					),
-					'title' => array(
-						'title'			=> __( 'Method Title', 'apg_shipping' ),
-						'type'			=> 'text',
-						'desc_tip'		=> __( 'This controls the title which the user sees during checkout.', 'apg_shipping' ),
-						'default'		=> __( 'APG Shipping', 'apg_shipping' ),
-					),
-					'tax_status' => array(
-						'title'			=> __( 'Tax Status', 'apg_shipping' ),
-						'type'			=> 'select',
-						'class'			=> 'wc-enhanced-select',
-						'default'		=> 'taxable',
-						'options'		=> array(
-							'taxable'		=> __( 'Taxable', 'apg_shipping' ),
-							'none'			=> __( 'None', 'apg_shipping' ),
-						),
-					),
-					'fee' => array(
-						'title'			=> __( 'Handling Fee', 'apg_shipping' ),
-						'type'			=> 'price',
-						'desc_tip'		=> __( 'Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable.', 'apg_shipping' ),
-						'default'		=> '',
-						'placeholder'	=> wc_format_localized_price(0)
-					),
-					'cargo' => array(
-						'title'			=> __( 'Additional Fee', 'apg_shipping' ),
-						'type'			=> 'text',
-						'desc_tip'		=> __( 'Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g. 6%. Leave blank to disable.', 'apg_shipping' ),
-						'default'		=> '',
-					),
-					'options' => array(
-						'title'			=> __( 'Shipping Rates', 'apg_shipping' ),
-						'type'			=> 'textarea',
-						'desc_tip'		=> __( 'Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions. Example: <code>Max weight|Cost|postcode/state/country group code separated by comma (,)|LxWxH (optional)</code>. Also you can set your dimensions based rates. Example: <code>LxWxH|Cost|postcode/state/country group code separated by comma (,)</code>', 'apg_shipping' ),
-						'css'			=> 'width:300px;',
-						'default'		=> '',
-						'description'	=> '<code>1000|6.95|P2,S1,C3|10x10x10</code><br /><code>10x10x10|6.95|P2,S1,C3</code><br />' . sprintf( __( 'Remember your weight unit: %s, and dimensions unit: %s.', 'apg_shipping' ), get_option( 'woocommerce_weight_unit' ),get_option( 'woocommerce_dimension_unit' ) ),
-					),
-					'maximo' => array(
-						'title'			=> __( 'Overweight/over dimensions', 'apg_shipping' ),
-						'type'			=> 'checkbox',
-						'label'			=> __( 'Return the maximum price.', 'apg_shipping' ),
-						'default'		=> 'yes',
-					),
-					'postal_group_no' => array(
-						'title'			=> __( 'Number of postcode groups', 'apg_shipping' ),
-						'type'			=> 'number',
-						'desc_tip'		=> __( 'Number of groups of ZIP/Postcode sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping' ),
-						'default'		=> '0',
-					),
-					'state_group_no' => array(
-						'title'			=> __( 'Number of state groups', 'apg_shipping' ),
-						'type'			=> 'number',
-						'desc_tip'		=> __( 'Number of groups of states sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping' ),
-						'default'		=> '0',
-					),
-					'country_group_no' => array(
-						'title'			=> __( 'Number of country groups', 'apg_shipping' ),
-						'type'			=> 'number',
-						'desc_tip'		=> __( 'Number of groups of countries sharing delivery rates. (Hit "Save changes" button after you have changed this setting).', 'apg_shipping' ),
-						'default'		=> '0',
-					),
-				);
-				if ( $this->paises_permitidos == 'specific' ) {
-					$this->form_fields['sync_countries'] = array(
-						'title'			=> __( 'Add countries to allowed', 'apg_shipping' ),
-						'type'			=> 'checkbox',
-						'label'			=> __( 'Countries added to country groups will be automatically added to <em>Allowed Countries</em> in <a href="admin.php?page=wc-settings&tab=general">General settings</a> tab.', 'apg_shipping' ),
-						'default'		=> 'no',
-					);
-				}
-				if ( $this->paises_permitidos == 'all' ) {
-					$this->form_fields['global_countries'] = array(
-						'title'			=> __( 'Add global group', 'apg_shipping' ),
-						'type'			=> 'checkbox',
-						'label'			=> sprintf( __( 'Add group C%s for the other countries.', 'apg_shipping' ), $this->country_group_no + 1 ),
-						'default'		=> 'no',
-					);
-				}
-				if ( WC()->shipping->get_shipping_classes() && $this->paises_permitidos == 'all' ) { 
-					$this->form_fields['Class_C' . ( $this->country_group_no + 1 )] =  array(
-						'title' 			=> sprintf( __( 'C%s Shipping Class', 'apg_shipping' ), $this->country_group_no + 1 ),
-						'desc_tip' 		=> sprintf( __( 'Select the shipping class for Country Group %s', 'apg_shipping' ), $this->country_group_no + 1 ),
-						'css'			=> 'width: 450px;',
-						'default'		=> array( 
-							'todas' 
-						),
-						'type'			=> 'multiselect',
-						'class'			=> 'wc-enhanced-select',
-						'options' 		=> array( 
-							'todas' 			=> __( 'All enabled shipping class', 'apg_shipping' ) 
-						) + $this->clases_de_envio,
-					);
-				}
-				if ( $this->tax_status != 'none' && $this->paises_permitidos == 'all' ) {
-					$this->form_fields['Tax_C' . ( $this->country_group_no + 1 )] =  array(
-						'title' 			=> sprintf( __( 'C%s Tax Class', 'apg_shipping' ), $this->country_group_no + 1 ),
-						'desc_tip' 		=> sprintf( __( 'Select the tax class for Country Group %s', 'apg_shipping' ), $this->country_group_no + 1 ),
-						'css' 			=> 'min-width:150px;',
-						'default'		=> $this->impuesto_de_envios,
-						'type' 			=> 'select',
-						'class'			=> 'wc-enhanced-select',
-						'options' 		=> array( 
-							'standard' 		=> __( 'Standard', 'apg_shipping' )
-						) + $this->tipos_impuestos,
-					);
-				}
-				$this->form_fields['grupos_excluidos'] = array(
-						'title'			=> __( 'No shipping', 'apg_shipping' ),
-						'type'			=> 'text',
-						'desc_tip'		=> sprintf( __("Group/s of ZIP/Postcode/State where %s doesn't accept shippings. Example: <code>Postcode/state group code separated by comma (,)</code>", 'apg_shipping' ), get_bloginfo( 'name' ) ),
-						'default'		=> '',
-						'description'	=> '<code>P2,S1</code>',
-				);
-				if ( WC()->shipping->get_shipping_classes() ) {
-					$this->form_fields['clases_excluidas'] = array( 
-						'title'		=> __( 'No shipping (Shipping class)', 'apg_shipping' ),
-						'desc_tip' 	=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'apg_shipping' ), get_bloginfo( 'name' ) ),
-						'css'		=> 'width: 450px;',
-						'default'	=> '',
-						'type'		=> 'multiselect',
-						'class'		=> 'wc-enhanced-select',
-						'options' 	=> array( 
-							'todas' => __( 'All enabled shipping class', 'apg_shipping' ) 
-						) + $this->clases_de_envio,
-					);
-				}
-				if ( class_exists( 'apg_free_shipping' ) ) {
-					$this->form_fields['muestra'] = array(
-						'title'			=> __( 'Show only APG Free Shipping', 'apg_shipping' ),
-						'type'			=> 'checkbox',
-						'label'			=> __( 'Don\'t show shipping cost if <a href="https://wordpress.org/plugins/woocommerce-apg-free-postcodestatecountry-shipping/" target="_blank" title="WordPress.org">WooCommerce - APG Free Postcode/State/Country Shipping</a> is available.', 'apg_shipping' ),
-						'default'		=> 'no',
-					);
-				}
+				$this->instance_form_fields = include( 'includes/admin/campos.php' );
 			}
 	
-			//Función que lee y devuelve los tipos de impuestos
-			public function apg_shipping_dame_impuestos() {
-				$impuestos = array_filter( array_map( 'trim', explode( "\n", get_option( 'woocommerce_tax_classes' ) ) ) );
-				if ( $impuestos ) {
-					foreach ( $impuestos as $impuesto ) {
-						$this->tipos_impuestos[sanitize_title( $impuesto )] = esc_html( $impuesto );
-					}
-				}
+			//Pinta el formulario
+			public function admin_options() {
+				include_once( 'includes/formulario.php' );
+			}
+
+			public function get_instance_form_fields() {
+				return parent::get_instance_form_fields();
 			}
 	
 			//Función que lee y devuelve los tipos de clases de envío
 			public function apg_shipping_dame_clases_de_envio() {
-				foreach ( get_terms( 'product_shipping_class', array( 'hide_empty' => '0' ) ) as $clase_de_envio ) {
-					if ( is_object( $clase_de_envio ) ) {
+				if ( WC()->shipping->get_shipping_classes() ) {
+					foreach ( WC()->shipping->get_shipping_classes() as $clase_de_envio ) {
 						$this->clases_de_envio[esc_attr( $clase_de_envio->slug )] = $clase_de_envio->name;
+						$this->clases_de_envio_tarifas .= esc_attr( $clase_de_envio->slug ) . " -> " . $clase_de_envio->name . ", ";
 					}
+				} else {
+					$this->clases_de_envio[] = __( 'Select a class&hellip;', 'apg_shipping' );
 				}
+				$this->clases_de_envio_tarifas = substr( $this->clases_de_envio_tarifas, 0, -2 ) . ".";
 			}	
-
-			//Muestra los campos para los grupos de códigos postales
-			public function pinta_grupos_codigos_postales() {
-				$numero = $this->postal_group_no;
-	
-				for ( $contador = 1; $numero >= $contador; $contador++ ) {
-					$this->form_fields['P' . $contador] =  array(
-						'title'    	=> sprintf( __( 'Postcode Group %s (P%s)', 'apg_shipping' ), $contador, $contador ),
-						'type'     	=> 'text',
-						'desc_tip'	=> __( 'Add the postcodes for this group. Semi-colon (;) separate multiple values. Wildcards (*) can be used. Example: <code>07*</code>. Ranges for numeric postcodes will be expanded into individual postcodes. Example: <code>12345-12350</code>.', 'apg_shipping' ),
-						'css'      => 'width: 450px;',
-						'default'  => '',
-					);
-					if ( WC()->shipping->get_shipping_classes() ) {
-						$this->form_fields['Class_P' . $contador] = array(
-							'title'		=> sprintf( __( 'P%s Shipping Class', 'apg_shipping' ), $contador, $contador ),
-							'desc_tip' 	=> sprintf( __( 'Select the shipping class for Postcode Group %s', 'apg_shipping' ), $contador ),
-							'css'		=> 'width: 450px;',
-							'default'	=> array( 
-								'todas'
-							),
-							'type'		=> 'multiselect',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'todas' 		=> __( 'All enabled shipping class', 'apg_shipping' )
-							) + $this->clases_de_envio,
-						);
-					}
-					if ( $this->tax_status != 'none' ) {
-						$this->form_fields['Tax_P' . $contador] =  array(
-							'title'	 	=> sprintf( __( 'P%s Tax Class', 'apg_shipping' ), $contador ),
-							'desc_tip' 	=> sprintf( __( 'Select the tax class for Postcode Group %s', 'apg_shipping' ), $contador ),
-							'css' 		=> 'min-width:150px;',
-							'default'	=> $this->impuesto_de_envios,
-							'type' 		=> 'select',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'standard'	=> __( 'Standard', 'apg_shipping' )
-							) + $this->tipos_impuestos,
-						);
-					}
-				}
-			}
-	
-			//Muestra los campos para los grupos de estados (provincias)
-			public function pinta_grupos_estados() {
-				$numero = $this->state_group_no;
-	
-				$base_country = WC()->countries->get_base_country();
-	
-				for ( $contador = 1; $numero >= $contador; $contador++ ) {
-					$this->form_fields['S' . $contador] =  array(
-						'title'		=> sprintf( __( 'State Group %s (S%s)', 'apg_shipping' ), $contador, $contador ),
-						'type'		=> 'multiselect',
-						'class'		=> 'wc-enhanced-select',
-						'css'		=> 'width: 450px;',
-						'desc_tip'	=> __( 'Select the states for this group.', 'apg_shipping' ),
-						'default'	=> '',
-						'options'	=> WC()->countries->get_states( $base_country ),
-					);
-					if ( WC()->shipping->get_shipping_classes() ) {
-						$this->form_fields['Class_S' . $contador] = array(
-							'title'		=> sprintf( __( 'S%s Shipping Class', 'apg_shipping' ), $contador, $contador ),
-							'desc_tip' 	=> sprintf( __( 'Select the shipping class for State Group %s', 'apg_shipping' ), $contador ),
-							'css'		=> 'width: 450px;',
-							'default'	=> array( 
-								'todas' 
-							),
-							'type'		=> 'multiselect',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'todas' 		=> __( 'All enabled shipping class', 'apg_shipping' )
-							) + $this->clases_de_envio,
-						);
-					}
-					if ( $this->tax_status != 'none' ) {
-						$this->form_fields['Tax_S' . $contador] =  array(
-							'title' 		=> sprintf( __( 'S%s Tax Class', 'apg_shipping' ), $contador ),
-							'desc_tip' 	=> sprintf( __( 'Select the tax class for State Group %s', 'apg_shipping' ), $contador ),
-							'css' 		=> 'min-width:150px;',
-							'default'	=> $this->impuesto_de_envios,
-							'type' 		=> 'select',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'standard'	=> __( 'Standard', 'apg_shipping' )
-							) + $this->tipos_impuestos,
-						);
-					}
-				}
-			}
-	
-			//Muestra los campos para los grupos de países
-			public function pinta_grupos_paises() {
-				$numero = $this->country_group_no;
-				
-				for ( $contador = 1; $numero >= $contador; $contador++ ) {
-					$this->form_fields['C' . $contador] =  array(
-						'title'		=> sprintf( __( 'Country Group %s (C%s)', 'apg_shipping' ), $contador, $contador ),
-						'type'		=> 'multiselect',
-						'class'		=> 'wc-enhanced-select',
-						'css'		=> 'width: 450px;',
-						'desc_tip'	=> __( 'Select the countries for this group.', 'apg_shipping' ),
-						'default'	=> '',
-						'options'	=> WC()->countries->get_shipping_countries(),
-					);
-					if ( WC()->shipping->get_shipping_classes() ) {
-						$this->form_fields['Class_C' . $contador] = array(
-							'title'		=> sprintf( __( 'C%s Shipping Class', 'apg_shipping' ), $contador, $contador ),
-							'desc_tip'	=> sprintf( __( 'Select the shipping class for Country Group %s', 'apg_shipping' ), $contador ),
-							'css'		=> 'width: 450px;',
-							'default'	=> array( 
-								'todas' 
-							),
-							'type'		=> 'multiselect',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'todas'		=> __( 'All enabled shipping class', 'apg_shipping' )
-							) + $this->clases_de_envio,
-						);
-					}
-					if ( $this->tax_status != 'none' ) {
-						$this->form_fields['Tax_C' . $contador] =  array(
-							'title' 		=> sprintf( __( 'C%s Tax Class', 'apg_shipping' ), $contador ),
-							'desc_tip' 	=> sprintf( __( 'Select the tax class for Country Group %s', 'apg_shipping' ), $contador ),
-							'css' 		=> 'min-width:150px;',
-							'default'	=> $this->impuesto_de_envios,
-							'type' 		=> 'select',
-							'class'		=> 'wc-enhanced-select',
-							'options' 	=> array( 
-								'standard'	=> __( 'Standard', 'apg_shipping' )
-							) + $this->tipos_impuestos,
-						);
-					}
-				}
-			}
-	
-			//Comprueba el estado de apg_free_shipping
-			public function chequea_apg_free_shipping( $valores ) {
-				$this->apg_free_shipping = $valores;
-				
-				return $valores;
-			}
 			
 			//Calcula el gasto de envío
 			public function calculate_shipping( $paquete = array() ) {
-				//Peso total del pedido
-				$peso_total = WC()->cart->cart_contents_weight;
 				//Variables
 				$volumen = $largo = $ancho = $alto = 0;
 				$clases = $medidas = array();
+
+				//Peso total del pedido
+				$peso_total = WC()->cart->cart_contents_weight;
+
 				//Toma distintos datos de los productos
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
 					$producto = $valores['data'];
+
+					//Toma el peso del producto
 					$peso = $producto->get_weight() * $valores['quantity'];
+
+					//No atiende a las clases de envío excluidas
+					if ( $this->clases_excluidas ) {
+						//Clase de producto
+						if ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) {
+							$peso_total -= $peso;
+							continue; 
+						}
+					}
 					
 					//Arregla un problema con los pesos en variaciones virtuales
 					if ( $producto->is_virtual() ) {
@@ -533,543 +220,201 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					
 					//Clase de producto
 					if ( $producto->needs_shipping() ) {
-						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'todas';
+						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
+						//Inicializamos la clase general
 						if ( !isset ($clases['todas'] ) ) {
 							$clases['todas'] = 0;
 						}
-						$clases['todas'] += $peso;
+						//Guardamos peso o cantidad de productos
+						$cantidad = ( $this->tipo_tarifas == "yes" ) ? $valores['quantity'] : $peso;
+						$clases['todas'] += $cantidad;
 						if ( !isset( $clases[$clase] ) ) {
-							$clases[$clase] = $peso;
+							$clases[$clase] = $cantidad;
 						} else if ( $clase != 'todas' ) {
-							$clases[$clase] += $peso;
+							$clases[$clase] += $cantidad;
 						}
 					}
 				}
-				
-				if ( $this->clases_excluidas ) {
-					//Toma distintos datos de los productos
-					foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
-						$producto = $valores['data'];
 
-						//Clase de producto
-						if ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) ) {
-							return false; //No atiende a las clases de envío excluidas
-						}
-					}
+				if ( empty( $medidas ) && empty( $clases ) ) {
+					return false; //No hay productos
 				}
-	
-				$grupos = $this->dame_grupos( $paquete, $clases );
-				if ( empty( $grupos ) ) {
-					return false; //No hay resultados
-				}
-
-				$grupos_excluidos = explode( ',', preg_replace( '/\s+/', '', $this->grupos_excluidos ) );
-				foreach ( $grupos_excluidos as $grupo_excluido ) {
-					if ( in_array($grupo_excluido, $grupos) ) {
-						return false; //No atiende a los grupos excluidos
-					}
-				}
-				
-				if ( $this->apg_free_shipping && $this->muestra == 'yes' ) {
-					return false; //Sólo muestra el envío gratuito
-				}
-				
-				$tarifas = $this->dame_tarifas($grupos); //Recoge las tarifas programadas
-
-				$precios = $this->dame_tarifa_mas_barata( $tarifas, $peso_total, $volumen, $largo, $ancho, $alto, $grupos, $medidas, $clases ); //Filtra las tarifas
-				if ( empty( $precios ) ) {
+				$tarifas = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases ); //Filtra las tarifas
+				if ( empty( $tarifas ) ) {
 					return false; //No hay tarifa
+				}
+				
+				$importe = 0;
+				foreach( $tarifas as $tarifa ) {
+					$importe += $tarifa;
 				}
 
 				//Calculamos el precio
-				$precio_total = $suma_impuestos = $suma_cargos = 0;
-				$impuestos_parciales = $impuestos_totales = array();
-				if ( $this->tax_status != 'none' ) {
-					$impuestos = new WC_Tax();
-				}
+				$suma_cargos = 0;
 	
 				//Cargos adicionales
-				if ( $this->fee > 0 ) {
+				if ( $this->fee > 0 ) { //Cargo por manipulación
 					$suma_cargos += $this->fee;			
 				}
-				if ( $this->cargo > 0 && !strpos( $this->cargo, '%' ) ) {
-					$suma_cargos += $this->cargo;
-				}
-	
-				foreach ( $precios as $grupo => $precio ) {
-					if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) ) {
-						$suma_cargos += $precio * ( str_replace( '%', '', $this->cargo ) / 100 ); //Cargos adicionales
+				//¿Cargo adicional por producto?
+				$cargo_por_producto = ( $this->tipo_cargo == "no" ) ? 1 : WC()->cart->get_cart_contents_count();
+				
+				if ( $this->cargo > 0 && !strpos( $this->cargo, '%' ) ) { //Cargo adicional normal
+					$suma_cargos += $this->cargo * $cargo_por_producto;
+				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && !strpos( $this->cargo, '|' ) ) { //Cargo adicional porcentaje
+					$suma_cargos += ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { //Porcentaje con mínimo y máximo
+					//Recogemos los valores mínimo y máximo
+					$porcentaje = explode( '|', $this->cargo );
+					preg_match( '/min=[\"|\'](.*)[\"|\'][\s+|$]/', $porcentaje[1], $minimo );
+					preg_match( '/max=[\"|\'](.*)[\"|\']$/', $porcentaje[1], $maximo );
+					
+					$calculo_de_porcentaje = ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+					//Comprobamos el mínimo
+					if ( isset( $minimo[1] ) && $minimo[1] > $calculo_de_porcentaje ) {
+						$calculo_de_porcentaje = $minimo[1];
 					}
-					$precio += $suma_cargos;
-					$precio_total += $precio;
-					if ( $this->tax_status != 'none' ) {
-						$impuestos_parciales[$grupo] = $impuestos->calc_shipping_tax( $precio, $impuestos->get_shipping_tax_rates( $this->settings['Tax_' . $grupo] ) );
+					//Comprobamos el máximo
+					if ( isset( $maximo[1] ) && $calculo_de_porcentaje > $maximo[1] ) {
+						$calculo_de_porcentaje = $maximo[1];
 					}
-				}
-				if ( $this->tax_status != 'none' ) {
-					foreach ( $impuestos_parciales as $impuesto_parcial ) {
-						foreach ( $impuesto_parcial as $clave => $impuesto ) {
-							$suma_impuestos += $impuesto;
-							if ( $impuesto > 0 ) { //Prevenimos sumar impuestos a 0 
-								$impuestos_totales[$clave] = $suma_impuestos;
-							} else {
-								$impuestos_totales[$clave] = $impuesto;
-							}	
-						}
-					}
+					//Añade el cargo
+					$suma_cargos += $calculo_de_porcentaje;
 				}
 
+				//Actualizamos precio
+				$importe += $suma_cargos;
+				//¿Impuestos?
+				$impuestos = ( $this->tax_status != 'none' ) ? '' : false;
 				$tarifa = array(
 					'id'		=> $this->id,
 					'label'		=> $this->title,
-					'cost'		=> $precio_total,
-					'taxes'		=> $impuestos_totales,
+					'cost'		=> $importe,
+					'taxes'		=> $impuestos,
 					'calc_tax'	=> 'per_order'
 				);
 	
 				$this->add_rate( $tarifa );
 			}
-	
-			//Selecciona el/los grupo/s según la dirección de envío del cliente
-			public function dame_grupos( $paquete = array(), $clases = array() ) {
-				$grupo 					= array();
-				$codigo_postal			= strtoupper( woocommerce_clean( $paquete['destination']['postcode'] ) );
-				$codigos_postales		= array(
-					$codigo_postal
-				);
-				$tamano_codigo_postal	= strlen( $paquete['destination']['postcode'] );
-				
-				//Prepraramos los códigos postales
-				for ( $i = 0; $i < $tamano_codigo_postal; $i++ ) {
-					$codigo_postal = substr( $codigo_postal, 0, -1 );
-					$codigos_postales[] = $codigo_postal . '*';
-				}
-				
-				//Revisamos los grupos
-				$grupos = array( 
-					'C' => 'country', 
-					'S' => 'state', 
-					'P' => 'postcode'
-				);
-				foreach ( $grupos as $letra => $nombre ) {
-					$contador = 1;
-	
-					while ( isset( $this->settings[$letra . $contador] ) && $this->settings[$letra . $contador] ) {
-						if ( $nombre == 'country' || ( $nombre == 'state' && WC()->countries->get_base_country() == $paquete['destination']['country'] ) ) {
-							if ( isset( $paquete['destination'][$nombre] ) && in_array( $paquete['destination'][$nombre], $this->settings[$letra . $contador] ) ) {
-								if ( isset( $this->settings["Class_" . $letra . $contador][0] ) ) {
-									foreach ( $clases as $clase => $peso ) {
-										if ( in_array( $clase, $this->settings["Class_" . $letra . $contador] ) ) {
-											$grupo[$clase] = $letra . $contador;
-											if ( $letra != 'C' && $clase != 'todas' && isset( $grupo['todas'] ) && strpos( $grupo['todas'], 'C' ) !== false ) {
-												unset( $grupo['todas'] );
-											}
-										}
-									}
-								} else {
-									$grupo['sin_clase'] = $letra . $contador;
-								}
-							}
-						} else if ( $nombre == 'postcode' && WC()->countries->get_base_country() == $paquete['destination']['country'] ) {
-							$grupos = explode( ";", $this->settings[$letra . $contador] );
-							foreach ( $codigos_postales as $codigo_postal ) {
-								foreach ( $grupos as $grupo_postal ) {
-									if ( trim( $codigo_postal ) == trim( $grupo_postal ) ) {
-										if ( isset( $this->settings["Class_" . $letra . $contador][0] ) ) {
-											foreach ( $clases as $clase => $peso ) {
-												if ( in_array( $clase, $this->settings["Class_" . $letra . $contador] ) ) {
-													$grupo[$clase] = $letra . $contador;
-													if ( $clase != 'todas' && isset( $grupo['todas'] ) && ( strpos( $grupo['todas'], 'C' ) !== false || strpos( $grupo['todas'], 'S' ) !== false ) ) {
-														unset( $grupo['todas'] );
-													}
-												}
-											}
-										} else {
-											$grupo['sin_clase'] = $letra . $contador;
-										}
-									}
-								}
-							}						
-						}
-						$contador++;
-					}
-				}
-				
-				//Grupo internacional
-				if ( empty( $grupo ) && $this->paises_permitidos == 'all' && $this->global_countries == 'yes' ) {
-					$contador = ( $this->country_group_no + 1 );
-					
-					if ( isset( $this->settings["Class_C" . $contador][0] ) ) {
-						foreach ( $clases as $clase ) {
-							if ( in_array( $clase, $this->settings["Class_C" . $contador] ) ) {
-								$grupo[$clase] = "C" . $contador;
-							}
-						}
-					} else {
-						$grupo['sin_clase'] = "C" . $contador;
-					}
-				}
-	
-				return $grupo;
-			}
 			
-			//Devuelve la tarifa aplicable al grupo/s seleccionado/s
-			public function dame_tarifas( $grupos = array() ) {
-				$tarifas = $tarifa_de_grupo = array();
+			//Recoge las tarifas programadas
+			public function dame_tarifas() {
+				$tarifas = array();
 				
 				//Recoge las tarifas programadas
-				if ( !empty( $this->options ) ) {
-					foreach ( $this->options as $indice => $opcion ) {
+				if ( !empty( $this->tarifas ) ) {
+					foreach ( $this->tarifas as $indice => $opcion ) {
 						$tarifa = preg_split( '~\s*\|\s*~', preg_replace( '/\s+/', '', $opcion ) );
 	
-						if ( sizeof($tarifa) < 3) {
+						if ( sizeof( $tarifa ) < 2 ) {
 							continue;
 						} else {
 							$tarifas[] = $tarifa;
 						}
 					}
 				}
-				
-				//Procesa las tarifas
-				foreach ( $tarifas as $tarifa ) {
-					$grupos_de_tarifas = explode( ",", $tarifa[2] );
-					foreach ( $grupos_de_tarifas as $grupo_de_tarifa ) {
-						foreach ( $grupos as $grupo ) {
-							if ( $grupo_de_tarifa == $grupo ) {
-								$tarifa_de_grupo[] = $tarifa;
-							}
-						}
-					}
-				}
 	
-				return $tarifa_de_grupo;
+				return $tarifas;
 			}
 	
 			//Selecciona la tarifa más barata
-			public function dame_tarifa_mas_barata( $tarifas, $peso_total, $volumen_total, $largo, $ancho, $alto, $grupos, $medidas, $clases ) {
-				$gasto_de_envio = $tarifa_gasto_de_envio = array();
+			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases ) {
+				//Variables
+				$tarifa_mas_barata = array();
+				$peso_anterior = $largo_anterior = 0;
 				
-				if ( !empty( $grupos ) ) {
-					foreach ( $grupos as $clase => $grupo ) {
-						$peso_anterior = $largo_anterior = 0;
-						if ( isset( $clases[$clase] ) ) {
-							$peso_parcial = $clases[$clase];
-						} else if ( isset( $clases['todas'] ) ) {
-							$peso_parcial = $clases['todas'];
-						} else {
-							$peso_parcial = $peso_total;
-						}
-	
-						foreach ( $tarifas as $indice => $tarifa ) {	
-							if ( strpos( $tarifa[2], $grupo ) !== false ) { //El grupo existe en las tarifas recogidas.
-								$excede = $dimensiones = false;
-								unset( $medida_maxima ); //Fix by DJ Team Digital
-								if ( stripos( $tarifa[0], "x" ) ) { //Son dimensiones no pesos
-									$dimensiones = true;
-									$medida_maxima = strtolower( $tarifa[0] );
-								}
-								if ( isset( $tarifa[3] ) ) {
-									$medida_maxima = strtolower( $tarifa[3] );
-								}
-							
-								if ( isset( $medida_maxima ) ) { //Son medidas
-									$medida_maxima = explode( "x", $medida_maxima );
-									if ( ( $largo > $medida_maxima[0] || $ancho > $medida_maxima[1] || $alto > $medida_maxima[2] ) || $volumen_total > ( $medida_maxima[0] * $medida_maxima[1] * $medida_maxima[2] ) ) { //Excede el tamaño o volumen máximo
-										$excede = true;
-									}
-								}
-							
-								if ( !$dimensiones && !$excede ) { //Es un peso
-									if ( !$peso_anterior || ( $tarifa[0] >= $peso_parcial && $peso_parcial > $peso_anterior ) ) {
-										$gasto_de_envio[$grupo] = $tarifa[1];
-									} else if ( $this->maximo == "yes" && ( empty( $gasto_de_envio[$grupo] ) || $peso_parcial > $peso_anterior ) ) {
-										$gasto_de_envio[$grupo] = $tarifa[1];
-									}
-									$peso_anterior = $tarifa[0];
-								} else if ( $dimensiones && !$excede ) { //Es una medida
-									$volumen = $medida_maxima[0] * $medida_maxima[1] * $medida_maxima[2];
-
-									if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_maxima[0] >= $largo && $largo > $largo_anterior ) && ( $medida_maxima[1] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_maxima[2] >= $alto && $alto > $alto_anterior ) ) ) {
-										$gasto_de_envio[$grupo] = $tarifa[1];									
-									} else if ( $this->maximo == "yes" && ( empty( $gasto_de_envio[$grupo] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) {
-										$gasto_de_envio[$grupo] = $tarifa[1];
-									}
-
-									$largo_anterior = $medida_maxima[0];
-									$ancho_anterior = $medida_maxima[1];
-									$alto_anterior = $medida_maxima[2];
-								} else if ( $this->maximo == "yes" && ( ( empty( $gasto_de_envio[$grupo] ) ) || $gasto_de_envio[$grupo] < $tarifa[1] ) ) {
-									$gasto_de_envio[$grupo] = $tarifa[1];
-								}
-														
-								$tarifa_gasto_de_envio[$tarifa[2]] = $tarifa[1];
-							}
-						}
-						
-						if ( $this->maximo == "no" && ( $peso_anterior && $peso_parcial > $peso_anterior ) ) {
-							unset( $gasto_de_envio[$grupo] );
-						}
+				//Obtenemos las tarifas
+				$tarifas = $this->dame_tarifas();
+				
+				//Revisamos los pesos por clases
+				$peso_parcial = $peso_total;
+				foreach ( $clases as $clase => $peso ) {
+					if ( isset( $clases[$clase] ) ) {
+						$peso_parcial = $clases[$clase];
+					} else if ( isset( $clases['todas'] ) ) {
+						$peso_parcial = $clases['todas'];
 					}
 				}
-	
-				if ( !empty( $gasto_de_envio ) ) {
-					return $gasto_de_envio;
-				} else {
-					if ( !empty( $tarifa_gasto_de_envio ) && $this->maximo == "yes" ) {
-						return $tarifa_gasto_de_envio;
+
+
+				foreach ( $tarifas as $indice => $tarifa ) {	
+					//Variables
+					$calculo_volumetrico = $excede_dimensiones = $clase_de_envio = false;
+					unset( $medidas_tarifa ); //Fix by DJ Team Digital
+					
+					//Comprobamos medidas
+					if ( stripos( $tarifa[0], "x" ) ) { //Son dimensiones no pesos
+						$calculo_volumetrico = true;
+						$medidas_tarifa = strtolower( $tarifa[0] );
 					}
+					if ( isset( $tarifa[2] ) && stripos( $tarifa[2], "x" ) ) {
+						$medidas_tarifa = strtolower( $tarifa[2] );
+					}
+					if ( isset( $tarifa[3] ) && stripos( $tarifa[3], "x" ) ) {
+						$medidas_tarifa = strtolower( $tarifa[3] );
+					}
+					//¿Existen medidas?
+					if ( isset( $medidas_tarifa ) ) {
+						$medida_tarifa = explode( "x", $medidas_tarifa );
+						if ( ( $largo > $medida_tarifa[0] || $ancho > $medida_tarifa[1] || $alto > $medida_tarifa[2] ) || $volumen_total > ( $medida_tarifa[0] * $medida_tarifa[1] * $medida_tarifa[2] ) ) {
+							$excede_dimensiones = true; //Excede el tamaño o volumen máximo
+						}
+					}
+					
+					//Comprobamos clases de envío
+					if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) {
+						$clase_de_envio = $tarifa[2];
+					} else {
+						$clase_de_envio = 'sin-clase';
+					}
+					
+					//Obtenemos la tarifa más barata
+					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
+						if ( !$peso_anterior || ( $tarifa[0] >= $peso_parcial && $peso_parcial > $peso_anterior ) ) {
+							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						} else if ( $this->maximo == "yes" && ( $tarifa_mas_barata[$clase_de_envio] == 0 || $peso_parcial > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
+							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						}
+						//Guardamos el peso actual
+						$peso_anterior = $tarifa[0];
+					} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida
+						$volumen = $medida_tarifa[0] * $medida_tarifa[1] * $medida_tarifa[2];
+
+						if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[0] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[1] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[2] >= $alto && $alto > $alto_anterior ) ) ) {
+							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];									
+						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
+							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						}
+						//Guardamos las medidas actuales
+						$largo_anterior = $medida_tarifa[0];
+						$ancho_anterior = $medida_tarifa[1];
+						$alto_anterior = $medida_tarifa[2];
+					} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || $tarifa_mas_barata[$clase_de_envio] < $tarifa[1] ) ) { //Las medidas son mayores que la de la tarifa máxima
+						$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+					}
+				}
+						
+				if ( $this->maximo == "no" && ( $peso_anterior && $peso_parcial > $peso_anterior ) ) {
+					$tarifa_mas_barata[$clase_de_envio] == 0; //Se ha excedido la tarifa máxima
+				}
+	
+				if ( !empty( $tarifa_mas_barata ) ) {
+					return $tarifa_mas_barata;
 				}
 				
 				return array();
-			}
-	
-			//Actualiza los países específicos
-			public function sincroniza_paises() {
-				if ( $this->paises_permitidos == 'specific' && $this->settings['sync_countries'] == 'yes' ) {
-					$paises = $this->dame_paises_especificos();
-					if ( !empty( $paises ) ) {
-						sort( $paises );
-						update_option( 'woocommerce_specific_allowed_countries', $paises );
-					}
-				} 
-			}
-			
-			//Devuelve los países específicos
-			public function dame_paises_especificos() {
-				$paises_iniciales = $paises_nuevos = array();
-				//Lee los países iniciales  
-				$contador = 1;
-				while ( isset( $this->settings['C' . $contador] ) && is_array( $this->settings['C' . $contador] ) ) {
-					$paises_iniciales = array_merge( $paises_iniciales, $this->settings['C' . $contador] );
-					$contador++;
-				}
-				//Lee los países actuales
-				$this->settings = NULL;
-				$this->init_settings();
-				$contador = 1;
-				while ( isset( $this->settings['C' . $contador] ) && is_array( $this->settings['C' . $contador] ) ) {
-					$paises_nuevos = array_merge( $paises_nuevos, $this->settings['C' . $contador] );
-					$contador++;
-				}
-				$paises_especificos_permitidos = get_option( 'woocommerce_specific_allowed_countries' );
-				if ( is_array( $paises_especificos_permitidos) ) {
-					$paises_nuevos = array_merge( $paises_nuevos, $paises_especificos_permitidos );
-				}
-				$paises = array_unique( $paises_nuevos );
-				//Limpia los países borrados
-				$paises_borrados = array_diff( $paises_iniciales, $paises_nuevos );
-				if ( !empty( $paises_borrados ) ) {
-					foreach ( $paises_borrados as $pais_borrado ) {
-						if ( ( $indice = array_search( $pais_borrado, $paises ) ) !== false ) {
-							unset( $paises[$indice] );
-						}
-					}
-				}
-				
-				return $paises;
-			}
-	
-			//Pinta el formulario
-			public function admin_options() {
-				include( 'includes/formulario.php' );
 			}
 		}
 	}
 	add_action( 'plugins_loaded', 'apg_shipping_inicio', 0 );
 	
-	//Función que lee y devuelve los nuevos gastos de envío
-	function apg_shipping_lee_envios() {
-		global $woocommerce, $envios_adicionales;
-	
-		if ( !is_array( $envios_adicionales ) || isset( $_POST['subtab'] ) ) {
-			$envios_adicionales = array_filter( array_map( 'trim', explode( "\n", get_option( 'woocommerce_apg_shipping' ) ) ) );
-		}
-
-		return $envios_adicionales;
-	}
-	
-	//Función que convierte guiones en guiones bajos
-	function apg_limpia_guiones( $texto ) {
-		return str_replace( '-', '_', sanitize_title( $texto ) );
-	}
-	
 	//Añade clases necesarias para nuevos gastos de envío
 	function apg_shipping_clases( $metodos ) {
-		foreach ( apg_shipping_lee_envios() as $clave => $envio ) {
-			$limpio = apg_limpia_guiones( $envio );
-			if ( !class_exists( "apg_shipping_$limpio") ) {
-				eval("
-			class apg_shipping_$limpio extends apg_shipping {
-				public function __construct() {
-					\$shipping = apg_shipping_lee_envios();
-		
-					\$this->id 				= \"apg_shipping_$limpio\";
-					\$this->method_title	= __( \$shipping[$clave], 'apg_shipping' );
-					add_action( 'woocommerce_update_options_shipping_' . \$this->id, array( \$this, 'process_admin_options' ) );
-	
-					parent::init();
-				}
-			}
-				");
-			}
-		}	
+		$metodos[ 'apg_shipping' ] = 'WC_apg_shipping';
 	
 		return $metodos;
 	}
 	add_filter( 'woocommerce_shipping_methods', 'apg_shipping_clases', 0 );
-	
-	//Añade APG Shipping a WooCommerce
-	function apg_shipping_anade_gastos_de_envio( $metodos ) {
-		global $limpieza;
-		
-		//Creamos los medios de envío
-		$metodos[] = 'apg_shipping';
-		$envios_apg = (array) apg_shipping_lee_envios();
-		foreach ( $envios_apg as $envio ) {
-			$metodo = "apg_shipping_" . apg_limpia_guiones( $envio );
-			$metodos[] = $metodo;
-		}
-	
-		if ( !$limpieza && isset( $_POST['subtab'] ) ) {
-			apg_limpiamos_opciones();
-		}
-		
-		//Reordenamos los medios de envío en WooCommerce
-		$envios_woocommerce = (array) get_option( 'woocommerce_shipping_method_order' );
-		$orden = array_keys( $envios_woocommerce );
-	
-		$valor_orden = array();
-    	foreach ( $orden as $clave ) {
-			if ( preg_match( '/apg_shipping_/', $clave ) ) {
-				$valor_orden[$clave] = $envios_woocommerce[$clave];
-			}
-    	}
-		
-		$ordena_envios = array();
-		foreach ( $envios_apg as $clave => $envio ) {
-			if ( isset( $envios_woocommerce["apg_shipping_" . apg_limpia_guiones( $envio )] ) ) {
-				$ordena_envios["apg_shipping_" . apg_limpia_guiones( $envio )] = $envios_woocommerce["apg_shipping_" . apg_limpia_guiones( $envio )];
-			} else {
-				$ordena_envios["apg_shipping_" . apg_limpia_guiones( $envio )] = count( $metodos ) - 1;
-			}
-		}
-		$contador = 0;
-		foreach ( $ordena_envios as $clave => $orden ) {
-			if ( $contador == 0 ) {
-				if ( reset( $valor_orden ) != $orden ) {
-					$envios_woocommerce[$clave] = current( $valor_orden );
-				}
-			} else {
-				if ( next( $valor_orden ) != $orden ) {
-					$envios_woocommerce[$clave] = current( $valor_orden );
-				}
-			}
-			$contador++;
-		}
-		asort( $envios_woocommerce );
-		update_option( 'woocommerce_shipping_method_order', $envios_woocommerce );	
-			
-		return $metodos;
-	}
-	add_filter( 'woocommerce_shipping_methods', 'apg_shipping_anade_gastos_de_envio', 10 );
-	
-	//Recomponemos los nombres de las secciones
-	function apg_shipping_secciones( $secciones ) {
-		foreach ( apg_shipping_lee_envios() as $envio ) {
-			$limpio = apg_limpia_guiones( $envio );
-			if ( $secciones["apg_shipping_" . $limpio] != $envio ) {
-				$secciones["apg_shipping_" . $limpio] = $envio;
-			}
-		}
-
-		return $secciones;
-	}
-	add_filter( 'woocommerce_get_sections_shipping', 'apg_shipping_secciones' );
-
-	//Controlamos las opciones de WooCommerce para mantenerlas limpias
-	function apg_limpiamos_opciones( $limpia = false ) {
-		global $limpieza;
-		
-		$apg_opciones = $encontrados = array();
-	
-		//Vemos las opciones que existen
-		foreach ( wp_load_alloptions() as $nombre => $valor ) {
-			if ( stristr( $nombre, 'woocommerce_apg_shipping_' ) ) {
-				$apg_opciones[] = $nombre;
-			}
-		}
-		
-		//Vemos las opciones que usamos
-		$envios = (array) apg_shipping_lee_envios();
-		$encontrados[] = "woocommerce_apg_shipping_settings";
-		foreach ( $envios as $envio ) {
-			foreach ( $apg_opciones as $opcion ) {
-				if ( strpos( $opcion, apg_limpia_guiones( $envio ) ) !== false ) {
-					$encontrados[] = apg_limpia_guiones( $opcion );
-				}
-			}
-		}
-		
-		//Borramos las no necesarias
-		$borrar = ( !$limpia ) ? array_diff( $apg_opciones, $encontrados ) : $apg_opciones;
-		foreach( $borrar as $borrame ) {
-			if ( preg_match( '/woocommerce_apg_shipping_(\d)_settings/', $borrame, $valor ) ) {
-				update_option( "woocommerce_apg_shipping_" . apg_limpia_guiones( $envios[($valor[1] - 1)] ) . "_settings", get_option( $borrame ) );
-			}
-			delete_option( $borrame );
-		}
-		
-		$limpieza = true; //Cambiamos la variable global para que sólo se ejecute una vez
-	}
-	
-	//Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
-	function apg_shipping_nuevos_gastos_de_envio( $configuracion ) {
-		$anadir_seccion = array();
-	
-		foreach ( $configuracion as $seccion ) {
-			if ( ( isset( $seccion['id'] ) && $seccion['id'] == 'shipping_options' ) && ( isset( $seccion['type'] ) && $seccion['type'] == 'sectionend' ) ) {
-				$anadir_seccion[] = array(
-					'type'		=> 'sectionend',
-					'id'		=> 'shipping_methods' 
-				);
-				$anadir_seccion[] = array( 
-					'title'		=> __( 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 'apg_shipping' ),
-					'type'		=> 'title',
-					'id'		=> 'apg_shipping' 
-				);
-				$anadir_seccion[] = array( 
-					'name'		=> __( 'Additional Shipping', 'apg_shipping' ),
-					'desc_tip'	=> __( 'List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping' ),
-					'id'		=> 'campos_apg_shipping',
-					'type'		=> 'shipping_apg_shipping_envios',
-				);
-				//Este lo usamos para rellenar
-				$anadir_seccion[] = array(
-					'name'		=> __( 'Additional Shipping', 'apg_shipping' ),
-					'desc_tip'	=> __( 'List additonal shipping classes below (1 per line). This is in addition to the default <code>APG shipping</code>.', 'apg_shipping' ),
-					'id'		=> 'woocommerce_apg_shipping',
-					'type'		=> 'textarea',
-					'default'	=> '',
-					'class'		=> 'borrame_apg_shipping',					
-				);
-				$anadir_seccion[] = array(
-					'type'		=> 'sectionend',
-					'id'		=> 'apg_shipping' 
-				);
-			}
-	
-			$anadir_seccion[] = $seccion;
-		}
-		
-		return $anadir_seccion;
-	}
-	add_filter( 'woocommerce_shipping_settings', 'apg_shipping_nuevos_gastos_de_envio' );
-	
-	//Añade un nuevo campo a Opciones de envío para añadir nuevos gastos de envío
-	function apg_shipping_campos_nuevos_gastos_de_envio( $opciones ) {
-		include( 'includes/formulario-gastos-de-envio.php' );
-	}
-	add_filter( 'woocommerce_admin_field_shipping_apg_shipping_envios', 'apg_shipping_campos_nuevos_gastos_de_envio' );
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }

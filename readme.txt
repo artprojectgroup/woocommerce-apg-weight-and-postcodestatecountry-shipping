@@ -47,7 +47,7 @@ On our official website you can learn more about [**WooCommerce - APG Weight and
 = Comments =
 Don’t forget to leave us your comment on:
 
-* [WooCommerce - APG Free Postcode/State/Country Shipping](http://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-free-postcodestatecountry-shipping) on Art Project Group.
+* [WooCommerce - APG Weight and Postcode/State/Country Shipping](http://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping) on Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) on Facebook.
 * [@artprojectgroup](https://twitter.com/artprojectgroup) on Twitter.
 * [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) on Google+.

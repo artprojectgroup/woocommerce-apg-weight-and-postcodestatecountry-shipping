@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.0
+Version: 2.0.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -32,7 +32,7 @@ $apg_shipping = array(
 	'donacion' 		=> 'http://artprojectgroup.es/tienda/donacion',
 	'soporte' 		=> 'http://wcprojectgroup.es/tienda/ticket-de-soporte',
 	'plugin_url' 	=> 'http://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping&section=apg_shipping', 
+	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 );
 $envios_adicionales = $limpieza = NULL;
@@ -286,15 +286,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$importe += $suma_cargos;
 				//¿Impuestos?
 				$impuestos = ( $this->tax_status != 'none' ) ? '' : false;
+
 				$tarifa = array(
-					'id'		=> $this->id,
+					'id'		=> $this->get_rate_id(),
 					'label'		=> $this->title,
 					'cost'		=> $importe,
 					'taxes'		=> $impuestos,
 					'calc_tax'	=> 'per_order'
 				);
-	
+				
 				$this->add_rate( $tarifa );
+				
+				do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
 			}
 			
 			//Recoge las tarifas programadas

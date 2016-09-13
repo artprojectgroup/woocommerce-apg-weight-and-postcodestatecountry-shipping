@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.0.1
+Version: 2.0.1.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -339,7 +339,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					}
 				}
 
-
 				foreach ( $tarifas as $indice => $tarifa ) {	
 					//Variables
 					$calculo_volumetrico = $excede_dimensiones = $clase_de_envio = false;
@@ -367,7 +366,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					//Comprobamos clases de envío
 					if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) {
 						$clase_de_envio = $tarifa[2];
-					} else {
+					} else if ( array_key_exists( 'sin-clase', $clases ) ) {
 						$clase_de_envio = 'sin-clase';
 					}
 					
@@ -375,7 +374,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
 						if ( !$peso_anterior || ( $tarifa[0] >= $peso_parcial && $peso_parcial > $peso_anterior ) ) {
 							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
-						} else if ( $this->maximo == "yes" && ( $tarifa_mas_barata[$clase_de_envio] == 0 || $peso_parcial > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
+						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || $peso_parcial > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
 							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
 						}
 						//Guardamos el peso actual
@@ -400,7 +399,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				if ( $this->maximo == "no" && ( $peso_anterior && $peso_parcial > $peso_anterior ) ) {
 					$tarifa_mas_barata[$clase_de_envio] == 0; //Se ha excedido la tarifa máxima
 				}
-	
+
 				if ( !empty( $tarifa_mas_barata ) ) {
 					return $tarifa_mas_barata;
 				}

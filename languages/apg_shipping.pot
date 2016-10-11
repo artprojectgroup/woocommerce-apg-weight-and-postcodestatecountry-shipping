@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 19:17+0000\n"
+"POT-Creation-Date: 2016-10-11 08:35+0000\n"
 "POT-Revision-Date: Thu Aug 11 2016 14:13:55 GMT+0200 (CEST)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Settings of "
 msgstr ""
 
-#: apg-shipping.php:66 apg-shipping.php:472
+#: apg-shipping.php:66 apg-shipping.php:484
 msgid "Settings"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgid ""
 "WooCommerce 2.6 and you'll lose it</em>."
 msgstr ""
 
-#: apg-shipping.php:106 includes/admin/campos.php:12
+#: apg-shipping.php:106 includes/admin/campos.php:18
 msgid "APG Shipping"
 msgstr ""
 
@@ -81,23 +81,23 @@ msgid ""
 "delivery cost/bands."
 msgstr ""
 
-#: apg-shipping.php:166
+#: apg-shipping.php:167
 msgid "Select a class&hellip;"
 msgstr ""
 
-#: apg-shipping.php:426
+#: apg-shipping.php:438
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
 
-#: apg-shipping.php:465 includes/cuadro-informacion.php:44
+#: apg-shipping.php:477 includes/cuadro-informacion.php:44
 msgid "Please, rate %s:"
 msgstr ""
 
-#: apg-shipping.php:472
+#: apg-shipping.php:484
 msgid "Please, update your %s. It's very important!"
 msgstr ""
 
-#: apg-shipping.php:472
+#: apg-shipping.php:484
 msgid "settings"
 msgstr ""
 
@@ -122,71 +122,79 @@ msgid "Documentation and Support:"
 msgstr ""
 
 #: includes/admin/campos.php:9
-msgid "Method Title"
+msgid "Enable/Disable"
 msgstr ""
 
 #: includes/admin/campos.php:11
-msgid "This controls the title which the user sees during checkout."
+msgid "Enable this shipping method"
 msgstr ""
 
 #: includes/admin/campos.php:15
-msgid "Tax Status"
+msgid "Method Title"
 msgstr ""
 
-#: includes/admin/campos.php:20
-msgid "Taxable"
+#: includes/admin/campos.php:17
+msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
 #: includes/admin/campos.php:21
-msgid "None"
+msgid "Tax Status"
 msgstr ""
 
-#: includes/admin/campos.php:25
-msgid "Handling Fee"
+#: includes/admin/campos.php:26
+msgid "Taxable"
 msgstr ""
 
 #: includes/admin/campos.php:27
-msgid "Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable."
+msgid "None"
 msgstr ""
 
-#: includes/admin/campos.php:28
-msgid "Fee added to the total cost of items."
+#: includes/admin/campos.php:31
+msgid "Handling Fee"
 msgstr ""
 
 #: includes/admin/campos.php:33
+msgid "Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable."
+msgstr ""
+
+#: includes/admin/campos.php:34
+msgid "Fee added to the total cost of items."
+msgstr ""
+
+#: includes/admin/campos.php:39
 msgid "Additional Fee"
 msgstr ""
 
-#: includes/admin/campos.php:35
+#: includes/admin/campos.php:41
 msgid ""
 "Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g."
 " 6%. Leave blank to disable."
 msgstr ""
 
-#: includes/admin/campos.php:36
+#: includes/admin/campos.php:42
 msgid ""
 "Additional fee added to the total cost of items.<br />You can use  <code>"
 "min=\"fee\" max=\"fee\"</code> for percentage based fees, e.g. <code>"
 "6%|min=\"20.50\" max=\"100\"</code>."
 msgstr ""
 
-#: includes/admin/campos.php:41 includes/admin/campos.php:56
+#: includes/admin/campos.php:47 includes/admin/campos.php:62
 msgid "Apply per product?"
 msgstr ""
 
-#: includes/admin/campos.php:43
+#: includes/admin/campos.php:49
 msgid "Apply additional fee per product."
 msgstr ""
 
-#: includes/admin/campos.php:44
+#: includes/admin/campos.php:50
 msgid "To apply additional fee for the number of items."
 msgstr ""
 
-#: includes/admin/campos.php:48
+#: includes/admin/campos.php:54
 msgid "Shipping Rates"
 msgstr ""
 
-#: includes/admin/campos.php:50
+#: includes/admin/campos.php:56
 msgid ""
 "Set your weight based rates for postcode/state/country groups (one per line)."
 " You may optionally add the maximum dimensions, e.g. <code>Max "
@@ -195,39 +203,39 @@ msgid ""
 "name (optional)</code>."
 msgstr ""
 
-#: includes/admin/campos.php:53
+#: includes/admin/campos.php:59
 msgid "Remember your shipping class name: "
 msgstr ""
 
-#: includes/admin/campos.php:53
+#: includes/admin/campos.php:59
 msgid "Remember your weight unit: %s, and dimensions unit: %s."
 msgstr ""
 
-#: includes/admin/campos.php:58
+#: includes/admin/campos.php:64
 msgid "Apply shipping rate per product."
 msgstr ""
 
-#: includes/admin/campos.php:59
+#: includes/admin/campos.php:65
 msgid "To apply shipping rate for the number of items."
 msgstr ""
 
-#: includes/admin/campos.php:63
+#: includes/admin/campos.php:69
 msgid "Overweight/over dimensions"
 msgstr ""
 
-#: includes/admin/campos.php:65
+#: includes/admin/campos.php:71
 msgid "Return the maximum price."
 msgstr ""
 
-#: includes/admin/campos.php:71
+#: includes/admin/campos.php:77
 msgid "No shipping (Shipping class)"
 msgstr ""
 
-#: includes/admin/campos.php:72
+#: includes/admin/campos.php:78
 msgid "Select the shipping class where %s doesn't accept shippings."
 msgstr ""
 
-#: includes/admin/campos.php:78
+#: includes/admin/campos.php:84
 msgid "All enabled shipping class"
 msgstr ""
 

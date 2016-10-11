@@ -5,6 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 //Campos del formulario
 $campos = array(
+	'activo' => array(
+		'title'			=> __( 'Enable/Disable', 'apg_shipping' ),
+		'type'			=> 'checkbox',
+		'label'			=> __( 'Enable this shipping method', 'apg_shipping' ),
+		'default'		=> 'yes',
+	),
 	'title' => array(
 		'title'			=> __( 'Method Title', 'apg_shipping' ),
 		'type'			=> 'text',

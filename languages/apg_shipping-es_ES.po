@@ -3,9 +3,9 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 19:19+0000\n"
-"PO-Revision-Date: 2016-09-08 19:29+0000\n"
-"Last-Translator: Art Project Group <info@artprojectgroup.es>\n"
+"POT-Creation-Date: 2016-10-11 08:36+0000\n"
+"PO-Revision-Date: 2016-10-11 08:36+0000\n"
+"Last-Translator: artprojectgroup <artprojectgroup@gmail.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es-ES\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
@@ -27,74 +27,13 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Loco-Target-Locale: es_ES"
 
-#: apg-shipping.php:166
-msgid "Select a class&hellip;"
-msgstr "Selecciona una clase&hellip;"
+#: includes/admin/campos.php:9
+msgid "Enable/Disable"
+msgstr "Activar/Desactivar"
 
-#: includes/admin/campos.php:28
-msgid "Fee added to the total cost of items."
-msgstr "Coste añadido al importe total de productos."
-
-#: includes/admin/campos.php:36
-msgid ""
-"Additional fee added to the total cost of items.<br />You can use  <code>"
-"min=\"fee\" max=\"fee\"</code> for percentage based fees, e.g. <code>"
-"6%|min=\"20.50\" max=\"100\"</code>."
-msgstr ""
-"Coste adicional añadido al importe total de productos.<br />Puedes usar "
-"<code>min=\"fee\" max=\"fee\"</code> para costes basados en porcentajes, por "
-"ejemplo <code>6%|min=\"20.50\" max=\"100\"</code>."
-
-#: includes/admin/campos.php:41 includes/admin/campos.php:56
-msgid "Apply per product?"
-msgstr "¿Aplicar por producto?"
-
-#: includes/admin/campos.php:43
-msgid "Apply additional fee per product."
-msgstr "Aplicar coste adicional por producto."
-
-#: includes/admin/campos.php:44
-msgid "To apply additional fee for the number of items."
-msgstr "Para aplicar un coste adicional por el número de productos."
-
-#: includes/admin/campos.php:50
-msgid ""
-"Set your weight based rates for postcode/state/country groups (one per line)."
-" You may optionally add the maximum dimensions, e.g. <code>Max "
-"weight|Cost|Shipping class name (optional)|LxWxH (optional)</code>. Also you "
-"can set your dimensions based rates, e.g. <code>LxWxH|Cost|Shipping class "
-"name (optional)</code>."
-msgstr ""
-"Añade tus tarifas basadas en el peso para grupos código postal/provincia "
-"(estado)/país (uno por línea). Opcional puedes añadir dimensiones máximas, "
-"por ejemplo <code>Peso máximo|Tarifa|Nombre de Clase de envío (opcional)"
-"|LxWxH (opcional)</code>. También puedes añadir tarifas basadas en "
-"dimensiones, por ejemplo <code>LxWxH|Tarifa|Nombre de Clase de envío "
-"(opcional)</code>."
-
-#: includes/admin/campos.php:53
-msgid "Remember your shipping class name: "
-msgstr "Recuerda los nombres de tus clase de envío:"
-
-#: includes/admin/campos.php:58
-msgid "Apply shipping rate per product."
-msgstr "Aplicar tarifas de envío por producto."
-
-#: includes/admin/campos.php:59
-msgid "To apply shipping rate for the number of items."
-msgstr "Para aplicar las tarifas de envío por número de productos."
-
-#. URI of the plugin
-msgid ""
-"https://wordpress.org/plugins/woocommerce-apg-weight-and-"
-"postcodestatecountry-shipping/"
-msgstr ""
-"https://wordpress.org/plugins/woocommerce-apg-weight-and-"
-"postcodestatecountry-shipping/"
-
-#. Author URI of the plugin
-msgid "http://artprojectgroup.es/"
-msgstr "http://artprojectgroup.es/"
+#: includes/admin/campos.php:11
+msgid "Enable this shipping method"
+msgstr "Activa este método de envío"
 
 #: apg-shipping.php:49 includes/cuadro-informacion.php:7
 msgid "Make a donation by "
@@ -120,7 +59,7 @@ msgstr "Contacta con nosotros por "
 msgid "Settings of "
 msgstr "Ajustes de "
 
-#: apg-shipping.php:66 apg-shipping.php:472
+#: apg-shipping.php:66 apg-shipping.php:484
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -146,7 +85,7 @@ msgstr ""
 "configurar tras la actualización.<br /><em>Recuerda que la configuración "
 "actual es totalmente incompatible con WooCommerce 2.6 y se perderá</em>."
 
-#: apg-shipping.php:106 includes/admin/campos.php:12
+#: apg-shipping.php:106 includes/admin/campos.php:18
 msgid "APG Shipping"
 msgstr "Gastos de envío APG"
 
@@ -164,19 +103,23 @@ msgstr ""
 "(estado)/país y agrupar los grupos que comparten el mismo precio/franja de "
 "gasto de envío."
 
-#: apg-shipping.php:426
+#: apg-shipping.php:167
+msgid "Select a class&hellip;"
+msgstr "Selecciona una clase&hellip;"
+
+#: apg-shipping.php:438
 msgid "This plugin require WooCommerce active to run!"
 msgstr "¡Este plugin necesita WooCommerce activo para funcionar!"
 
-#: apg-shipping.php:465 includes/cuadro-informacion.php:44
+#: apg-shipping.php:477 includes/cuadro-informacion.php:44
 msgid "Please, rate %s:"
 msgstr "Por favor, puntúa %s:"
 
-#: apg-shipping.php:472
+#: apg-shipping.php:484
 msgid "Please, update your %s. It's very important!"
 msgstr "Por favor, actualice sus %s. ¡Es muy importante!"
 
-#: apg-shipping.php:472
+#: apg-shipping.php:484
 msgid "settings"
 msgstr "ajustes"
 
@@ -201,43 +144,47 @@ msgstr "Contacta con nosotros:"
 msgid "Documentation and Support:"
 msgstr "Documentación y ayuda:"
 
-#: includes/admin/campos.php:9
+#: includes/admin/campos.php:15
 msgid "Method Title"
 msgstr "Título del método"
 
-#: includes/admin/campos.php:11
+#: includes/admin/campos.php:17
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 "Esto controla el título que el usuario ve durante la finalización de la "
 "compra."
 
-#: includes/admin/campos.php:15
+#: includes/admin/campos.php:21
 msgid "Tax Status"
 msgstr "Estado de impuestos"
 
-#: includes/admin/campos.php:20
+#: includes/admin/campos.php:26
 msgid "Taxable"
 msgstr "Sujeto a impuestos"
 
-#: includes/admin/campos.php:21
+#: includes/admin/campos.php:27
 msgid "None"
 msgstr "Ninguno"
 
-#: includes/admin/campos.php:25
+#: includes/admin/campos.php:31
 msgid "Handling Fee"
 msgstr "Coste por pedido"
 
-#: includes/admin/campos.php:27
+#: includes/admin/campos.php:33
 msgid "Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable."
 msgstr ""
 "Introduce un coste por pedido, por ejemplo: 2.50. Déjalo en blanco para "
 "deshabilitarlo."
 
-#: includes/admin/campos.php:33
+#: includes/admin/campos.php:34
+msgid "Fee added to the total cost of items."
+msgstr "Coste añadido al importe total de productos."
+
+#: includes/admin/campos.php:39
 msgid "Additional Fee"
 msgstr "Coste adicional"
 
-#: includes/admin/campos.php:35
+#: includes/admin/campos.php:41
 msgid ""
 "Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g."
 " 6%. Leave blank to disable."
@@ -245,31 +192,80 @@ msgstr ""
 "Introduce un coste adicional por pedido, por ejemplo: 2.50, o un porcentaje, "
 "por ejempolo: 6%. Déjalo en blanco para deshabilitarlo."
 
-#: includes/admin/campos.php:48
+#: includes/admin/campos.php:42
+msgid ""
+"Additional fee added to the total cost of items.<br />You can use  <code>"
+"min=\"fee\" max=\"fee\"</code> for percentage based fees, e.g. <code>"
+"6%|min=\"20.50\" max=\"100\"</code>."
+msgstr ""
+"Coste adicional añadido al importe total de productos.<br />Puedes usar "
+"<code>min=\"fee\" max=\"fee\"</code> para costes basados en porcentajes, por "
+"ejemplo <code>6%|min=\"20.50\" max=\"100\"</code>."
+
+#: includes/admin/campos.php:47 includes/admin/campos.php:62
+msgid "Apply per product?"
+msgstr "¿Aplicar por producto?"
+
+#: includes/admin/campos.php:49
+msgid "Apply additional fee per product."
+msgstr "Aplicar coste adicional por producto."
+
+#: includes/admin/campos.php:50
+msgid "To apply additional fee for the number of items."
+msgstr "Para aplicar un coste adicional por el número de productos."
+
+#: includes/admin/campos.php:54
 msgid "Shipping Rates"
 msgstr "Tarifas de envío"
 
-#: includes/admin/campos.php:53
+#: includes/admin/campos.php:56
+msgid ""
+"Set your weight based rates for postcode/state/country groups (one per line)."
+" You may optionally add the maximum dimensions, e.g. <code>Max "
+"weight|Cost|Shipping class name (optional)|LxWxH (optional)</code>. Also you "
+"can set your dimensions based rates, e.g. <code>LxWxH|Cost|Shipping class "
+"name (optional)</code>."
+msgstr ""
+"Añade tus tarifas basadas en el peso para grupos código postal/provincia "
+"(estado)/país (uno por línea). Opcional puedes añadir dimensiones máximas, "
+"por ejemplo <code>Peso máximo|Tarifa|Nombre de Clase de envío (opcional)"
+"|LxWxH (opcional)</code>. También puedes añadir tarifas basadas en "
+"dimensiones, por ejemplo <code>LxWxH|Tarifa|Nombre de Clase de envío "
+"(opcional)</code>."
+
+#: includes/admin/campos.php:59
+msgid "Remember your shipping class name: "
+msgstr "Recuerda los nombres de tus clase de envío:"
+
+#: includes/admin/campos.php:59
 msgid "Remember your weight unit: %s, and dimensions unit: %s."
 msgstr "Recuerde la unidad de peso: %s, y la unidad de medida: %s."
 
-#: includes/admin/campos.php:63
+#: includes/admin/campos.php:64
+msgid "Apply shipping rate per product."
+msgstr "Aplicar tarifas de envío por producto."
+
+#: includes/admin/campos.php:65
+msgid "To apply shipping rate for the number of items."
+msgstr "Para aplicar las tarifas de envío por número de productos."
+
+#: includes/admin/campos.php:69
 msgid "Overweight/over dimensions"
 msgstr "Exceso de peso/dimensiones"
 
-#: includes/admin/campos.php:65
+#: includes/admin/campos.php:71
 msgid "Return the maximum price."
 msgstr "Devolver el precio máximo."
 
-#: includes/admin/campos.php:71
+#: includes/admin/campos.php:77
 msgid "No shipping (Shipping class)"
 msgstr "Sin envíos (Clase de envío)"
 
-#: includes/admin/campos.php:72
+#: includes/admin/campos.php:78
 msgid "Select the shipping class where %s doesn't accept shippings."
 msgstr "Selecciona la clase de envíos donde %s no aceptará envíos."
 
-#: includes/admin/campos.php:78
+#: includes/admin/campos.php:84
 msgid "All enabled shipping class"
 msgstr "Todas las clases de envío disponibles"
 
@@ -303,6 +299,18 @@ msgstr ""
 "\n"
 "\n"
 
+#. URI of the plugin
+msgid ""
+"https://wordpress.org/plugins/woocommerce-apg-weight-and-"
+"postcodestatecountry-shipping/"
+msgstr ""
+"https://wordpress.org/plugins/woocommerce-apg-weight-and-"
+"postcodestatecountry-shipping/"
+
 #. Author of the plugin
 msgid "Art Project Group"
 msgstr "Art Project Group"
+
+#. Author URI of the plugin
+msgid "http://artprojectgroup.es/"
+msgstr "http://artprojectgroup.es/"

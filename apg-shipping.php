@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.0.2.3
+Version: 2.0.2.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -176,8 +176,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 
 				//Variables
-				$volumen = $largo = $ancho = $alto = 0;
-				$clases = $medidas = array();
+				$volumen	= 0;
+				$largo		= 0;
+				$ancho		= 0;
+				$alto		= 0;
+				$clases		= array();
+				$medidas	= array();
 
 				//Peso total del pedido
 				$peso_total = WC()->cart->cart_contents_weight;
@@ -288,9 +292,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				}
 
 				//Actualizamos precio
-				$importe += $suma_cargos;
+				$importe	+= $suma_cargos;
 				//¿Impuestos?
-				$impuestos = ( $this->tax_status != 'none' ) ? '' : false;
+				$impuestos	= ( $this->tax_status != 'none' ) ? '' : false;
 
 				$tarifa = array(
 					'id'		=> $this->get_rate_id(),
@@ -328,8 +332,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			//Selecciona la tarifa más barata
 			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases ) {
 				//Variables
-				$tarifa_mas_barata = $peso_parcial = array();
-				$peso_anterior = $largo_anterior = 0;
+				$tarifa_mas_barata			= array();
+				$peso_parcial				= array();
+				$peso_anterior				= 0;
+				$largo_anterior				= 0;
+				$ancho_anterior				= 0;
+				$alto_anterior				= 0;
+				$clase_de_envio_anterior	= '';
 
 				//Obtenemos las tarifas
 				$tarifas = $this->dame_tarifas();
@@ -350,11 +359,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				foreach ( $peso_parcial as $clase => $peso ) {
 					$clases['todas'] -= $peso;
 				}
-				
 				//Aplicamos tarifas
 				foreach ( $tarifas as $indice => $tarifa ) {	
 					//Variables
-					$calculo_volumetrico = $excede_dimensiones = $clase_de_envio = false;
+					$calculo_volumetrico	= false;
+					$excede_dimensiones		= false;
+					$clase_de_envio			= false;
 					unset( $medidas_tarifa ); //Fix by DJ Team Digital
 					
 					//Comprobamos medidas
@@ -378,7 +388,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					
 					//Comprobamos clases de envío
 					$clase_de_envio = ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) ? $tarifa[2] : 'todas';
-
+					if ( $clase_de_envio_anterior != $clase_de_envio ) {
+						$clase_de_envio_anterior	= $clase_de_envio;
+						$peso_anterior				= 0;
+						$largo_anterior				= 0;
+						$ancho_anterior				= 0;
+						$alto_anterior				= 0;
+					}
+						
 					//Obtenemos la tarifa más barata
 					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
 						if ( !$peso_anterior || ( $tarifa[0] >= $clases[$clase_de_envio] && $clases[$clase_de_envio] > $peso_anterior ) ) {
@@ -404,16 +421,16 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
 					}
 				}
-						
-				if ( $this->maximo == "no" && ( $peso_anterior && $peso_parcial > $peso_anterior ) ) {
-					$tarifa_mas_barata[$clase_de_envio] == 0; //Se ha excedido la tarifa máxima
+
+				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[$clase_de_envio] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) { //Se ha excedido la tarifa máxima
+					unset( $tarifa_mas_barata[$clase_de_envio] );
 				}
 
 				if ( !empty( $tarifa_mas_barata ) ) {
 					return $tarifa_mas_barata;
+				} else {
+					return array();
 				}
-				
-				return array();
 			}
 		}
 	}

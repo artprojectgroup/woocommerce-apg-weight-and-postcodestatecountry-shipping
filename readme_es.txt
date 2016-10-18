@@ -4,7 +4,7 @@ Donate link: http://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
 Tested up to: 4.6.1
-Stable tag: 2.0.2.3
+Stable tag: 2.0.2.4
 WC requires at least: 2.6
 WC tested up to: 2.6.4
 License: GPLv3
@@ -82,6 +82,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 2.0.2.4 = 
+* Arreglo de error con el cálculo de gastos de envío sin sobrepeso/dimensión.
+* Arreglo de error con el cálculo de gastos de envío por clases de envío.
 = 2.0.2.3 = 
 * Añadida opción para activar o desactivar un método de envío.
 = 2.0.2.2 =
@@ -306,8 +309,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Versión inicial.
 
 == Upgrade Notice ==
-= 2.0.2.3 = 
-* Añadida opción para activar o desactivar un método de envío.
+= 2.0.2.4 = 
+* Arreglo de error con el cálculo de gastos de envío sin sobrepeso/dimensión.
+* Arreglo de error con el cálculo de gastos de envío por clases de envío.
 
 ==Traducciones ==
 * *English*: by [**Art Project Group**](http://artprojectgroup.es/) (default language).

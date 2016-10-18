@@ -8,8 +8,3 @@
   <?php $this->generate_settings_html( $this->get_instance_form_fields() ); ?>
 </table>
 <!--/.form-table--> 
-<script type="text/javascript">
-jQuery( document ).ready( function( $ ) {	
-
-});
-</script> 

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.0.2.4
+Version: 2.0.2.5
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -422,6 +422,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					}
 				}
 
+				if ( $clases['todas'] == 0 ) { //Prevenimos errores de duplicación de tarifas
+					unset( $tarifa_mas_barata['todas'] );
+				}
+				
 				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[$clase_de_envio] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) { //Se ha excedido la tarifa máxima
 					unset( $tarifa_mas_barata[$clase_de_envio] );
 				}

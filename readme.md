@@ -9,11 +9,11 @@ Requires at least: 3.8
 
 Tested up to: 4.6.1
 
-Stable tag: 2.0.2.4
+Stable tag: 2.0.2.5
 
 WC requires at least: 2.6
 
-WC tested up to: 2.6.4
+WC tested up to: 2.6.7
 
 License: GPLv3
 
@@ -87,6 +87,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.0.2.5
+* Arreglo de error con el cálculo de gastos de envío por clases de envío.
+
 ### 2.0.2.4
 * Arreglo de error con el cálculo de gastos de envío sin sobrepeso/dimensión.
 * Arreglo de error con el cálculo de gastos de envío por clases de envío.

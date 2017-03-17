@@ -3,8 +3,8 @@ Contributors: artprojectgroup
 Donate link: http://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
-Tested up to: 4.7.2
-Stable tag: 2.0.3.1
+Tested up to: 4.7.3
+Stable tag: 2.1
 WC requires at least: 2.6
 WC tested up to: 2.7
 License: GPLv3
@@ -23,9 +23,14 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can create an unlimited number of rates.
 * You can create rates with maximum weight and/or dimensions.
 * You can create rates for number of items.
+* You can create rates for cart total.
 * You can assign rates to specific shipping classes.
+* You can select the highest shipping class rate instead of the sum of rates.
 * You can choose accept or not weight or dimensions excess.
 * You can exclude shipping for one, several or all shipping classes.
+* You can exclude user roles.
+* You can show a custom icon image.
+* You can show the estimated delivery time.
 
 = Translations =
 * Español ([**Art Project Group**](http://artprojectgroup.es/)).
@@ -82,6 +87,13 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.1 =
+* Support to limit free shipping by user roles. **Update sponsored by [**Dermoder**](http://dermoder.com)**
+* Support to shipping rates per cart total. **Update sponsored by [**Marketing Paradise**](https://mkparadise.com)**
+* Support to select the highest shipping class rate.
+* Support to add a custom image.
+* Support to add the estimated delivery time.
+* Updated screenshot.
 = 2.0.3.1 = 
 * Adjust to optimize WooCommerce 2.7 compatibility.
 = 2.0.3 = 
@@ -318,8 +330,13 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 * Initial version.
 
 == Upgrade Notice ==
-= 2.0.3.1 = 
-* Adjust to optimize WooCommerce 2.7 compatibility.
+= 2.1 =
+* Support to limit free shipping by user roles. **Update sponsored by [**Dermoder**](http://dermoder.com)**
+* Support to shipping rates per cart total. **Update sponsored by [**Marketing Paradise**](https://mkparadise.com)**
+* Support to select the highest shipping class rate.
+* Support to add a custom image.
+* Support to add the estimated delivery time.
+* Updated screenshot.
 
 == Translations ==
 * *English*: by [**Art Project Group**](http://artprojectgroup.es/) (default language).

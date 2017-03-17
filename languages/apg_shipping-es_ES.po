@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 08:36+0000\n"
-"PO-Revision-Date: 2016-10-11 08:36+0000\n"
+"POT-Creation-Date: 2017-03-17 11:08+0000\n"
+"PO-Revision-Date: 2017-03-17 11:08+0000\n"
 "Last-Translator: artprojectgroup <artprojectgroup@gmail.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es-ES\n"
@@ -27,21 +27,21 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Loco-Target-Locale: es_ES"
 
-#: includes/admin/campos.php:9
-msgid "Enable/Disable"
-msgstr "Activar/Desactivar"
-
-#: includes/admin/campos.php:11
-msgid "Enable this shipping method"
-msgstr "Activa este método de envío"
+#: includes/admin/campos.php:76
+msgid ""
+"Select if you need just the highest shipping class rate not the sum of "
+"shipping classes rates."
+msgstr ""
+"Selecciona si necesitas sólo la tarifa de clase de envío más cara en lugar "
+"de la suma de las tarifas de las clases de envío."
 
 #: apg-shipping.php:49 includes/cuadro-informacion.php:7
 msgid "Make a donation by "
 msgstr "Haz una donación por "
 
-#: apg-shipping.php:51 apg-shipping.php:51 apg-shipping.php:51 
-#: apg-shipping.php:51 includes/cuadro-informacion.php:19 
-#: includes/cuadro-informacion.php:19 includes/cuadro-informacion.php:19 
+#: apg-shipping.php:51 apg-shipping.php:51 apg-shipping.php:51
+#: apg-shipping.php:51 includes/cuadro-informacion.php:19
+#: includes/cuadro-informacion.php:19 includes/cuadro-informacion.php:19
 #: includes/cuadro-informacion.php:19
 msgid "Follow us on "
 msgstr "Síguenos en "
@@ -50,7 +50,7 @@ msgstr "Síguenos en "
 msgid "More plugins on "
 msgstr "Más plugins en "
 
-#: apg-shipping.php:53 apg-shipping.php:53 includes/cuadro-informacion.php:33 
+#: apg-shipping.php:53 apg-shipping.php:53 includes/cuadro-informacion.php:33
 #: includes/cuadro-informacion.php:33
 msgid "Contact with us by "
 msgstr "Contacta con nosotros por "
@@ -59,7 +59,7 @@ msgstr "Contacta con nosotros por "
 msgid "Settings of "
 msgstr "Ajustes de "
 
-#: apg-shipping.php:66 apg-shipping.php:484
+#: apg-shipping.php:66 apg-shipping.php:590
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -85,11 +85,11 @@ msgstr ""
 "configurar tras la actualización.<br /><em>Recuerda que la configuración "
 "actual es totalmente incompatible con WooCommerce 2.6 y se perderá</em>."
 
-#: apg-shipping.php:106 includes/admin/campos.php:18
+#: apg-shipping.php:108 includes/admin/campos.php:18
 msgid "APG Shipping"
 msgstr "Gastos de envío APG"
 
-#: apg-shipping.php:107
+#: apg-shipping.php:109
 msgid ""
 "Lets you calculate shipping cost based on Postcode/State/Country and weight "
 "of the cart. Lets you set an unlimited weight bands on per "
@@ -103,23 +103,30 @@ msgstr ""
 "(estado)/país y agrupar los grupos que comparten el mismo precio/franja de "
 "gasto de envío."
 
-#: apg-shipping.php:167
+#: apg-shipping.php:184
 msgid "Select a class&hellip;"
 msgstr "Selecciona una clase&hellip;"
 
-#: apg-shipping.php:438
+#: apg-shipping.php:533
+#, php-format
+msgid "Estimated delivery time: %s"
+msgstr "Tiempo de entrega estimado: %s"
+
+#: apg-shipping.php:544
 msgid "This plugin require WooCommerce active to run!"
 msgstr "¡Este plugin necesita WooCommerce activo para funcionar!"
 
-#: apg-shipping.php:477 includes/cuadro-informacion.php:44
+#: apg-shipping.php:583 includes/cuadro-informacion.php:44
+#, php-format
 msgid "Please, rate %s:"
 msgstr "Por favor, puntúa %s:"
 
-#: apg-shipping.php:484
+#: apg-shipping.php:590
+#, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Por favor, actualice sus %s. ¡Es muy importante!"
 
-#: apg-shipping.php:484
+#: apg-shipping.php:590
 msgid "settings"
 msgstr "ajustes"
 
@@ -143,6 +150,14 @@ msgstr "Contacta con nosotros:"
 #: includes/cuadro-informacion.php:37
 msgid "Documentation and Support:"
 msgstr "Documentación y ayuda:"
+
+#: includes/admin/campos.php:9
+msgid "Enable/Disable"
+msgstr "Activar/Desactivar"
+
+#: includes/admin/campos.php:11
+msgid "Enable this shipping method"
+msgstr "Activa este método de envío"
 
 #: includes/admin/campos.php:15
 msgid "Method Title"
@@ -202,7 +217,7 @@ msgstr ""
 "<code>min=\"fee\" max=\"fee\"</code> para costes basados en porcentajes, por "
 "ejemplo <code>6%|min=\"20.50\" max=\"100\"</code>."
 
-#: includes/admin/campos.php:47 includes/admin/campos.php:62
+#: includes/admin/campos.php:47
 msgid "Apply per product?"
 msgstr "¿Aplicar por producto?"
 
@@ -238,36 +253,120 @@ msgid "Remember your shipping class name: "
 msgstr "Recuerda los nombres de tus clase de envío:"
 
 #: includes/admin/campos.php:59
+#, php-format
 msgid "Remember your weight unit: %s, and dimensions unit: %s."
 msgstr "Recuerde la unidad de peso: %s, y la unidad de medida: %s."
 
-#: includes/admin/campos.php:64
-msgid "Apply shipping rate per product."
-msgstr "Aplicar tarifas de envío por producto."
+#: includes/admin/campos.php:62
+msgid "Apply shipping rate per..."
+msgstr "Aplicar tarifas de envío por..."
 
-#: includes/admin/campos.php:65
-msgid "To apply shipping rate for the number of items."
-msgstr "Para aplicar las tarifas de envío por número de productos."
+#: includes/admin/campos.php:64
+msgid "Select how to apply the shipping rate: per weight, items or cart total."
+msgstr ""
+"Selecciona como quieres que se apliquen las tarifas de envío: por peso, "
+"productos o total del pedido."
+
+#: includes/admin/campos.php:67
+msgid "Total weight"
+msgstr "Peso total"
+
+#: includes/admin/campos.php:68
+msgid "Total items"
+msgstr "Productos totales"
 
 #: includes/admin/campos.php:69
+msgid "Cart total"
+msgstr "Total del pedido"
+
+#: includes/admin/campos.php:71
+msgid ""
+"Total weight: Apply shipping rate per cart weight (default).<br />Total "
+"items: Apply shipping rate per number of items.<br />Cart total: Apply "
+"shipping rate per cart total."
+msgstr ""
+"Peso total: Aplica la tarifa de envío por el peso del pedido (predeterminado)"
+".<br />Productos totales: Aplica la tarifa de envío por el número de "
+"productos.<br />Total del pedido: Aplica la tarifa de envío por el total del "
+"pedido."
+
+#: includes/admin/campos.php:74
+msgid "Highest shipping class rate"
+msgstr "Clase de envío más alta"
+
+#: includes/admin/campos.php:80
 msgid "Overweight/over dimensions"
 msgstr "Exceso de peso/dimensiones"
 
-#: includes/admin/campos.php:71
+#: includes/admin/campos.php:82
 msgid "Return the maximum price."
 msgstr "Devolver el precio máximo."
 
-#: includes/admin/campos.php:77
+#: includes/admin/campos.php:88
 msgid "No shipping (Shipping class)"
 msgstr "Sin envíos (Clase de envío)"
 
-#: includes/admin/campos.php:78
+#: includes/admin/campos.php:89
+#, php-format
 msgid "Select the shipping class where %s doesn't accept shippings."
 msgstr "Selecciona la clase de envíos donde %s no aceptará envíos."
 
-#: includes/admin/campos.php:84
+#: includes/admin/campos.php:95
 msgid "All enabled shipping class"
 msgstr "Todas las clases de envío disponibles"
+
+#: includes/admin/campos.php:100
+msgid "No shipping (User role)"
+msgstr "Sin envíos (Rol de usuario)"
+
+#: includes/admin/campos.php:101
+#, php-format
+msgid "Select the user role where %s doesn't accept shippings."
+msgstr "Selecciona el rol de usuario donde %s no aceptará envíos."
+
+#: includes/admin/campos.php:107
+msgid "No role"
+msgstr "Sin rol"
+
+#: includes/admin/campos.php:111
+msgid "Icon image"
+msgstr "Imagen personalizada"
+
+#: includes/admin/campos.php:113
+msgid "Icon image URL. APG recommends a 60x21px image."
+msgstr "URL de la imagen personalizada. APG recomienda una imagen de 60x21px."
+
+#: includes/admin/campos.php:118
+msgid "How show icon image?"
+msgstr "¿Cómo mostrar la imagen?"
+
+#: includes/admin/campos.php:119
+msgid "Select how you want to show the icon image."
+msgstr "Selecciona cómo quieres que se vea la imagen personalizada."
+
+#: includes/admin/campos.php:123
+msgid "Not show, just title"
+msgstr "No mostrar, sólo el título"
+
+#: includes/admin/campos.php:124
+msgid "Before title"
+msgstr "Antes del título"
+
+#: includes/admin/campos.php:125
+msgid "After title"
+msgstr "Detrás del título"
+
+#: includes/admin/campos.php:126
+msgid "No title, just icon"
+msgstr "Sin título, sólo imagen"
+
+#: includes/admin/campos.php:130
+msgid "Estimated delivery time"
+msgstr "Tiempo de entrega estimado"
+
+#: includes/admin/campos.php:132
+msgid "Define estimation for delivery time for this shipping method."
+msgstr "Indica el tiempo estimado de entrega para este método de envío."
 
 #. Name of the plugin
 msgid "WooCommerce - APG Weight and Postcode/State/Country Shipping"

@@ -3,8 +3,8 @@ Contributors: artprojectgroup
 Donate link: http://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
-Tested up to: 4.7.2
-Stable tag: 2.0.3.1
+Tested up to: 4.7.3
+Stable tag: 2.1
 WC requires at least: 2.6
 WC tested up to: 2.7
 License: GPLv3
@@ -23,9 +23,14 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes crear un número ilimitado de tarifas.
 * Puedes crear las tarifas con un peso y/o dimensiones máximos.
 * Puedes crear tarifas por número de productos.
+* Puedes crear tarifas por total del pedido.
 * Puedes asignar tarifas a clases de envío específicas.
+* Puedes seleccionar la tarifa de clase de envío más cara en lugar de la suma de tarifas.
 * Puedes elegir si aceptar excesos de peso o dimensiones.
 * Puedes excluir el envío de una, varias o todas las clases de envío del sistema.
+* Puedes excluir roles de usuario.
+* Puedes mostrar una imagen personalizada.
+* Puedes mostrar el tiempo estimado de entrega.
 
 = Traducciones =
 * Español ([**Art Project Group**](http://artprojectgroup.es/)).
@@ -82,6 +87,13 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 2. Captura de pantalla de WooCommerce - APG Weight and Postcode/State/Country Shipping. Pestaña de Gastos de Envío APG.
 
 == Changelog ==
+= 2.1 = 
+* Soporte de roles de usuario para no realizar envíos gratuitos. **Actualización patrocinada por [**Dermoder**](http://dermoder.com)** 
+* Soporte de tarifas por total de pedido. **Actualización patrocinada por [**Marketing Paradise**](https://mkparadise.com)**
+* Soporte para seleccionar la tarifa de clase de envío más cara.
+* Soporte para añadir imagen personalizada.
+* Soporte para añadir el tiempo estimado de entrega.
+* Actualización de la captura de pantalla.
 = 2.0.3.1 = 
 * Ajuste para optimizar la compatibilidad con WooCommerce 2.7.
 = 2.0.3 = 
@@ -318,8 +330,13 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Versión inicial.
 
 == Upgrade Notice ==
-= 2.0.3.1 = 
-* Ajuste para optimizar la compatibilidad con WooCommerce 2.7.
+= 2.1 = 
+* Soporte de roles de usuario para no realizar envíos gratuitos. **Actualización patrocinada por [**Dermoder**](http://dermoder.com)** 
+* Soporte de tarifas por total de pedido. **Actualización patrocinada por [**Marketing Paradise**](https://mkparadise.com)**
+* Soporte para seleccionar la tarifa de clase de envío más cara.
+* Soporte para añadir imagen personalizada.
+* Soporte para añadir el tiempo estimado de entrega.
+* Actualización de la captura de pantalla.
 
 ==Traducciones ==
 * *English*: by [**Art Project Group**](http://artprojectgroup.es/) (default language).

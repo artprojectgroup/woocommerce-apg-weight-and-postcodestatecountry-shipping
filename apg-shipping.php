@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.1
+Version: 2.1.0.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -188,12 +188,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 			//Función que lee y devuelve los roles de usuario
 			public function apg_shipping_dame_roles_de_usuario() {
-				$wp_roles			= new WP_Roles();
-				$wp_roles->use_db	= true;
-  
-				foreach( $wp_roles->get_names() as $role ) {
-					$this->roles_de_usuario[strtolower( $role )] = $role;
-				}
+				$wp_roles= new WP_Roles();
+
+				foreach( $wp_roles->role_names as $role => $nombre ) {
+					$this->roles_de_usuario[$role] = $nombre;
+				}				
 			}	
 			
 			//Calcula el gasto de envío
@@ -448,6 +447,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					} else if ( !isset( $tarifa[2] ) || !stripos( $tarifa[2], "x" ) ) {
 						$clase_de_envio = 'sin-clase';					
 					}
+					//Prevenimos errores
+					if ( $clase_de_envio == 'sin-clase' && !isset( $clases['sin-clase'] ) ) {
+						$clase_de_envio = 'todas';					
+					}
 					if ( $clase_de_envio_anterior != $clase_de_envio ) {
 						$clase_de_envio_anterior	= $clase_de_envio;
 						$peso_anterior				= 0;
@@ -455,7 +458,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$ancho_anterior				= 0;
 						$alto_anterior				= 0;
 					}
-						
+
 					//Obtenemos la tarifa más barata
 					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
 						if ( ( !$peso_anterior && $tarifa[0] >= $clases[$clase_de_envio] ) || ( $tarifa[0] >= $clases[$clase_de_envio] && $clases[$clase_de_envio] > $peso_anterior ) ) {

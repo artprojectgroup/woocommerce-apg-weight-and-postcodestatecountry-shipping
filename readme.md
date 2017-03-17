@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.7.3
 
-Stable tag: 2.1
+Stable tag: 2.1.0.1
 
 WC requires at least: 2.6
 
@@ -92,6 +92,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.1.0.1
+* Arreglo de error en la clave de rol de usuario.
+
 ### 2.1
 * Soporte de roles de usuario para no realizar envíos gratuitos. **Actualización patrocinada por [**Dermoder**](http://dermoder.com)** 
 * Soporte de tarifas por total de pedido. **Actualización patrocinada por [**Marketing Paradise**](https://mkparadise.com)**

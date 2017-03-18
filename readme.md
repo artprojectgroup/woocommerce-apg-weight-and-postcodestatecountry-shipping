@@ -93,7 +93,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
-### 2.1.0.1
+### 2.2
 * Soporte para ocultar medios de pago.
 
 ### 2.1.0.1

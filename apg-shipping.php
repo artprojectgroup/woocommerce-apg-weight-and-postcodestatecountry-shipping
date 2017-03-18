@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.1.0.1
+Version: 2.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: http://artprojectgroup.es/
@@ -35,7 +35,7 @@ $apg_shipping = array(
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 );
-$envios_adicionales = $limpieza = NULL;
+$medios_de_pago = array();
 
 //Carga el idioma
 load_plugin_textdomain( 'apg_shipping', null, dirname( DIRECCION_apg_shipping ) . '/languages' );
@@ -100,6 +100,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			//Variables
 			public $clases_de_envio			= array();
 			public $roles_de_usuario		= array();
+			public $metodos_de_pago			= array();
 			public $clases_de_envio_tarifas	= "";
 	
 			public function __construct( $instance_id = 0 ) {
@@ -119,9 +120,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function init() {
 				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
 				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
+				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
 	
-				$this->init_form_fields(); //Crea los campos de opciones
 				$this->init_settings(); //Recogemos todos los valores
+				$this->init_form_fields(); //Crea los campos de opciones
 				
 				//Inicializamos variables
 				$campos = array(
@@ -137,6 +139,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'maximo', 
 					'clases_excluidas', 
 					'roles_excluidos', 
+					'pago',
 					'icono',
 					'muestra_icono',
 					'entrega',
@@ -145,7 +148,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$this->$campo = $this->get_option( $campo );
 				}
 				$this->tarifas = (array) explode( "\n", $this->tarifas );
-				
+
 				//Acción
 				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 			}
@@ -188,12 +191,21 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 			//Función que lee y devuelve los roles de usuario
 			public function apg_shipping_dame_roles_de_usuario() {
-				$wp_roles= new WP_Roles();
+				$wp_roles = new WP_Roles();
 
-				foreach( $wp_roles->role_names as $role => $nombre ) {
-					$this->roles_de_usuario[$role] = $nombre;
-				}				
-			}	
+				foreach( $wp_roles->role_names as $rol => $nombre ) {
+					$this->roles_de_usuario[$rol] = $nombre;
+				}
+			}
+
+			//Función que lee y devuelve los métodos de pago
+			public function apg_shipping_dame_metodos_de_pago() {
+				global $medios_de_pago;
+				
+				foreach( $medios_de_pago as $clave => $medio_de_pago ) {
+					$this->metodos_de_pago[$medio_de_pago->id] = $medio_de_pago->title;
+				}
+			}
 			
 			//Calcula el gasto de envío
 			public function calculate_shipping( $paquete = array() ) {
@@ -510,6 +522,37 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		return $metodos;
 	}
 	add_filter( 'woocommerce_shipping_methods', 'apg_shipping_clases', 0 );
+	
+	//Filtra los medios de pago
+	function apg_shipping_filtra_medios_de_pago( $medios ) {
+		if ( isset( WC()->session->chosen_shipping_methods ) ) {
+			$id = explode( ":", WC()->session->chosen_shipping_methods[0] );
+		} else if ( isset( $_POST['shipping_method'] ) ) {
+			$id = explode( ":", $_POST['shipping_method'][0] );
+		}
+		$configuracion	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
+		
+		if ( isset( $_POST['payment_method'] ) && !$medios ) {
+			$medios = $_POST['payment_method'];
+		}
+
+		if ( !empty( $configuracion['pago'] ) && $configuracion['pago'][0] != 'todos' ) {
+			foreach ( $medios as $nombre => $medio ) {
+				if ( is_array( $configuracion['pago'] ) ) {
+					if ( !in_array( $nombre, $configuracion['pago'] ) ) {
+						unset( $medios[$nombre] );
+					}
+				} else { 
+					if ( $nombre != $configuracion['pago'] ) {
+						unset( $medios[$nombre] );
+					}
+				}
+			}
+		}
+
+		return $medios;
+	}
+	add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago' );
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }
@@ -595,6 +638,9 @@ function apg_shipping_actualizacion() {
 
 //Carga las hojas de estilo
 function apg_shipping_muestra_mensaje() {
+	global $medios_de_pago;
+	
+	$medios_de_pago = WC()->payment_gateways->payment_gateways();
 	wp_register_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', __FILE__ ) ); //Carga la hoja de estilo
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo' ); //Carga la hoja de estilo global
 

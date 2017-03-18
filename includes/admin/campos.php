@@ -86,26 +86,39 @@ $campos = array(
 if ( WC()->shipping->get_shipping_classes() ) {
 	$campos['clases_excluidas'] = array( 
 		'title'		=> __( 'No shipping (Shipping class)', 'apg_shipping' ),
-		'desc_tip' 	=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'apg_shipping' ), get_bloginfo( 'name' ) ),
+		'desc_tip' 	=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'apg_shipping' ), $this->method_title ),
 		'css'		=> 'width: 450px;',
 		'default'	=> '',
 		'type'		=> 'multiselect',
 		'class'		=> 'wc-enhanced-select',
 		'options' 	=> array( 
-			'todas' => __( 'All enabled shipping class', 'apg_shipping' ) 
+			'todas' 	=> __( 'All enabled shipping class', 'apg_shipping' ) 
 		) + $this->clases_de_envio,
 	);
 }
 $campos['roles_excluidos'] = array( 
 	'title'			=> __( 'No shipping (User role)', 'apg_shipping' ),
-	'desc_tip' 		=> sprintf( __( "Select the user role where %s doesn't accept shippings.", 'apg_shipping' ), get_bloginfo( 'name' ) ),
+	'desc_tip' 		=> sprintf( __( "Select the user role where %s doesn't accept shippings.", 'apg_shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
 	'type'			=> 'multiselect',
 	'class'			=> 'wc-enhanced-select',
 	'options' 		=> array( 
-		'invitado' => __( 'No role', 'apg_shipping' ) 
+		'invitado'		=> __( 'Guest', 'apg_shipping' ) 
 	) + $this->roles_de_usuario,
+);
+$campos['pago'] = array(
+	'title'			=> __( 'Payment gateway', 'apg_shipping' ),
+	'desc_tip'		=> sprintf( __( "Payment gateway available for %s", 'apg_shipping' ), $this->method_title ),
+	'css'			=> 'width: 450px;',
+	'default'		=> array( 
+		'todos' 
+	),
+	'type'			=> 'multiselect',
+	'class'			=> 'chosen_select',
+	'options' 		=> array( 
+		'todos'			=> __( 'All enabled payments', 'apg_shipping' )
+	) + $this->metodos_de_pago,
 );
 $campos['icono'] = array( 
 		'title'			=> __( 'Icon image', 'apg_shipping' ),

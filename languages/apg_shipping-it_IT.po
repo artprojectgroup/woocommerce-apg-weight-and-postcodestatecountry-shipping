@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-17 11:08+0000\n"
-"PO-Revision-Date: 2017-03-17 11:08+0000\n"
+"POT-Creation-Date: 2017-03-18 16:49+0000\n"
+"PO-Revision-Date: 2017-03-18 16:49+0000\n"
 "Last-Translator: artprojectgroup <artprojectgroup@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it-IT\n"
@@ -33,11 +33,11 @@ msgid ""
 "WooCommerce 2.6 and you'll lose it</em>."
 msgstr ""
 
-#: apg-shipping.php:184
+#: apg-shipping.php:187
 msgid "Select a class&hellip;"
 msgstr ""
 
-#: apg-shipping.php:533
+#: apg-shipping.php:579
 #, php-format
 msgid "Estimated delivery time: %s"
 msgstr ""
@@ -133,46 +133,59 @@ msgid "Select the user role where %s doesn't accept shippings."
 msgstr ""
 
 #: includes/admin/campos.php:107
-msgid "No role"
+msgid "Guest"
 msgstr ""
 
 #: includes/admin/campos.php:111
-msgid "Icon image"
+msgid "Payment gateway"
 msgstr ""
 
-#: includes/admin/campos.php:113
-msgid "Icon image URL. APG recommends a 60x21px image."
+#: includes/admin/campos.php:112
+#, php-format
+msgid "Payment gateway available for %s"
 msgstr ""
 
-#: includes/admin/campos.php:118
-msgid "How show icon image?"
-msgstr ""
-
-#: includes/admin/campos.php:119
-msgid "Select how you want to show the icon image."
-msgstr ""
-
-#: includes/admin/campos.php:123
-msgid "Not show, just title"
+#: includes/admin/campos.php:120
+msgid "All enabled payments"
 msgstr ""
 
 #: includes/admin/campos.php:124
-msgid "Before title"
-msgstr ""
-
-#: includes/admin/campos.php:125
-msgid "After title"
+msgid "Icon image"
 msgstr ""
 
 #: includes/admin/campos.php:126
-msgid "No title, just icon"
+msgid "Icon image URL. APG recommends a 60x21px image."
 msgstr ""
 
-#: includes/admin/campos.php:130
-msgid "Estimated delivery time"
+#: includes/admin/campos.php:131
+msgid "How show icon image?"
 msgstr ""
 
 #: includes/admin/campos.php:132
+msgid "Select how you want to show the icon image."
+msgstr ""
+
+#: includes/admin/campos.php:136
+msgid "Not show, just title"
+msgstr ""
+
+#: includes/admin/campos.php:137
+msgid "Before title"
+msgstr ""
+
+#: includes/admin/campos.php:138
+msgid "After title"
+msgstr ""
+
+#: includes/admin/campos.php:139
+msgid "No title, just icon"
+msgstr ""
+
+#: includes/admin/campos.php:143
+msgid "Estimated delivery time"
+msgstr ""
+
+#: includes/admin/campos.php:145
 msgid "Define estimation for delivery time for this shipping method."
 msgstr ""
 
@@ -219,7 +232,7 @@ msgid "Settings of "
 msgstr "Configurazioni di "
 
 # @ apg_shipping
-#: apg-shipping.php:66 apg-shipping.php:590
+#: apg-shipping.php:66 apg-shipping.php:636
 msgid "Settings"
 msgstr "Configurazione"
 
@@ -234,12 +247,12 @@ msgid "Support"
 msgstr "Supporto"
 
 # @ apg_shipping
-#: apg-shipping.php:108 includes/admin/campos.php:18
+#: apg-shipping.php:109 includes/admin/campos.php:18
 msgid "APG Shipping"
 msgstr "APG Shipping"
 
 # @ apg_shipping
-#: apg-shipping.php:109
+#: apg-shipping.php:110
 msgid ""
 "Lets you calculate shipping cost based on Postcode/State/Country and weight "
 "of the cart. Lets you set an unlimited weight bands on per "
@@ -251,7 +264,7 @@ msgstr ""
 "illimintato range di prezzi suddivisi per CAP/Provincia/Nazione e "
 "condividere i gruppi che condividono lo stesso prezzo/range."
 
-#: apg-shipping.php:544
+#: apg-shipping.php:590
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
 "Questo plugin\n"
@@ -265,19 +278,19 @@ msgstr ""
 "a correre!"
 
 # @ apg_shipping
-#: apg-shipping.php:583 includes/cuadro-informacion.php:44
+#: apg-shipping.php:629 includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr "Per favore vota %s:"
 
 # @ apg_shipping
-#: apg-shipping.php:590
+#: apg-shipping.php:636
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Per favore aggiorna il tuo %s. E’ importantissimo!"
 
 # @ apg_shipping
-#: apg-shipping.php:590
+#: apg-shipping.php:636
 msgid "settings"
 msgstr "configurazioni"
 

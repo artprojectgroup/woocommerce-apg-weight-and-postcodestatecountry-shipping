@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.7.3
 
-Stable tag: 2.1.0.1
+Stable tag: 2.2
 
 WC requires at least: 2.6
 
@@ -38,6 +38,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes elegir si aceptar excesos de peso o dimensiones.
 * Puedes excluir el envío de una, varias o todas las clases de envío del sistema.
 * Puedes excluir roles de usuario.
+* Puedes ocultar medios de pago.
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
 
@@ -92,6 +93,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.1.0.1
+* Soporte para ocultar medios de pago.
+
 ### 2.1.0.1
 * Arreglo de error en la clave de rol de usuario.
 

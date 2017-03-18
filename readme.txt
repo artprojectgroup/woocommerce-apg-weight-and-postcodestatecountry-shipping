@@ -4,7 +4,7 @@ Donate link: http://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
 Requires at least: 3.8
 Tested up to: 4.7.3
-Stable tag: 2.1.0.1
+Stable tag: 2.2
 WC requires at least: 2.6
 WC tested up to: 2.7
 License: GPLv3
@@ -29,6 +29,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can choose accept or not weight or dimensions excess.
 * You can exclude shipping for one, several or all shipping classes.
 * You can exclude user roles.
+* You can hide payment gateways.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
 
@@ -87,6 +88,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.2 = 
+* Support to hide payment gateways.
 = 2.1.0.1 =
 * Fixed user role key.
 = 2.1 =
@@ -332,8 +335,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 * Initial version.
 
 == Upgrade Notice ==
-= 2.1.0.1 =
-* Fixed user role key.
+= 2.2 = 
+* Support to hide payment gateways.
 
 == Translations ==
 * *English*: by [**Art Project Group**](http://artprojectgroup.es/) (default language).

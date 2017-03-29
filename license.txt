@@ -20,7 +20,7 @@ This program incorporates work covered by the following copyright and
 permission notices:
 
   WooCommerce - APG Weight and Postcode/State/Country Shipping is Copyright (c) 2013 Art Project Group
-  http://www.artprojectgroup.es - http://www.artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping
+  https://artprojectgroup.es - https://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping
 
   WooCommerce - APG Weight and Postcode/State/Country Shipping is released under the GPL
 

@@ -29,9 +29,9 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
 $apg_shipping = array(	
 	'plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-	'donacion' 		=> 'http://artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'http://wcprojectgroup.es/tienda/ticket-de-soporte',
-	'plugin_url' 	=> 'http://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
+	'donacion' 		=> 'https://artprojectgroup.es/tienda/donacion',
+	'soporte' 		=> 'https://wcprojectgroup.es/tienda/ticket-de-soporte',
+	'plugin_url' 	=> 'https://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 );

@@ -7,9 +7,9 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 4.7.3
+Tested up to: 4.7.4
 
-Stable tag: 2.2.0.2
+Stable tag: 2.2.0.3
 
 WC requires at least: 2.6
 
@@ -93,6 +93,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.2.0.3
+* Ajuste para optimizar la compatibilidad con WooCommerce 3.0.
+
 ### 2.2.0.2
 * Prevención de error en la página Mi cuenta.
 

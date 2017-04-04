@@ -168,6 +168,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				if ( is_admin() ) {
 					wc_enqueue_js( "
 						jQuery( function( $ ) {
+							$(document).on('mouseover', '.wc-shipping-zone-method-rows', function(){
+								$( 'a.wc-shipping-zone-method-settings' ).removeClass( 'wc-shipping-zone-method-settings' );
+							});
 							$( 'a.wc-shipping-zone-method-settings' ).removeClass( 'wc-shipping-zone-method-settings' );
 						});
 					" );

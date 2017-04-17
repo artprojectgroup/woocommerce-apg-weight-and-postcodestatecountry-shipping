@@ -13,7 +13,7 @@ Stable tag: 2.2.0.3
 
 WC requires at least: 2.6
 
-WC tested up to: 3.0
+WC tested up to: 3.0.3
 
 License: GPLv3
 
@@ -93,6 +93,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.2.0.4
+* Ajuste para optimizar la compatibilidad con WooCommerce 3.0.
+
 ### 2.2.0.3
 * Ajuste para optimizar la compatibilidad con WooCommerce 3.0.
 

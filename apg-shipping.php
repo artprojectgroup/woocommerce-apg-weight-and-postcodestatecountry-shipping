@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.0.4
+Version: 2.2.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -161,21 +161,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			//Pinta el formulario
 			public function admin_options() {
 				include_once( 'includes/formulario.php' );
-			}
-			
-			//Fuerza a mostrar el formulario
-			public function get_instance_form_fields() {
-				if ( is_admin() ) {
-					wc_enqueue_js( "
-						jQuery( function( $ ) {
-							$( document ).on( 'mouseover', '.wc-shipping-zone-method-rows', function() {
-								$( 'a.wc-shipping-zone-method-settings' ).removeClass( 'wc-shipping-zone-method-settings' );
-							} );
-						} );
-					" );
-				}
-
-				return parent::get_instance_form_fields();
 			}
 	
 			//Función que lee y devuelve los tipos de clases de envío
@@ -412,7 +397,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	
 				return $tarifas;
 			}
-	
+
 			//Selecciona la tarifa más barata
 			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases ) {
 				//Variables
@@ -429,7 +414,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				//Reajustamos pesos
 				foreach ( $clases as $clase => $peso ) {
-					if ( $clase != 'todas' ) {
+					if ( $clase != 'todas' && apg_busca_en_array( $clase, $tarifas ) ) {
 						$clases['todas'] -= $peso;
 					}
 				}
@@ -462,16 +447,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 					
 					//Comprobamos clases de envío
-					if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) {
-						$clase_de_envio = $tarifa[2];
-					} else	if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && !array_key_exists( $tarifa[2], $clases ) ) {
-						$clase_de_envio = 'todas';					
-					} else if ( !isset( $tarifa[2] ) || !stripos( $tarifa[2], "x" ) ) {
-						$clase_de_envio = 'sin-clase';					
+					if ( $clases['todas'] == $peso_total ) {
+						$clase_de_envio = 'todas';
+					} else {
+						if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) {
+							$clase_de_envio = $tarifa[2];
+						} else if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && !array_key_exists( $tarifa[2], $clases ) ) {
+							$clase_de_envio = 'todas';					
+						} else if ( !isset( $tarifa[2] ) || !stripos( $tarifa[2], "x" ) ) {
+							$clase_de_envio = 'sin-clase';					
+						}
 					}
 					//Prevenimos errores
 					if ( $clase_de_envio == 'sin-clase' && !isset( $clases['sin-clase'] ) ) {
-						$clase_de_envio = 'todas';					
+						$clase_de_envio = 'todas';
 					}
 					if ( $clase_de_envio_anterior != $clase_de_envio ) {
 						$clase_de_envio_anterior	= $clase_de_envio;
@@ -568,6 +557,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago' );
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
+}
+
+//Busca en un array multidimensional
+function apg_busca_en_array( $busqueda, $array_de_busqueda, $extricto = true ) {
+	foreach ( $array_de_busqueda as $valor_a_comparar ) {
+		if ( ( $extricto ? $valor_a_comparar === $busqueda : $valor_a_comparar == $busqueda ) || ( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $extricto ) ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //Muestra el icono

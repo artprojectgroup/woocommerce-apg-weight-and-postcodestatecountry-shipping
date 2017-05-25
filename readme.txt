@@ -207,7 +207,7 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 * Fixed bug detected in additional fee calculating.
 * Fixed bug detected in partial taxes calculating.
 = 1.7.3.5 =
-* Fixed bug detected in additional fee calculation.
+* Fixed bug detected in additional fee calculating.
 * Fixed bug detected in maximum price returning.
 = 1.7.3.4 =
 * Fixed bug detected in taxes calculation.

@@ -315,7 +315,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Permite vincular el envío con una, varias o todas las clases de envío del sistema.
 * Permite crear tarifas no ascendentes.
 * Nuevos enlaces e iconos.
-* Nueva captura de pantalla.
+* Actualización de la hoja de estilo.
 
 ### 1.5.1.1
 * Modificación de la URL del plugin en Art Project Group.
@@ -376,7 +376,7 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 * Eliminación de imagen externa por otra local.
 
 ### 1.0
-* Actualización de las hojas de estilo acorde al nuevo WordPress 8.
+* Actualización de las hojas de estilo acorde al nuevo WordPress.
 * Arreglo de pequeños errores en el código.
 
 ### 0.9

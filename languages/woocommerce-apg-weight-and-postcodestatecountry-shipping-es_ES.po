@@ -3,9 +3,9 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-18 16:49+0000\n"
-"PO-Revision-Date: 2017-03-18 16:49+0000\n"
-"Last-Translator: artprojectgroup <artprojectgroup@gmail.com>\n"
+"POT-Creation-Date: 2017-05-29 07:47+0000\n"
+"PO-Revision-Date: 2017-05-29 07:47+0000\n"
+"Last-Translator: Emilio José Calvo Carrasco <artprojectgroup@gmail.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es-ES\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
@@ -27,22 +27,9 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Loco-Target-Locale: es_ES"
 
-#: includes/admin/campos.php:107
-msgid "Guest"
-msgstr "Invitado"
-
-#: includes/admin/campos.php:111
-msgid "Payment gateway"
-msgstr "Medio de pago"
-
-#: includes/admin/campos.php:112
-#, php-format
-msgid "Payment gateway available for %s"
-msgstr "Medio de pago disponible para %s"
-
-#: includes/admin/campos.php:120
-msgid "All enabled payments"
-msgstr "Todos los medios de pago"
+#. Author URI of the plugin
+msgid "https://artprojectgroup.es/"
+msgstr "https://artprojectgroup.es/"
 
 #: apg-shipping.php:49 includes/cuadro-informacion.php:7
 msgid "Make a donation by "
@@ -68,7 +55,7 @@ msgstr "Contacta con nosotros por "
 msgid "Settings of "
 msgstr "Ajustes de "
 
-#: apg-shipping.php:66 apg-shipping.php:636
+#: apg-shipping.php:66 apg-shipping.php:649
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -112,30 +99,30 @@ msgstr ""
 "(estado)/país y agrupar los grupos que comparten el mismo precio/franja de "
 "gasto de envío."
 
-#: apg-shipping.php:187
+#: apg-shipping.php:174
 msgid "Select a class&hellip;"
 msgstr "Selecciona una clase&hellip;"
 
-#: apg-shipping.php:579
+#: apg-shipping.php:592
 #, php-format
 msgid "Estimated delivery time: %s"
 msgstr "Tiempo de entrega estimado: %s"
 
-#: apg-shipping.php:590
+#: apg-shipping.php:603
 msgid "This plugin require WooCommerce active to run!"
 msgstr "¡Este plugin necesita WooCommerce activo para funcionar!"
 
-#: apg-shipping.php:629 includes/cuadro-informacion.php:44
+#: apg-shipping.php:642 includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr "Por favor, puntúa %s:"
 
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr "Por favor, actualice sus %s. ¡Es muy importante!"
 
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 msgid "settings"
 msgstr "ajustes"
 
@@ -341,6 +328,23 @@ msgstr "Sin envíos (Rol de usuario)"
 msgid "Select the user role where %s doesn't accept shippings."
 msgstr "Selecciona el rol de usuario donde %s no aceptará envíos."
 
+#: includes/admin/campos.php:107
+msgid "Guest"
+msgstr "Invitado"
+
+#: includes/admin/campos.php:111
+msgid "Payment gateway"
+msgstr "Medio de pago"
+
+#: includes/admin/campos.php:112
+#, php-format
+msgid "Payment gateway available for %s"
+msgstr "Medio de pago disponible para %s"
+
+#: includes/admin/campos.php:120
+msgid "All enabled payments"
+msgstr "Todos los medios de pago"
+
 #: includes/admin/campos.php:124
 msgid "Icon image"
 msgstr "Imagen personalizada"
@@ -422,7 +426,3 @@ msgstr ""
 #. Author of the plugin
 msgid "Art Project Group"
 msgstr "Art Project Group"
-
-#. Author URI of the plugin
-msgid "http://artprojectgroup.es/"
-msgstr "http://artprojectgroup.es/"

@@ -3,16 +3,16 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-18 16:49+0000\n"
-"PO-Revision-Date: 2017-03-18 16:49+0000\n"
-"Last-Translator: artprojectgroup <artprojectgroup@gmail.com>\n"
-"Language-Team: Portuguese (Brazil)\n"
-"Language: pt-BR\n"
+"POT-Creation-Date: 2017-05-29 07:48+0000\n"
+"PO-Revision-Date: 2017-05-29 07:48+0000\n"
+"Last-Translator: Emilio José Calvo Carrasco <artprojectgroup@gmail.com>\n"
+"Language-Team: Italian\n"
+"Language: it-IT\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: Loco - https://localise.biz/\n"
 "X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
 "__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
@@ -22,7 +22,7 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: ../..\n"
 "X-Poedit-Basepath: .\n"
-"X-Loco-Target-Locale: pt_BR"
+"X-Loco-Target-Locale: it_IT"
 
 #: apg-shipping.php:82
 msgid ""
@@ -33,11 +33,11 @@ msgid ""
 "WooCommerce 2.6 and you'll lose it</em>."
 msgstr ""
 
-#: apg-shipping.php:187
+#: apg-shipping.php:174
 msgid "Select a class&hellip;"
 msgstr ""
 
-#: apg-shipping.php:579
+#: apg-shipping.php:592
 #, php-format
 msgid "Estimated delivery time: %s"
 msgstr ""
@@ -202,10 +202,14 @@ msgid ""
 "href=\"http://gist.github.com/Mantish/5658280\" target=\"_blank\">GitHub</a>."
 msgstr ""
 
+#. Author URI of the plugin
+msgid "https://artprojectgroup.es/"
+msgstr "https://artprojectgroup.es/"
+
 # @ apg_shipping
 #: apg-shipping.php:49 includes/cuadro-informacion.php:7
 msgid "Make a donation by "
-msgstr "Faça uma doação para "
+msgstr "Fai una donazione da"
 
 # @ apg_shipping
 #: apg-shipping.php:51 apg-shipping.php:51 apg-shipping.php:51
@@ -213,43 +217,43 @@ msgstr "Faça uma doação para "
 #: includes/cuadro-informacion.php:19 includes/cuadro-informacion.php:19
 #: includes/cuadro-informacion.php:19
 msgid "Follow us on "
-msgstr "Siga a gente "
+msgstr "Seguici su "
 
 # @ apg_shipping
 #: apg-shipping.php:52 includes/cuadro-informacion.php:25
 msgid "More plugins on "
-msgstr "Mais plugins em "
+msgstr "Più plugin su "
 
 # @ apg_shipping
 #: apg-shipping.php:53 apg-shipping.php:53 includes/cuadro-informacion.php:33
 #: includes/cuadro-informacion.php:33
 msgid "Contact with us by "
-msgstr "Entre em contato conosco por "
+msgstr "Contattaci da "
 
 # @ apg_shipping
 #: apg-shipping.php:66
 msgid "Settings of "
-msgstr "Configurações de "
+msgstr "Configurazioni di "
 
 # @ apg_shipping
-#: apg-shipping.php:66 apg-shipping.php:636
+#: apg-shipping.php:66 apg-shipping.php:649
 msgid "Settings"
-msgstr "Configurações"
+msgstr "Configurazione"
 
 # @ apg_shipping
 #: apg-shipping.php:67
 msgid "Support of "
-msgstr "Suporte de "
+msgstr "Supporto di "
 
 # @ apg_shipping
 #: apg-shipping.php:67 includes/cuadro-informacion.php:39
 msgid "Support"
-msgstr "Suporte técnico"
+msgstr "Supporto"
 
 # @ apg_shipping
 #: apg-shipping.php:109 includes/admin/campos.php:18
 msgid "APG Shipping"
-msgstr "Calculadora de frete APG"
+msgstr "APG Shipping"
 
 # @ apg_shipping
 #: apg-shipping.php:110
@@ -259,108 +263,107 @@ msgid ""
 "postcode/state/country basis and group the groups that that share same "
 "delivery cost/bands."
 msgstr ""
-"Permite calcular o custo de frete baseado no grupo de CEP/Estado/País e peso "
-"da remessa. Permite definir um número ilimitado de faixas de peso por código "
-"postal/estado/país e agrupar os grupos de entrega que compartilham o mesmo "
-"custo/faixas de peso."
+"Permetti di calcolare i costi di spedizione basandosi sul "
+"CAP/Provincia/Nazione e peso del carrello. Permette di inserire un "
+"illimintato range di prezzi suddivisi per CAP/Provincia/Nazione e "
+"condividere i gruppi che condividono lo stesso prezzo/range."
 
-#: apg-shipping.php:590
+#: apg-shipping.php:603
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
-"Este plugin\n"
+"Questo plugin\n"
 " \n"
-"requer\n"
+"richiede\n"
 " \n"
 "WooCommerce\n"
 " \n"
-"ativa\n"
+"attivo\n"
 " \n"
-"para executar\n"
-"!"
+"a correre!"
 
 # @ apg_shipping
-#: apg-shipping.php:629 includes/cuadro-informacion.php:44
+#: apg-shipping.php:642 includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
-msgstr "Por favor, qualifique %s:"
+msgstr "Per favore vota %s:"
 
 # @ apg_shipping
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 #, php-format
 msgid "Please, update your %s. It's very important!"
-msgstr "Por favor, actualize seu %s. É muito importante!"
+msgstr "Per favore aggiorna il tuo %s. E’ importantissimo!"
 
 # @ apg_shipping
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 msgid "settings"
-msgstr "configurações"
+msgstr "configurazioni"
 
 # @ apg_shipping
 #: includes/cuadro-informacion.php:5
 msgid "If you enjoyed and find helpful this plugin, please make a donation:"
-msgstr "Se você achou este plugin útil, por favor, faça uma doação:"
+msgstr "Se questo plugin ti ha aiutato, per favore fai una donazione:"
 
 # @ apg_shipping
 #: includes/cuadro-informacion.php:17
 msgid "Follow us:"
-msgstr "Siga a gente:"
+msgstr "Seguici:"
 
 # @ apg_shipping
 #: includes/cuadro-informacion.php:23
 msgid "More plugins:"
-msgstr "Mais plugins:"
+msgstr "Più plugin:"
 
 # @ apg_shipping
 #: includes/cuadro-informacion.php:31
 msgid "Contact with us:"
-msgstr "Entre em contato:"
+msgstr "Contattaci:"
 
 # @ apg_shipping
 #: includes/cuadro-informacion.php:37
 msgid "Documentation and Support:"
-msgstr "Documentação e suporte:"
+msgstr "Documentazione e Supporto:"
 
 # @ apg_shipping
 #: includes/admin/campos.php:15
 msgid "Method Title"
-msgstr "Título do Método de Envio"
+msgstr "Titolo del metodo di spedizione"
 
 # @ apg_shipping
 #: includes/admin/campos.php:17
 msgid "This controls the title which the user sees during checkout."
-msgstr "Define o título do frete que o usuário verá durante o checkout."
+msgstr "La descrizione che l’utente vede durante il checkout"
 
 # @ apg_shipping
 #: includes/admin/campos.php:21
 msgid "Tax Status"
-msgstr "Situação Fiscal"
+msgstr "Situazione delle imposte"
 
 # @ apg_shipping
 #: includes/admin/campos.php:26
 msgid "Taxable"
-msgstr "Tributável"
+msgstr "Tassabile"
 
 # @ apg_shipping
 #: includes/admin/campos.php:27
 msgid "None"
-msgstr "Não Tributável"
+msgstr "No"
 
 # @ apg_shipping
 #: includes/admin/campos.php:31
 msgid "Handling Fee"
-msgstr "Taxa de Manuseio"
+msgstr "Tassa di manipolazione"
 
 # @ apg_shipping
 #: includes/admin/campos.php:33
 msgid "Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable."
 msgstr ""
-"Taxa de manuseio excluindo impostos. Digite um valor, por exemplo, 2.50. "
-"Deixe em branco para desabilitar."
+"Quota tasse escluse. Inserisci un valore, per esempio 2.50. Lascia vuoto per "
+"disabilitare."
 
 # @ apg_shipping
 #: includes/admin/campos.php:39
 msgid "Additional Fee"
-msgstr "Taxas Adicionais"
+msgstr "Quota aggiuntiva"
 
 # @ apg_shipping
 #: includes/admin/campos.php:41
@@ -368,46 +371,45 @@ msgid ""
 "Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g."
 " 6%. Leave blank to disable."
 msgstr ""
-"Taxa adicional excluindo impostos. Digite um valor, por exemplo, 2,50, ou "
-"porcentagem, por exemplo, 6%. Deixe em branco para desabilitar."
+"Quota aggiuntiva escluso tasse. Inserisce un valore, per esempio 2.50, o una "
+"percentuale, 6%. Lascia vuoto per disabilitare."
 
 # @ apg_shipping
 #: includes/admin/campos.php:54
 msgid "Shipping Rates"
-msgstr "Tarifas de envío"
+msgstr "Prezzi di spedizione"
 
 # @ apg_shipping
 #: includes/admin/campos.php:59
 #, php-format
 msgid "Remember your weight unit: %s, and dimensions unit: %s."
-msgstr ""
-"Lembre-se que sua unidade de peso é: %s, e sua unidade de medida é: %s."
+msgstr "Ricorda: la tua unità di peso è %s, e quella delle dimensioni è: %s."
 
 # @ apg_shipping
 #: includes/admin/campos.php:80
 msgid "Overweight/over dimensions"
-msgstr "Peso e/ou dimensões acima do definido"
+msgstr "Superamento di peso/dimensioni"
 
 # @ apg_shipping
 #: includes/admin/campos.php:82
 msgid "Return the maximum price."
-msgstr "Retorne o preço máximo."
+msgstr "Mostra il prezzo massimo."
 
 # @ apg_shipping
 #: includes/admin/campos.php:88
 msgid "No shipping (Shipping class)"
-msgstr "Sem envio (Classe de envio)"
+msgstr "Nessun Invio (Tipo di Invio)"
 
 # @ apg_shipping
 #: includes/admin/campos.php:89
 #, php-format
 msgid "Select the shipping class where %s doesn't accept shippings."
-msgstr "Selecione a classe de envios onde %s no ceitará envios."
+msgstr "Seleziona le classi di Invio dove %s non accetta gli invii."
 
 # @ apg_shipping
 #: includes/admin/campos.php:95
 msgid "All enabled shipping class"
-msgstr "Todas as classes de envio disponíveis"
+msgstr "Tutti i tipi spedizioni abilitati"
 
 #. Name of the plugin
 msgid "WooCommerce - APG Weight and Postcode/State/Country Shipping"
@@ -424,7 +426,3 @@ msgstr ""
 #. Author of the plugin
 msgid "Art Project Group"
 msgstr "Art Project Group"
-
-#. Author URI of the plugin
-msgid "http://artprojectgroup.es/"
-msgstr "http://artprojectgroup.es/"

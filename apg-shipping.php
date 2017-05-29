@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.1
+Version: 2.2.1.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -9,7 +9,7 @@ Author: Art Project Group
 Requires at least: 3.8
 Tested up to: 4.8
 
-Text Domain: apg_shipping
+Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
 
 @package WooCommerce - APG Weight and Postcode/State/Country Shipping
@@ -38,7 +38,7 @@ $apg_shipping = array(
 $medios_de_pago = array();
 
 //Carga el idioma
-load_plugin_textdomain( 'apg_shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );
+load_plugin_textdomain( 'woocommerce-apg-weight-and-postcodestatecountry-shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {
@@ -46,11 +46,11 @@ function apg_shipping_enlaces( $enlaces, $archivo ) {
 
 	if ( $archivo == DIRECCION_apg_shipping ) {
 		$plugin = apg_shipping_plugin( $apg_shipping['plugin_uri'] );
-		$enlaces[] = '<a href="' . $apg_shipping['donacion'] . '" target="_blank" title="' . __( 'Make a donation by ', 'apg_shipping' ) . 'APG"><span class="genericon genericon-cart"></span></a>';
+		$enlaces[] = '<a href="' . $apg_shipping['donacion'] . '" target="_blank" title="' . __( 'Make a donation by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'APG"><span class="genericon genericon-cart"></span></a>';
 		$enlaces[] = '<a href="'. $apg_shipping['plugin_url'] . '" target="_blank" title="' . $apg_shipping['plugin'] . '"><strong class="artprojectgroup">APG</strong></a>';
-		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . __( 'Follow us on ', 'apg_shipping' ) . 'Facebook" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://twitter.com/artprojectgroup" title="' . __( 'Follow us on ', 'apg_shipping' ) . 'Twitter" target="_blank"><span class="genericon genericon-twitter"></span></a> <a href="https://plus.google.com/+ArtProjectGroupES" title="' . __( 'Follow us on ', 'apg_shipping' ) . 'Google+" target="_blank"><span class="genericon genericon-googleplus-alt"></span></a> <a href="http://es.linkedin.com/in/artprojectgroup" title="' . __( 'Follow us on ', 'apg_shipping' ) . 'LinkedIn" target="_blank"><span class="genericon genericon-linkedin"></span></a>';
-		$enlaces[] = '<a href="https://profiles.wordpress.org/artprojectgroup/" title="' . __( 'More plugins on ', 'apg_shipping' ) . 'WordPress" target="_blank"><span class="genericon genericon-wordpress"></span></a>';
-		$enlaces[] = '<a href="mailto:info@artprojectgroup.es" title="' . __( 'Contact with us by ', 'apg_shipping' ) . 'e-mail"><span class="genericon genericon-mail"></span></a> <a href="skype:artprojectgroup" title="' . __( 'Contact with us by ', 'apg_shipping' ) . 'Skype"><span class="genericon genericon-skype"></span></a>';
+		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Facebook" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://twitter.com/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Twitter" target="_blank"><span class="genericon genericon-twitter"></span></a> <a href="https://plus.google.com/+ArtProjectGroupES" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Google+" target="_blank"><span class="genericon genericon-googleplus-alt"></span></a> <a href="http://es.linkedin.com/in/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'LinkedIn" target="_blank"><span class="genericon genericon-linkedin"></span></a>';
+		$enlaces[] = '<a href="https://profiles.wordpress.org/artprojectgroup/" title="' . __( 'More plugins on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'WordPress" target="_blank"><span class="genericon genericon-wordpress"></span></a>';
+		$enlaces[] = '<a href="mailto:info@artprojectgroup.es" title="' . __( 'Contact with us by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'e-mail"><span class="genericon genericon-mail"></span></a> <a href="skype:artprojectgroup" title="' . __( 'Contact with us by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Skype"><span class="genericon genericon-skype"></span></a>';
 		$enlaces[] = apg_shipping_plugin( $apg_shipping['plugin_uri'] );
 	}
 	
@@ -63,8 +63,8 @@ function apg_shipping_enlace_de_ajustes( $enlaces ) {
 	global $apg_shipping;
 
 	$enlaces_de_ajustes = array(
-		'<a href="' . $apg_shipping['ajustes'] . '" title="' . __( 'Settings of ', 'apg_shipping' ) . $apg_shipping['plugin'] .'">' . __( 'Settings', 'apg_shipping' ) . '</a>', 
-		'<a href="' . $apg_shipping['soporte'] . '" title="' . __( 'Support of ', 'apg_shipping' ) . $apg_shipping['plugin'] .'">' . __( 'Support', 'apg_shipping' ) . '</a>'
+		'<a href="' . $apg_shipping['ajustes'] . '" title="' . __( 'Settings of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping['plugin'] .'">' . __( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>', 
+		'<a href="' . $apg_shipping['soporte'] . '" title="' . __( 'Support of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping['plugin'] .'">' . __( 'Support', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>'
 	);
 	foreach ( $enlaces_de_ajustes as $enlace_de_ajustes ) {
 		array_unshift( $enlaces, $enlace_de_ajustes );
@@ -79,7 +79,7 @@ add_filter( "plugin_action_links_$plugin", 'apg_shipping_enlace_de_ajustes' );
 function apg_shipping_noficacion( $datos_version_actual, $datos_nueva_version ) {
 	if ( isset( $datos_nueva_version->upgrade_notice ) && strlen( trim( $datos_nueva_version->upgrade_notice ) ) > 0 && (float) $datos_version_actual['Version'] < 2.0 ){
         $mensaje = '</p><div class="wc_plugin_upgrade_notice">';
-		$mensaje .= __( "<h4>ALERT: 2.0 is a major update</h4>It’s important that you make backups of your <strong>WooCommerce - APG Weight and Postcode/State/Country Shipping</strong> current configuration and configure it again after upgrade.<br /><em>Remember, the current setting is totally incompatible with WooCommerce 2.6 and you'll lose it</em>.", "apg_shipping" );
+		$mensaje .= __( "<h4>ALERT: 2.0 is a major update</h4>It’s important that you make backups of your <strong>WooCommerce - APG Weight and Postcode/State/Country Shipping</strong> current configuration and configure it again after upgrade.<br /><em>Remember, the current setting is totally incompatible with WooCommerce 2.6 and you'll lose it</em>.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
         $mensaje .= '</div><p>';
 		
 		echo $mensaje;
@@ -104,10 +104,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public $clases_de_envio_tarifas	= "";
 	
 			public function __construct( $instance_id = 0 ) {
-				$this->id					= 'apg_shipping';
+				$this->id					= 'woocommerce-apg-weight-and-postcodestatecountry-shipping';
 				$this->instance_id			= absint( $instance_id );
-				$this->method_title			= __( "APG Shipping", 'apg_shipping' );
-				$this->method_description	= __( 'Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands.', 'apg_shipping' );
+				$this->method_title			= __( "APG Shipping", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
+				$this->method_description	= __( 'Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 				$this->supports				= array(
 					'shipping-zones',
 					'instance-settings',
@@ -171,7 +171,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$this->clases_de_envio_tarifas .= esc_attr( $clase_de_envio->slug ) . " -> " . $clase_de_envio->name . ", ";
 					}
 				} else {
-					$this->clases_de_envio[] = __( 'Select a class&hellip;', 'apg_shipping' );
+					$this->clases_de_envio[] = __( 'Select a class&hellip;', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 				}
 				$this->clases_de_envio_tarifas = substr( $this->clases_de_envio_tarifas, 0, -2 ) . ".";
 			}	
@@ -589,7 +589,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	}
 	//Tiempo de entrega
 	if ( !empty( $configuracion['entrega'] ) ) {
-		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'apg_shipping' ), $configuracion['entrega'] ) . '</small>';
+		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $configuracion['entrega'] ) . '</small>';
 	}
 	
 	return $etiqueta;
@@ -600,7 +600,7 @@ add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono',
 function apg_shipping_requiere_wc() {
 	global $apg_shipping;
 		
-	echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . __( "This plugin require WooCommerce active to run!", 'apg_shipping' ) . '</h4></div>';
+	echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . __( "This plugin require WooCommerce active to run!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4></div>';
 	deactivate_plugins( DIRECCION_apg_shipping );
 }
 
@@ -639,14 +639,14 @@ function apg_shipping_plugin( $nombre ) {
 	$estrellas = ob_get_contents();
 	ob_end_clean();
 
-	return '<a title="' . sprintf( __( 'Please, rate %s:', 'apg_shipping' ), $apg_shipping['plugin'] ) . '" href="' . $apg_shipping['puntuacion'] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
+	return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping['plugin'] ) . '" href="' . $apg_shipping['puntuacion'] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
 }
 
 //Muestra el mensaje de actualización
 function apg_shipping_actualizacion() {
 	global $apg_shipping;
 	
-    echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . sprintf( __( "Please, update your %s. It's very important!", 'apg_shipping' ), '<a href="' . $apg_shipping['ajustes'] . '" title="' . __( 'Settings', 'apg_shipping' ) . '">' . __( 'settings', 'apg_shipping' ) . '</a>' ) . '</h4></div>';
+    echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . sprintf( __( "Please, update your %s. It's very important!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), '<a href="' . $apg_shipping['ajustes'] . '" title="' . __( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '">' . __( 'settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>' ) . '</h4></div>';
 }
 
 //Carga las hojas de estilo

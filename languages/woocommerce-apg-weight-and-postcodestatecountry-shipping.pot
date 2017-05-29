@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-18 16:48+0000\n"
+"POT-Creation-Date: 2017-05-29 07:47+0000\n"
 "POT-Revision-Date: Thu Aug 11 2016 14:13:55 GMT+0200 (CEST)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Settings of "
 msgstr ""
 
-#: apg-shipping.php:66 apg-shipping.php:636
+#: apg-shipping.php:66 apg-shipping.php:649
 msgid "Settings"
 msgstr ""
 
@@ -81,30 +81,30 @@ msgid ""
 "delivery cost/bands."
 msgstr ""
 
-#: apg-shipping.php:187
+#: apg-shipping.php:174
 msgid "Select a class&hellip;"
 msgstr ""
 
-#: apg-shipping.php:579
+#: apg-shipping.php:592
 #, php-format
 msgid "Estimated delivery time: %s"
 msgstr ""
 
-#: apg-shipping.php:590
+#: apg-shipping.php:603
 msgid "This plugin require WooCommerce active to run!"
 msgstr ""
 
-#: apg-shipping.php:629 includes/cuadro-informacion.php:44
+#: apg-shipping.php:642 includes/cuadro-informacion.php:44
 #, php-format
 msgid "Please, rate %s:"
 msgstr ""
 
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 #, php-format
 msgid "Please, update your %s. It's very important!"
 msgstr ""
 
-#: apg-shipping.php:636
+#: apg-shipping.php:649
 msgid "settings"
 msgstr ""
 
@@ -371,5 +371,5 @@ msgid "Art Project Group"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "http://artprojectgroup.es/"
+msgid "https://artprojectgroup.es/"
 msgstr ""

@@ -1,12 +1,12 @@
 === WooCommerce - APG Weight and Postcode/State/Country Shipping ===
 Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
-Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
+Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles
 Requires at least: 3.8
 Tested up to: 4.8
-Stable tag: 2.2.1.2
+Stable tag: 2.2.1.3
 WC requires at least: 2.6
-WC tested up to: 3.0.7
+WC tested up to: 3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -32,6 +32,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can hide payment gateways.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
+* Fully compatible with [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 
 = Translations =
 * Español ([**Art Project Group**](https://artprojectgroup.es/)).
@@ -88,6 +89,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.2.1.3 = 
+* Support for [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 = 2.2.1.2 = 
 * Fixed plugin configuration.
 = 2.2.1.1 = 
@@ -349,8 +352,8 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 * Initial version.
 
 == Upgrade Notice ==
-= 2.2.1.2 = 
-* Fixed plugin configuration.
+= 2.2.1.3 = 
+* Support for [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

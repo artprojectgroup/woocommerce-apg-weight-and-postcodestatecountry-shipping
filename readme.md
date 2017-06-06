@@ -3,17 +3,17 @@ Contributors: artprojectgroup
 
 Donate link: https://artprojectgroup.es/tienda/donacion
 
-Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes
+Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles
 
 Requires at least: 3.8
 
 Tested up to: 4.8
 
-Stable tag: 2.2.1.2
+Stable tag: 2.2.1.3
 
 WC requires at least: 2.6
 
-WC tested up to: 3.0.7
+WC tested up to: 3.1
 
 License: GPLv3
 
@@ -41,6 +41,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes ocultar medios de pago.
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
+* Totalmente compatible con el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
 
 ### Traducciones
 * Español ([**Art Project Group**](https://artprojectgroup.es/)).
@@ -93,6 +94,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.2.1.3
+* Soporte para el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
+
 ### 2.2.1.2
 * Arreglo de configuración del plugin.
 

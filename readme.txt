@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles
 Requires at least: 3.8
 Tested up to: 4.8
-Stable tag: 2.2.1.3
+Stable tag: 2.2.1.4
 WC requires at least: 2.6
 WC tested up to: 3.1
 License: GPLv3
@@ -89,6 +89,9 @@ If you need help to configuring or installing **WooCommerce - APG Weight and Pos
 2. Screenshot of WooCommerce - APG Weight and Postcode/State/Country Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.2.1.4 =
+* Adjust to optimize WooCommerce Product Bundles compatibility.
+* Fixed bug with WooCommerce Germanized Pro.
 = 2.2.1.3 = 
 * Support for [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 = 2.2.1.2 = 

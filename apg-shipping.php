@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.1.3
+Version: 2.2.1.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -260,9 +260,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 					}
 					
-					//Arregla un problema con los pesos en variaciones virtuales
-					if ( $producto->is_virtual() ) {
-						$peso_total -= $peso;
+					//Ajuste para los productos virtual y bundle
+					if ( $producto->is_virtual() && !isset( $valores['bundled_by'] ) ) {
+						$peso_total			-= $peso;
+						$productos_totales	-= $valores['quantity'];
+						$precio_total		-= $precio;
 					}
 
 					//Medidas y volúmenes
@@ -530,7 +532,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	function apg_shipping_filtra_medios_de_pago( $medios ) {
 		if ( isset( WC()->session->chosen_shipping_methods ) ) {
 			$id = explode( ":", WC()->session->chosen_shipping_methods[0] );
-		} else if ( isset( $_POST['shipping_method'] ) ) {
+		} else if ( isset( $_POST['shipping_method'][0] ) ) {
 			$id = explode( ":", $_POST['shipping_method'][0] );
 		}
 		if ( empty( $id ) ) {

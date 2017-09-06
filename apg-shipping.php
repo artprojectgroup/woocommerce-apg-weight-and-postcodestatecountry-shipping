@@ -1,13 +1,15 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.1.4
+Version: 2.2.1.5
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.8
+Tested up to: 4.9
+WC requires at least: 2.6
+WC tested up to: 3.2
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -87,8 +89,8 @@ function apg_shipping_noficacion( $datos_version_actual, $datos_nueva_version ) 
 }
 add_action( 'in_plugin_update_message-woocommerce-apg-weight-and-postcodestatecountry-shipping/apg-shipping.php', 'apg_shipping_noficacion', 10, 2 );
 
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 //¿Está activo WooCommerce?
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
 	//Contine la clase que crea los nuevos gastos de envío
 	function apg_shipping_inicio() {
@@ -227,6 +229,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				//Precio total del pedido
 				$precio_total = WC()->cart->get_displayed_subtotal();
 
+				//Comprobamos si está activo WPML para coger la traducción correcta de la clase de envío
+				if ( function_exists('icl_object_id') ) {
+					global $sitepress;
+					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
+				}
+
 				//Toma distintos datos de los productos
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
 					$producto = $valores['data'];
@@ -287,7 +295,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$alto = $producto->get_height();
 					}
 
-					//Clase de producto
+					//Clase de envío
 					if ( $producto->needs_shipping() ) {
 						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
 						//Inicializamos la clase general
@@ -306,6 +314,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 							$clases[$clase] += $cantidad;
 						}
 					}
+				}
+
+				//Comprobamos si está activo WPML para devolverlo al idioma que estaba activo
+				if ( function_exists('icl_object_id') ) {
+					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
 				}
 				
 				if ( $this->tipo_tarifas == "unidad" ) {
@@ -659,14 +672,15 @@ function apg_shipping_actualizacion() {
 function apg_shipping_muestra_mensaje() {
 	global $medios_de_pago;
 	
+	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
 		$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
 	}
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', __FILE__ ) ); //Carga la hoja de estilo global
 	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', __FILE__ ) );
 
-	$configuracion = get_option( 'woocommerce_apg_shipping_settings' );
-	/*if ( !isset( $configuracion['maximo'] ) ) {
+	/*$configuracion = get_option( 'woocommerce_apg_shipping_settings' );
+	if ( !isset( $configuracion['maximo'] ) ) {
 		add_action( 'admin_notices', 'apg_shipping_actualizacion' ); //Comprueba si hay que mostrar el mensaje de actualización
 	}*/
 }
@@ -682,4 +696,3 @@ function apg_shipping_desinstalar() {
 	delete_transient( 'apg_shipping_plugin' );
 }
 register_uninstall_hook( __FILE__, 'apg_shipping_desinstalar' );
-?>

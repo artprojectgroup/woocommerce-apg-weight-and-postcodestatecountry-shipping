@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 4.9
 
-Stable tag: 2.2.1.5
+Stable tag: 2.2.1.6
 
 WC requires at least: 2.6
 
@@ -95,6 +95,9 @@ Si necesitas ayuda para configurar o instalar **WooCommerce - APG Weight and Pos
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.2.1.6
+* Arreglo de campos rotos.
+
 ### 2.2.1.5
 * Soporte para el plugin [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS).
 

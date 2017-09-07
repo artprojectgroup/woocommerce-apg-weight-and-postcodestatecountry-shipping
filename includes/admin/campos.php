@@ -96,6 +96,7 @@ if ( WC()->shipping->get_shipping_classes() ) {
 		) + $this->clases_de_envio,
 	);
 }
+/*
 $campos['tipo_clases'] = array(
 	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
@@ -103,6 +104,7 @@ $campos['tipo_clases'] = array(
 	'desc_tip'		=> __( 'To apply additional fee for the number of items.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'default'		=> 'no',
 );
+*/
 $campos['roles_excluidos'] = array( 
 	'title'			=> __( 'No shipping (User role)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'desc_tip' 		=> sprintf( __( "Select the user role where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
@@ -114,6 +116,7 @@ $campos['roles_excluidos'] = array(
 		'invitado'		=> __( 'Guest', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
 	) + $this->roles_de_usuario,
 );
+/*
 $campos['tipo_roles'] = array(
 	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
@@ -121,6 +124,7 @@ $campos['tipo_roles'] = array(
 	'desc_tip'		=> __( 'To apply additional fee for the number of items.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'default'		=> 'no',
 );
+*/
 $campos['pago'] = array(
 	'title'			=> __( 'Payment gateway', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'desc_tip'		=> sprintf( __( "Payment gateway available for %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),

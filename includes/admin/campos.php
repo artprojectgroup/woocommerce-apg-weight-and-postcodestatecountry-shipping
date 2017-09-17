@@ -164,5 +164,12 @@ $campos['entrega'] = array(
 		'default'		=> '',
 		'desc_tip'		=> true,
 );
+$campos['debug'] = array(
+	'title'			=> __( 'Show debug information?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+	'type'			=> 'checkbox',
+	'label'			=> __( 'Check if you want to show debug information on the cart page.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+	'desc_tip'		=> __( 'Displays the variables sent to the function dame_tarifa_mas_barata.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+	'default'		=> 'no',
+);
 
 return $campos;

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.1.6
+Version: 2.2.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -145,6 +145,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'icono',
 					'muestra_icono',
 					'entrega',
+					'debug',
 				);
 				foreach ( $campos as $campo ) {
 					$this->$campo = $this->get_option( $campo );
@@ -230,7 +231,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$precio_total = WC()->cart->get_displayed_subtotal();
 
 				//Comprobamos si está activo WPML para coger la traducción correcta de la clase de envío
-				if ( function_exists('icl_object_id') ) {
+				if ( function_exists('icl_object_id') && !function_exists( 'pll_the_languages' ) ) {
 					global $sitepress;
 					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
 				}
@@ -317,7 +318,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				}
 
 				//Comprobamos si está activo WPML para devolverlo al idioma que estaba activo
-				if ( function_exists('icl_object_id') ) {
+				if ( function_exists('icl_object_id') && !function_exists( 'pll_the_languages' ) ) {
 					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
 				}
 				
@@ -329,6 +330,19 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				if ( empty( $medidas ) && empty( $clases ) ) {
 					return false; //No hay productos
+				}
+				
+				//Muestra información de depuración
+				if ( $this->debug == 'yes' ) {
+					echo "<pre>";
+					echo "Peso total: " . $peso_total . PHP_EOL; 
+					echo "Volumen: " . $volumen . PHP_EOL; 
+					echo "Largo: " . $largo . PHP_EOL; 
+					echo "Ancho: " . $ancho . PHP_EOL; 
+					echo "Alto: " . $alto . PHP_EOL;  
+					echo "Medidas: " . print_r( $medidas, true ) . PHP_EOL; 
+					echo "Clases: " . print_r( $clases, true );
+					echo "</pre>";
 				}
 
 				$tarifas = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases ); //Filtra las tarifas

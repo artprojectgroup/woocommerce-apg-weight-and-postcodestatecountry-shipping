@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WooCommerce - APG Weight and Postcode/State/Country Shipping
-Version: 2.2.2
+Version: 2.2.2.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="http://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="http://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="http://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> publicada en <a href="http://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 4.9
+Tested up to: 4.9.1
 WC requires at least: 2.6
-WC tested up to: 3.2
+WC tested up to: 3.3
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -32,7 +32,7 @@ $apg_shipping = array(
 	'plugin' 		=> 'WooCommerce - APG Weight and Postcode/State/Country Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'donacion' 		=> 'https://artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'https://wcprojectgroup.es/tienda/ticket-de-soporte',
+	'soporte' 		=> 'https://artprojectgroup.es/tienda/ticket-de-soporte',
 	'plugin_url' 	=> 'https://artprojectgroup.es/plugins-para-wordpress/plugins-para-woocommerce/woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
@@ -565,20 +565,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		if ( empty( $id ) ) {
 			return $medios;
 		}
-		$configuracion	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
+		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
 		
 		if ( isset( $_POST['payment_method'] ) && !$medios ) {
 			$medios = $_POST['payment_method'];
 		}
 
-		if ( !empty( $configuracion['pago'] ) && $configuracion['pago'][0] != 'todos' ) {
+		if ( !empty( $apg_shipping_settings['pago'] ) && $apg_shipping_settings['pago'][0] != 'todos' ) {
 			foreach ( $medios as $nombre => $medio ) {
-				if ( is_array( $configuracion['pago'] ) ) {
-					if ( !in_array( $nombre, $configuracion['pago'] ) ) {
+				if ( is_array( $apg_shipping_settings['pago'] ) ) {
+					if ( !in_array( $nombre, $apg_shipping_settings['pago'] ) ) {
 						unset( $medios[$nombre] );
 					}
 				} else { 
-					if ( $nombre != $configuracion['pago'] ) {
+					if ( $nombre != $apg_shipping_settings['pago'] ) {
 						unset( $medios[$nombre] );
 					}
 				}
@@ -607,22 +607,22 @@ function apg_busca_en_array( $busqueda, $array_de_busqueda, $extricto = true ) {
 function apg_shipping_icono( $etiqueta, $metodo ) {
 	$gasto_de_envio	= explode( ":", $etiqueta );
 	$id				= explode( ":", $metodo->id );
-	$configuracion	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
+	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
 	//¿Mostramos el icono?
-	if ( !empty( $configuracion['icono'] ) && @getimagesize( $configuracion['icono'] ) && $configuracion['muestra_icono'] != 'no' ) {
-		$tamano = @getimagesize( $configuracion['icono'] );
-		$imagen	= '<img class="apg_shipping_icon" src="' . $configuracion['icono'] . '" witdh="' . $tamano[0] . '" height="' . $tamano[1] . '" />';
-		if ( $configuracion['muestra_icono'] == 'delante' ) {
+	if ( !empty( $apg_shipping_settings['icono'] ) && @getimagesize( $apg_shipping_settings['icono'] ) && $apg_shipping_settings['muestra_icono'] != 'no' ) {
+		$tamano = @getimagesize( $apg_shipping_settings['icono'] );
+		$imagen	= '<img class="apg_shipping_icon" src="' . $apg_shipping_settings['icono'] . '" witdh="' . $tamano[0] . '" height="' . $tamano[1] . '" />';
+		if ( $apg_shipping_settings['muestra_icono'] == 'delante' ) {
 			$etiqueta = $imagen . ' ' . $etiqueta; //Icono delante
-		} else if ( $configuracion['muestra_icono'] == 'detras' ) {
+		} else if ( $apg_shipping_settings['muestra_icono'] == 'detras' ) {
 			$etiqueta = $gasto_de_envio[0] . ' ' . $imagen . ':' . $gasto_de_envio[1]; //Icono detrás
 		} else {
 			$etiqueta = $imagen . ':' . $gasto_de_envio[1]; //Sólo icono
 		}
 	}
 	//Tiempo de entrega
-	if ( !empty( $configuracion['entrega'] ) ) {
-		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $configuracion['entrega'] ) . '</small>';
+	if ( !empty( $apg_shipping_settings['entrega'] ) ) {
+		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings['entrega'] ) . '</small>';
 	}
 	
 	return $etiqueta;
@@ -693,8 +693,8 @@ function apg_shipping_muestra_mensaje() {
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', __FILE__ ) ); //Carga la hoja de estilo global
 	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', __FILE__ ) );
 
-	/*$configuracion = get_option( 'woocommerce_apg_shipping_settings' );
-	if ( !isset( $configuracion['maximo'] ) ) {
+	/*$apg_shipping_settings = get_option( 'woocommerce_apg_shipping_settings' );
+	if ( !isset( $apg_shipping_settings['maximo'] ) ) {
 		add_action( 'admin_notices', 'apg_shipping_actualizacion' ); //Comprueba si hay que mostrar el mensaje de actualización
 	}*/
 }

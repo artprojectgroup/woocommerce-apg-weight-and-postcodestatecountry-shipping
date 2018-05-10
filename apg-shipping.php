@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.2.3.1
+Version: 2.2.3.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -9,7 +9,7 @@ Author: Art Project Group
 Requires at least: 3.8
 Tested up to: 5.0
 WC requires at least: 2.6
-WC tested up to: 3.3.1
+WC tested up to: 3.4
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -503,10 +503,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		} else if ( isset( $_POST['shipping_method'][0] ) ) {
 			$id = explode( ":", $_POST['shipping_method'][0] );
 		}
-		if ( empty( $id ) ) {
+		if ( !isset( $id[1] ) ) {
 			return $medios;
 		}
-		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
+		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] . '_settings' ) );
 		
 		if ( isset( $_POST['payment_method'] ) && !$medios ) {
 			$medios = $_POST['payment_method'];

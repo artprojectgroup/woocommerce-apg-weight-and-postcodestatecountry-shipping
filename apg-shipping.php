@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.2.3.2
+Version: 2.2.3.3
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.0
+Tested up to: 5.2
 WC requires at least: 2.6
-WC tested up to: 3.4
+WC tested up to: 3.6
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -20,9 +20,7 @@ Domain Path: /languages
 */
 
 //Igual no deberías poder abrirme
-if ( !defined( 'ABSPATH' ) ) {
-    exit();
-}
+defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
@@ -70,7 +68,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				
 				//Inicializamos variables
 				$campos = array(
-					'activo', 
 					'title', 
 					'tax_status', 
 					'fee', 
@@ -88,6 +85,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'entrega',
 					'debug',
 				);
+				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+					$campos[ 'activo' ];
+				}
 				foreach ( $campos as $campo ) {
 					$this->$campo = $this->get_option( $campo );
 				}
@@ -111,7 +111,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function apg_shipping_dame_clases_de_envio() {
 				if ( WC()->shipping->get_shipping_classes() ) {
 					foreach ( WC()->shipping->get_shipping_classes() as $clase_de_envio ) {
-						$this->clases_de_envio[esc_attr( $clase_de_envio->slug )] = $clase_de_envio->name;
+						$this->clases_de_envio[ esc_attr( $clase_de_envio->slug ) ] = $clase_de_envio->name;
 						$this->clases_de_envio_tarifas .= esc_attr( $clase_de_envio->slug ) . " -> " . $clase_de_envio->name . ", ";
 					}
 				} else {
@@ -125,7 +125,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$wp_roles = new WP_Roles();
 
 				foreach( $wp_roles->role_names as $rol => $nombre ) {
-					$this->roles_de_usuario[$rol] = $nombre;
+					$this->roles_de_usuario[ $rol ] = $nombre;
 				}
 			}
 
@@ -134,14 +134,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				global $medios_de_pago;
 				
 				foreach( $medios_de_pago as $clave => $medio_de_pago ) {
-					$this->metodos_de_pago[$medio_de_pago->id] = $medio_de_pago->title;
+					$this->metodos_de_pago[ $medio_de_pago->id ] = $medio_de_pago->title;
 				}
 			}
 			
 			//Calcula el gasto de envío
 			public function calculate_shipping( $paquete = array() ) {
-				if ( $this->activo == 'no' ) {
-					return false; //No está activo
+				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+					if ( $this->activo == 'no' ) {
+						return false; //No está activo
+					}
+				} else {
+					if ( ! $this->is_enabled() ) {
+						return false; //No está activo
+					}
 				}
 				
 				//Comprobamos los roles excluidos
@@ -179,20 +185,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				//Toma distintos datos de los productos
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
-					$producto = $valores['data'];
+					$producto = $valores[ 'data' ];
 
 					//Toma el peso del producto
-					$peso = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores['quantity'] : 0;
+					$peso = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
 					
 					//Toma el precio del producto
 					if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? $producto->get_price_excluding_tax() * $valores['quantity'] : $producto->get_price_including_tax() * $valores['quantity'];
+						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? $producto->get_price_excluding_tax() * $valores[ 'quantity' ] : $producto->get_price_including_tax() * $valores[ 'quantity' ];
 					} else {
-						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? wc_get_price_excluding_tax( $producto ) * $valores['quantity'] : wc_get_price_including_tax( $producto ) * $valores['quantity'];
+						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];
 					}
 					//Compatibilidad con WooCommerce Product Bundles
 					if ( $producto->is_type( 'bundle' ) ) {
-						$precio = $producto->get_bundle_price( 'min' ) * $valores['quantity'];
+						$precio = $producto->get_bundle_price( 'min' ) * $valores[ 'quantity' ];
 					}
 
 					//No atiende a las clases de envío excluidas
@@ -200,32 +206,32 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						//Clase de producto
 						if ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) {
 							$peso_total -= $peso;
-							$productos_totales -= $valores['quantity'];
+							$productos_totales -= $valores[ 'quantity' ];
 							if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-								$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - $producto->get_price_excluding_tax() * $valores['quantity'] : $precio_total - $producto->get_price_including_tax() * $valores['quantity'];
+								$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - $producto->get_price_excluding_tax() * $valores[ 'quantity' ] : $precio_total - $producto->get_price_including_tax() * $valores[ 'quantity' ];
 							} else {
-								$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - wc_get_price_excluding_tax( $producto ) * $valores['quantity'] : $precio_total - wc_get_price_including_tax( $producto ) * $valores['quantity'];	
+								$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : $precio_total - wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];	
 							}
 							continue; 
 						}
 					}
 					
 					//Ajuste para los productos virtual y bundle
-					if ( $producto->is_virtual() && !isset( $valores['bundled_by'] ) ) {
+					if ( $producto->is_virtual() && !isset( $valores[ 'bundled_by' ] ) ) {
 						$peso_total			-= $peso;
-						$productos_totales	-= $valores['quantity'];
+						$productos_totales	-= $valores[ 'quantity' ];
 						$precio_total		-= $precio;
 					}
 
 					//Medidas y volúmenes
 					if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
-						$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores['quantity'];
+						$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
 					}
 					$medidas[] = array(
 						'largo'		=> $producto->get_length(),
 						'ancho'		=> $producto->get_width(),
 						'alto'		=> $producto->get_height(),
-						'cantidad'	=> $valores['quantity'],
+						'cantidad'	=> $valores[ 'quantity' ],
 					);
 					if ( $producto->get_length() > $largo ) {
 						$largo = $producto->get_length();
@@ -241,19 +247,19 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					if ( $producto->needs_shipping() ) {
 						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
 						//Inicializamos la clase general
-						if ( !isset ($clases['todas'] ) ) {
-							$clases['todas'] = 0;
+						if ( !isset ($clases[ 'todas' ] ) ) {
+							$clases[ 'todas' ] = 0;
 						}
 						//Guardamos peso, cantidad de productos o total del pedido
-						$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores['quantity'] : $peso;
+						$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
 						if ( $this->tipo_tarifas == "total" ) {
 							$cantidad = $precio;
 						}
-						$clases['todas'] += $cantidad;
-						if ( !isset( $clases[$clase] ) ) {
-							$clases[$clase] = $cantidad;
+						$clases[ 'todas' ] += $cantidad;
+						if ( !isset( $clases[ $clase ] ) ) {
+							$clases[ $clase ] = $cantidad;
 						} else if ( $clase != 'todas' ) {
-							$clases[$clase] += $cantidad;
+							$clases[ $clase ] += $cantidad;
 						}
 					}
 				}
@@ -318,17 +324,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { //Porcentaje con mínimo y máximo
 					//Recogemos los valores mínimo y máximo
 					$porcentaje = explode( '|', $this->cargo );
-					preg_match( '/min=[\"|\'](.*)[\"|\'][\s+|$]/', $porcentaje[1], $minimo );
-					preg_match( '/max=[\"|\'](.*)[\"|\']$/', $porcentaje[1], $maximo );
+					preg_match( '/min=[ \"|\' ](.*)[ \"|\' ][ \s+|$ ]/', $porcentaje[ 1 ], $minimo );
+					preg_match( '/max=[ \"|\' ](.*)[ \"|\' ]$/', $porcentaje[ 1 ], $maximo );
 					
 					$calculo_de_porcentaje = ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
 					//Comprobamos el mínimo
-					if ( isset( $minimo[1] ) && $minimo[1] > $calculo_de_porcentaje ) {
-						$calculo_de_porcentaje = $minimo[1];
+					if ( isset( $minimo[ 1 ] ) && $minimo[ 1 ] > $calculo_de_porcentaje ) {
+						$calculo_de_porcentaje = $minimo[ 1 ];
 					}
 					//Comprobamos el máximo
-					if ( isset( $maximo[1] ) && $calculo_de_porcentaje > $maximo[1] ) {
-						$calculo_de_porcentaje = $maximo[1];
+					if ( isset( $maximo[ 1 ] ) && $calculo_de_porcentaje > $maximo[ 1 ] ) {
+						$calculo_de_porcentaje = $maximo[ 1 ];
 					}
 					//Añade el cargo
 					$suma_cargos += $calculo_de_porcentaje;
@@ -389,7 +395,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				//Reajustamos pesos
 				foreach ( $clases as $clase => $peso ) {
 					if ( $clase != 'todas' && apg_busca_en_array( $clase, $tarifas ) ) {
-						$clases['todas'] -= $peso;
+						$clases[ 'todas' ] -= $peso;
 					}
 				}
 
@@ -402,38 +408,38 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					unset( $medidas_tarifa ); //Fix by DJ Team Digital
 					
 					//Comprobamos medidas
-					if ( stripos( $tarifa[0], "x" ) ) { //Son dimensiones no pesos
+					if ( stripos( $tarifa[ 0 ], "x" ) ) { //Son dimensiones no pesos
 						$calculo_volumetrico = true;
-						$medidas_tarifa = strtolower( $tarifa[0] );
+						$medidas_tarifa = strtolower( $tarifa[ 0 ] );
 					}
-					if ( isset( $tarifa[2] ) && stripos( $tarifa[2], "x" ) ) {
-						$medidas_tarifa = strtolower( $tarifa[2] );
+					if ( isset( $tarifa[ 2 ] ) && stripos( $tarifa[ 2 ], "x" ) ) {
+						$medidas_tarifa = strtolower( $tarifa[ 2 ] );
 					}
-					if ( isset( $tarifa[3] ) && stripos( $tarifa[3], "x" ) ) {
-						$medidas_tarifa = strtolower( $tarifa[3] );
+					if ( isset( $tarifa[ 3 ] ) && stripos( $tarifa[ 3 ], "x" ) ) {
+						$medidas_tarifa = strtolower( $tarifa[ 3 ] );
 					}
 					//¿Existen medidas?
 					if ( isset( $medidas_tarifa ) ) {
 						$medida_tarifa = explode( "x", $medidas_tarifa );
-						if ( ( $largo > $medida_tarifa[0] || $ancho > $medida_tarifa[1] || $alto > $medida_tarifa[2] ) || $volumen_total > ( $medida_tarifa[0] * $medida_tarifa[1] * $medida_tarifa[2] ) ) {
+						if ( ( $largo > $medida_tarifa[ 0 ] || $ancho > $medida_tarifa[ 1 ] || $alto > $medida_tarifa[ 2 ] ) || $volumen_total > ( $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ] ) ) {
 							$excede_dimensiones = true; //Excede el tamaño o volumen máximo
 						}
 					}
 					
 					//Comprobamos clases de envío
-					if ( $clases['todas'] == $peso_total ) {
+					if ( $clases[ 'todas' ] == $peso_total ) {
 						$clase_de_envio = 'todas';
 					} else {
-						if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && array_key_exists( $tarifa[2], $clases ) ) {
-							$clase_de_envio = $tarifa[2];
-						} else if ( isset( $tarifa[2] ) && !stripos( $tarifa[2], "x" ) && !array_key_exists( $tarifa[2], $clases ) ) {
+						if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && array_key_exists( $tarifa[ 2 ], $clases ) ) {
+							$clase_de_envio = $tarifa[ 2 ];
+						} else if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && !array_key_exists( $tarifa[ 2 ], $clases ) ) {
 							$clase_de_envio = 'todas';					
-						} else if ( !isset( $tarifa[2] ) || !stripos( $tarifa[2], "x" ) ) {
+						} else if ( !isset( $tarifa[ 2 ] ) || !stripos( $tarifa[ 2 ], "x" ) ) {
 							$clase_de_envio = 'sin-clase';					
 						}
 					}
 					//Prevenimos errores
-					if ( $clase_de_envio == 'sin-clase' && !isset( $clases['sin-clase'] ) ) {
+					if ( $clase_de_envio == 'sin-clase' && !isset( $clases[ 'sin-clase' ] ) ) {
 						$clase_de_envio = 'todas';
 					}
 					if ( $clase_de_envio_anterior != $clase_de_envio ) {
@@ -446,36 +452,36 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					//Obtenemos la tarifa más barata
 					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
-						if ( ( !$peso_anterior && $tarifa[0] >= $clases[$clase_de_envio] ) || ( $tarifa[0] >= $clases[$clase_de_envio] && $clases[$clase_de_envio] > $peso_anterior ) ) {
-							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
-						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || $clases[$clase_de_envio] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
-							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						if ( ( !$peso_anterior && $tarifa[ 0 ] >= $clases[ $clase_de_envio ] ) || ( $tarifa[ 0 ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
+							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
+							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 						}
 						//Guardamos el peso actual
-						$peso_anterior = $tarifa[0];
+						$peso_anterior = $tarifa[ 0 ];
 					} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida
-						$volumen = $medida_tarifa[0] * $medida_tarifa[1] * $medida_tarifa[2];
+						$volumen = $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ];
 
-						if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[0] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[1] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[2] >= $alto && $alto > $alto_anterior ) ) ) {
-							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];									
-						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
-							$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[ 0 ] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[ 1 ] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[ 2 ] >= $alto && $alto > $alto_anterior ) ) ) {
+							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];									
+						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
+							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 						}
 						//Guardamos las medidas actuales
-						$largo_anterior = $medida_tarifa[0];
-						$ancho_anterior = $medida_tarifa[1];
-						$alto_anterior = $medida_tarifa[2];
-					} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[$clase_de_envio] ) || $tarifa_mas_barata[$clase_de_envio] < $tarifa[1] ) ) { //Las medidas son mayores que la de la tarifa máxima
-						$tarifa_mas_barata[$clase_de_envio] = $tarifa[1];
+						$largo_anterior = $medida_tarifa[ 0 ];
+						$ancho_anterior = $medida_tarifa[ 1 ];
+						$alto_anterior = $medida_tarifa[ 2 ];
+					} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $tarifa[ 1 ] ) ) { //Las medidas son mayores que la de la tarifa máxima
+						$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 					}
 				}
 
-				if ( $clases['todas'] == 0 && count( $tarifa_mas_barata ) > 1 ) { //Prevenimos errores de duplicación de tarifas
-					unset( $tarifa_mas_barata['todas'] );
+				if ( $clases[ 'todas' ] == 0 && count( $tarifa_mas_barata ) > 1 ) { //Prevenimos errores de duplicación de tarifas
+					unset( $tarifa_mas_barata[ 'todas' ] );
 				}
 				
-				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[$clase_de_envio] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) { //Se ha excedido la tarifa máxima
-					unset( $tarifa_mas_barata[$clase_de_envio] );
+				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[ $clase_de_envio ] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) { //Se ha excedido la tarifa máxima
+					unset( $tarifa_mas_barata[ $clase_de_envio ] );
 				}
 
 				if ( !empty( $tarifa_mas_barata ) ) {
@@ -499,28 +505,28 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	//Filtra los medios de pago
 	function apg_shipping_filtra_medios_de_pago( $medios ) {
 		if ( isset( WC()->session->chosen_shipping_methods ) ) {
-			$id = explode( ":", WC()->session->chosen_shipping_methods[0] );
-		} else if ( isset( $_POST['shipping_method'][0] ) ) {
-			$id = explode( ":", $_POST['shipping_method'][0] );
+			$id = explode( ":", WC()->session->chosen_shipping_methods[ 0 ] );
+		} else if ( isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
+			$id = explode( ":", $_POST[ 'shipping_method' ][ 0 ] );
 		}
-		if ( !isset( $id[1] ) ) {
+		if ( !isset( $id[ 1 ] ) ) {
 			return $medios;
 		}
-		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] . '_settings' ) );
+		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) );
 		
-		if ( isset( $_POST['payment_method'] ) && !$medios ) {
-			$medios = $_POST['payment_method'];
+		if ( isset( $_POST[ 'payment_method' ] ) && !$medios ) {
+			$medios = $_POST[ 'payment_method' ];
 		}
 
-		if ( !empty( $apg_shipping_settings['pago'] ) && $apg_shipping_settings['pago'][0] != 'todos' ) {
+		if ( !empty( $apg_shipping_settings[ 'pago' ] ) && $apg_shipping_settings[ 'pago' ][ 0 ] != 'todos' ) {
 			foreach ( $medios as $nombre => $medio ) {
-				if ( is_array( $apg_shipping_settings['pago'] ) ) {
-					if ( !in_array( $nombre, $apg_shipping_settings['pago'] ) ) {
-						unset( $medios[$nombre] );
+				if ( is_array( $apg_shipping_settings[ 'pago' ] ) ) {
+					if ( !in_array( $nombre, $apg_shipping_settings[ 'pago' ] ) ) {
+						unset( $medios[ $nombre ] );
 					}
 				} else { 
-					if ( $nombre != $apg_shipping_settings['pago'] ) {
-						unset( $medios[$nombre] );
+					if ( $nombre != $apg_shipping_settings[ 'pago' ] ) {
+						unset( $medios[ $nombre ] );
 					}
 				}
 			}
@@ -548,22 +554,22 @@ function apg_busca_en_array( $busqueda, $array_de_busqueda, $extricto = true ) {
 function apg_shipping_icono( $etiqueta, $metodo ) {
 	$gasto_de_envio	= explode( ":", $etiqueta );
 	$id				= explode( ":", $metodo->id );
-	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[1] .'_settings' ) );
+	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] .'_settings' ) );
 	//¿Mostramos el icono?
-	if ( !empty( $apg_shipping_settings['icono'] ) && @getimagesize( $apg_shipping_settings['icono'] ) && $apg_shipping_settings['muestra_icono'] != 'no' ) {
-		$tamano = @getimagesize( $apg_shipping_settings['icono'] );
-		$imagen	= '<img class="apg_shipping_icon" src="' . $apg_shipping_settings['icono'] . '" witdh="' . $tamano[0] . '" height="' . $tamano[1] . '" />';
-		if ( $apg_shipping_settings['muestra_icono'] == 'delante' ) {
+	if ( !empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
+		$tamano = @getimagesize( $apg_shipping_settings[ 'icono' ] );
+		$imagen	= '<img class="apg_shipping_icon" src="' . $apg_shipping_settings[ 'icono' ] . '" witdh="' . $tamano[ 0 ] . '" height="' . $tamano[ 1 ] . '" />';
+		if ( $apg_shipping_settings[ 'muestra_icono' ] == 'delante' ) {
 			$etiqueta = $imagen . ' ' . $etiqueta; //Icono delante
-		} else if ( $apg_shipping_settings['muestra_icono'] == 'detras' ) {
-			$etiqueta = $gasto_de_envio[0] . ' ' . $imagen . ':' . $gasto_de_envio[1]; //Icono detrás
+		} else if ( $apg_shipping_settings[ 'muestra_icono' ] == 'detras' ) {
+			$etiqueta = $gasto_de_envio[ 0 ] . ' ' . $imagen . ':' . $gasto_de_envio[ 1 ]; //Icono detrás
 		} else {
-			$etiqueta = $imagen . ':' . $gasto_de_envio[1]; //Sólo icono
+			$etiqueta = $imagen . ':' . $gasto_de_envio[ 1 ]; //Sólo icono
 		}
 	}
 	//Tiempo de entrega
-	if ( !empty( $apg_shipping_settings['entrega'] ) ) {
-		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings['entrega'] ) . '</small>';
+	if ( !empty( $apg_shipping_settings[ 'entrega' ] ) ) {
+		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>';
 	}
 	
 	return $etiqueta;
@@ -574,6 +580,6 @@ add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono',
 function apg_shipping_requiere_wc() {
 	global $apg_shipping;
 		
-	echo '<div class="error fade" id="message"><h3>' . $apg_shipping['plugin'] . '</h3><h4>' . __( "This plugin require WooCommerce active to run!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4></div>';
+	echo '<div class="error fade" id="message"><h3>' . $apg_shipping[ 'plugin' ] . '</h3><h4>' . __( "This plugin require WooCommerce active to run!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4></div>';
 	deactivate_plugins( DIRECCION_apg_shipping );
 }

@@ -4,13 +4,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 //Campos del formulario
-$campos = array(
-	'activo' => array(
+$campos = array();
+if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+	$campos[ 'activo' ] = array( 
 		'title'			=> __( 'Enable/Disable', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'checkbox',
 		'label'			=> __( 'Enable this shipping method', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'default'		=> 'yes',
-	),
+		'default'		=> 'yes'
+	);
+}
+$campos = array(
 	'title' => array(
 		'title'			=> __( 'Method Title', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
@@ -70,34 +73,36 @@ $campos = array(
 		 ),
 		'description'		=> __( 'Total weight: Apply shipping rate per cart weight (default).<br />Total items: Apply shipping rate per number of items.<br />Cart total: Apply shipping rate per cart total.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	),
-	'suma' => array(
+);
+if ( WC()->shipping->get_shipping_classes() ) {
+	$campos[ 'suma' ] = array( 
 		'title'			=> __( 'Highest shipping class rate', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'checkbox',
 		'label'			=> __( 'Select if you need just the highest shipping class rate not the sum of shipping classes rates.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> 'no',
-	),
-	'maximo' => array(
-		'title'			=> __( 'Overweight/over dimensions', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'type'			=> 'checkbox',
-		'label'			=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'default'		=> 'yes',
-	),
+	);
+}
+$campos[ 'maximo' ] = array( 
+    'title'				=> __( 'Overweight/over dimensions', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+    'type'				=> 'checkbox',
+    'label'				=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+    'default'			=> 'yes',
 );
 if ( WC()->shipping->get_shipping_classes() ) {
-	$campos['clases_excluidas'] = array( 
-		'title'		=> __( 'No shipping (Shipping class)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'desc_tip' 	=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
-		'css'		=> 'width: 450px;',
-		'default'	=> '',
-		'type'		=> 'multiselect',
-		'class'		=> 'wc-enhanced-select',
-		'options' 	=> array( 
-			'todas' 	=> __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
+	$campos[ 'clases_excluidas' ] = array( 
+		'title'			=> __( 'No shipping (Shipping class)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+		'desc_tip' 		=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+		'css'			=> 'width: 450px;',
+		'default'		=> '',
+		'type'			=> 'multiselect',
+		'class'			=> 'wc-enhanced-select',
+		'options' 		=> array( 
+			'todas' 		=> __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
 		) + $this->clases_de_envio,
 	);
 }
 /*
-$campos['tipo_clases'] = array(
+$campos[ 'tipo_clases' ] = array(
 	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
 	'label'			=> __( 'Ship only to this shipping class.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -105,7 +110,7 @@ $campos['tipo_clases'] = array(
 	'default'		=> 'no',
 );
 */
-$campos['roles_excluidos'] = array( 
+$campos[ 'roles_excluidos' ] = array( 
 	'title'			=> __( 'No shipping (User role)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'desc_tip' 		=> sprintf( __( "Select the user role where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
@@ -117,7 +122,7 @@ $campos['roles_excluidos'] = array(
 	) + $this->roles_de_usuario,
 );
 /*
-$campos['tipo_roles'] = array(
+$campos[ 'tipo_roles' ] = array(
 	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
 	'label'			=> __( 'Ship only to this user role.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -125,7 +130,7 @@ $campos['tipo_roles'] = array(
 	'default'		=> 'no',
 );
 */
-$campos['pago'] = array(
+$campos[ 'pago' ] = array(
 	'title'			=> __( 'Payment gateway', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'desc_tip'		=> sprintf( __( "Payment gateway available for %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
@@ -138,14 +143,14 @@ $campos['pago'] = array(
 		'todos'			=> __( 'All enabled payments', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
 	) + $this->metodos_de_pago,
 );
-$campos['icono'] = array( 
+$campos[ 'icono' ] = array( 
 		'title'			=> __( 'Icon image', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
 		'description'	=> __( 'Icon image URL. APG recommends a 60x21px image.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> plugins_url( 'assets/images/apg.jpg', DIRECCION_apg_shipping ),
 		'desc_tip'		=> true,
 );
-$campos['muestra_icono'] = array( 
+$campos[ 'muestra_icono' ] = array( 
 		'title'			=> __( 'How show icon image?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'desc_tip' 		=> __( "Select how you want to show the icon image.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'select',
@@ -157,14 +162,14 @@ $campos['muestra_icono'] = array(
 			'solo'			=> __( 'No title, just icon', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		 ),
 );
-$campos['entrega'] = array( 
+$campos[ 'entrega' ] = array( 
 		'title'			=> __( 'Estimated delivery time', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
 		'description'	=> __( 'Define estimation for delivery time for this shipping method.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> '',
 		'desc_tip'		=> true,
 );
-$campos['debug'] = array(
+$campos[ 'debug' ] = array(
 	'title'			=> __( 'Show debug information?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
 	'label'			=> __( 'Check if you want to show debug information on the cart page.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import url(../fonts/stylesheet.css);
 /*General*/
-table.apg-table, .cabecera {
+table.apg-table, .cabecera, .banner {
 	clear: none;
 	width: 79%;
 	max-width: 586px;
@@ -67,8 +67,13 @@ div.informacion a {
 	text-decoration: none;
 	color: #fff;
 }
-table.apg-table select, table.apg-table textarea {
-	width: 100% !important;
+.woocommerce table.form-table.apg-table .select2-container {
+    min-width: auto!important;
+}
+table.apg-table .select2-container, table.apg-table textarea, table.apg-table input[type=text], table.apg-table input[type=number] {
+    min-width: auto;
+    max-width: 100%;
+	width: 100%!important;
 }
 table.apg-table textarea {
 	min-height: 200px;

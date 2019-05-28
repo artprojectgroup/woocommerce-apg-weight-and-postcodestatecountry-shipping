@@ -99,30 +99,23 @@ function apg_shipping_plugin( $nombre ) {
 	return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
 }
 
-//Muestra el mensaje de actualización
-function apg_shipping_actualizacion() {
-	global $apg_shipping;
-	
-    echo '<div class="error fade" id="message"><h3>' . $apg_shipping[ 'plugin' ] . '</h3><h4>' . sprintf( __( "Please, update your %s. It's very important!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), '<a href="' . $apg_shipping[ 'ajustes' ] . '" title="' . __( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '">' . __( 'settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>' ) . '</h4></div>';
-}
-
-//Carga las hojas de estilo
-function apg_shipping_muestra_mensaje() {
+//Actualiza los medios de pago 
+function apg_free_shipping_pago() {
 	global $medios_de_pago;
 	
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
 		$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
 	}
+}
+add_action( 'admin_init', 'apg_free_shipping_pago' );
+
+//Hoja de estilo y JavaScript
+function apg_free_shipping_estilo() {
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ) ); //Carga la hoja de estilo global
 	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ) );
-
-	/*$apg_shipping_settings = get_option( 'woocommerce_apg_shipping_settings' );
-	if ( !isset( $apg_shipping_settings[ 'maximo' ] ) ) {
-		add_action( 'admin_notices', 'apg_shipping_actualizacion' ); //Comprueba si hay que mostrar el mensaje de actualización
-	}*/
 }
-add_action( 'admin_init', 'apg_shipping_muestra_mensaje' );
+add_action( 'admin_enqueue_scripts', 'apg_free_shipping_estilo' );
 
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {

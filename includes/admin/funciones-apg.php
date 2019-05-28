@@ -100,7 +100,7 @@ function apg_shipping_plugin( $nombre ) {
 }
 
 //Actualiza los medios de pago 
-function apg_free_shipping_pago() {
+function apg_shipping_pago() {
 	global $medios_de_pago;
 	
 	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -108,14 +108,14 @@ function apg_free_shipping_pago() {
 		$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
 	}
 }
-add_action( 'admin_init', 'apg_free_shipping_pago' );
+add_action( 'admin_init', 'apg_shipping_pago' );
 
 //Hoja de estilo y JavaScript
-function apg_free_shipping_estilo() {
+function apg_shipping_estilo() {
 	wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ) ); //Carga la hoja de estilo global
 	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ) );
 }
-add_action( 'admin_enqueue_scripts', 'apg_free_shipping_estilo' );
+add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
 
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {

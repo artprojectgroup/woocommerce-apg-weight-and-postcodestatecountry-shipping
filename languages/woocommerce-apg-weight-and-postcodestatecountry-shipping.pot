@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-21 01:19+0000\n"
+"POT-Creation-Date: 2019-08-21 02:16+0000\n"
 "POT-Revision-Date: Thu Aug 11 2016 14:13:55 GMT+0200 (CEST)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
@@ -63,7 +63,6 @@ msgstr ""
 
 #: includes/cuadro-informacion.php:19 includes/admin/funciones-apg.php:25
 #: includes/admin/funciones-apg.php:25 includes/admin/funciones-apg.php:25
-#: includes/admin/funciones-apg.php:25
 msgid "Follow us on "
 msgstr ""
 
@@ -239,10 +238,18 @@ msgstr ""
 msgid "No shipping (%s)"
 msgstr ""
 
+#: includes/admin/campos.php:92 includes/admin/campos.php:101
+msgid "Product category"
+msgstr ""
+
 #: includes/admin/campos.php:93 includes/admin/campos.php:109
 #: includes/admin/campos.php:126 includes/admin/campos.php:145
 #, php-format
 msgid "Select the %s where %s doesn't accept shippings."
+msgstr ""
+
+#: includes/admin/campos.php:93
+msgid "product category"
 msgstr ""
 
 #: includes/admin/campos.php:101 includes/admin/campos.php:117
@@ -257,6 +264,10 @@ msgstr ""
 msgid "Ship only to the %s selected in the previous field."
 msgstr ""
 
+#: includes/admin/campos.php:103 includes/admin/campos.php:104
+msgid "product categories"
+msgstr ""
+
 #: includes/admin/campos.php:104 includes/admin/campos.php:120
 #: includes/admin/campos.php:139 includes/admin/campos.php:158
 #, php-format
@@ -265,12 +276,48 @@ msgid ""
 "field."
 msgstr ""
 
+#: includes/admin/campos.php:108 includes/admin/campos.php:117
+msgid "Product tag"
+msgstr ""
+
+#: includes/admin/campos.php:109
+msgid "product tag"
+msgstr ""
+
+#: includes/admin/campos.php:119 includes/admin/campos.php:120
+msgid "product tags"
+msgstr ""
+
+#: includes/admin/campos.php:125 includes/admin/campos.php:136
+msgid "Shipping class"
+msgstr ""
+
+#: includes/admin/campos.php:126
+msgid "shipping class"
+msgstr ""
+
 #: includes/admin/campos.php:132
 msgid "All enabled shipping class"
 msgstr ""
 
+#: includes/admin/campos.php:138 includes/admin/campos.php:139
+msgid "shipping classes"
+msgstr ""
+
+#: includes/admin/campos.php:144 includes/admin/campos.php:155
+msgid "User role"
+msgstr ""
+
+#: includes/admin/campos.php:145
+msgid "user role"
+msgstr ""
+
 #: includes/admin/campos.php:151
 msgid "Guest"
+msgstr ""
+
+#: includes/admin/campos.php:157 includes/admin/campos.php:158
+msgid "user roles"
 msgstr ""
 
 #: includes/admin/campos.php:162

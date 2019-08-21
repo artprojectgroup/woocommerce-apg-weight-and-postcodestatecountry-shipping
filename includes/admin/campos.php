@@ -88,10 +88,42 @@ $campos[ 'maximo' ] = array(
     'label'				=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     'default'			=> 'yes',
 );
+$campos[ 'categorias_excluidas' ] = array( 
+	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Product category' ),
+	'desc_tip' 		=> sprintf( __( "Select the %s where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product category', $this->method_title ),
+	'css'			=> 'width: 450px;',
+	'default'		=> '',
+	'type'			=> 'multiselect',
+	'class'			=> 'wc-enhanced-select',
+	'options' 		=> $this->categorias_de_producto,
+);
+$campos[ 'tipo_categorias' ] = array(
+	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Product category' ),
+	'type'			=> 'checkbox',
+	'label'			=> sprintf( __( "Ship only to the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product categories' ),
+	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product categories' ),
+	'default'		=> 'no',
+);
+$campos[ 'etiquetas_excluidas' ] = array( 
+	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Product tag' ),
+	'desc_tip' 		=> sprintf( __( "Select the %s where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product tag', $this->method_title ),
+	'css'			=> 'width: 450px;',
+	'default'		=> '',
+	'type'			=> 'multiselect',
+	'class'			=> 'wc-enhanced-select',
+	'options' 		=> $this->etiquetas_de_producto,
+);
+$campos[ 'tipo_etiquetas' ] = array(
+	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Product tag' ),
+	'type'			=> 'checkbox',
+	'label'			=> sprintf( __( "Ship only to the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product tags' ),
+	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'product tags' ),
+	'default'		=> 'no',
+);
 if ( WC()->shipping->get_shipping_classes() ) {
 	$campos[ 'clases_excluidas' ] = array( 
-		'title'			=> __( 'No shipping (Shipping class)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'desc_tip' 		=> sprintf( __( "Select the shipping class where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+		'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Shipping class' ),
+		'desc_tip' 		=> sprintf( __( "Select the %s where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'shipping class', $this->method_title ),
 		'css'			=> 'width: 450px;',
 		'default'		=> '',
 		'type'			=> 'multiselect',
@@ -100,19 +132,17 @@ if ( WC()->shipping->get_shipping_classes() ) {
 			'todas' 		=> __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
 		) + $this->clases_de_envio,
 	);
+	$campos[ 'tipo_clases' ] = array(
+		'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'Shipping class' ),
+		'type'			=> 'checkbox',
+		'label'			=> sprintf( __( "Ship only to the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'shipping classes' ),
+		'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'shipping classes' ),
+		'default'		=> 'no',
+	);
 }
-/*
-$campos[ 'tipo_clases' ] = array(
-	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	'type'			=> 'checkbox',
-	'label'			=> __( 'Ship only to this shipping class.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	'desc_tip'		=> __( 'To apply additional fee for the number of items.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	'default'		=> 'no',
-);
-*/
 $campos[ 'roles_excluidos' ] = array( 
-	'title'			=> __( 'No shipping (User role)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	'desc_tip' 		=> sprintf( __( "Select the user role where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'User role' ),
+	'desc_tip' 		=> sprintf( __( "Select the %s where %s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'user role', $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
 	'type'			=> 'multiselect',
@@ -121,15 +151,13 @@ $campos[ 'roles_excluidos' ] = array(
 		'invitado'		=> __( 'Guest', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
 	) + $this->roles_de_usuario,
 );
-/*
 $campos[ 'tipo_roles' ] = array(
-	'title'			=> __( 'Only shipping?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'User role' ),
 	'type'			=> 'checkbox',
-	'label'			=> __( 'Ship only to this user role.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	'desc_tip'		=> __( 'To apply additional fee for the number of items.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+	'label'			=> sprintf( __( "Ship only to the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'user roles' ),
+	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), 'user roles' ),
 	'default'		=> 'no',
 );
-*/
 $campos[ 'pago' ] = array(
 	'title'			=> __( 'Payment gateway', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'desc_tip'		=> sprintf( __( "Payment gateway available for %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),

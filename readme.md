@@ -7,13 +7,13 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 5.2
+Tested up to: 5.2.3
 
-Stable tag: 2.2.3.4
+Stable tag: 2.3
 
 WC requires at least: 2.6
 
-WC tested up to: 3.6
+WC tested up to: 3.7
 
 License: GPLv3
 
@@ -38,6 +38,8 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes asignar tarifas a clases de envío específicas.
 * Puedes seleccionar la tarifa de clase de envío más cara en lugar de la suma de tarifas.
 * Puedes elegir si aceptar excesos de peso o dimensiones.
+* Puedes excluir el envío de una o varias categorías de producto.
+* Puedes excluir el envío de una o varias etiquetas de producto.
 * Puedes excluir el envío de una, varias o todas las clases de envío del sistema.
 * Puedes excluir roles de usuario.
 * Puedes ocultar medios de pago.
@@ -69,7 +71,6 @@ No olvides dejarnos tu comentario en:
 * [WC - APG Weight Shipping](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping) en Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) en Facebook.
 * [@artprojectgroup](https://twitter.com/artprojectgroup) en Twitter.
-* [+ArtProjectGroupES](https://plus.google.com/+ArtProjectGroupES/) en Google+.
 
 ### Más plugins
 Recuerda que puedes encontrar más [plugins para WordPress](https://artprojectgroup.es/plugins-para-wordpress) y más [plugins para WooCommerce](https://artprojectgroup.es/plugins-para-woocommerce) en [Art Project Group](https://artprojectgroup.es) y en nuestro perfil en [WordPress](https://profiles.wordpress.org/artprojectgroup/).
@@ -97,6 +98,10 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.3
+* Añadidas opciones para excluir el envío por categorías y etiquetas de producto **Actualización patrocinada por [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
+* Actualización de captura de pantalla.
+
 ### 2.2.3.4
 * Pequeños arreglos.
 

@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 5.2.3
 
-Stable tag: 2.3.0.1
+Stable tag: 2.3.0.2
 
 WC requires at least: 2.6
 
@@ -98,11 +98,14 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.3.0.2
+* Pequeños arreglos en la exclusión del envío por categorías y etiquetas de producto.
+
 ### 2.3.0.1
 * Pequeños arreglos.
 
 ### 2.3
-* Añadidas opciones para excluir el envío por categorías y etiquetas de producto **Actualización patrocinada por [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
+* Añadidas opciones para excluir el envío por categorías y etiquetas de producto. **Actualización patrocinada por [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
 * Actualización de captura de pantalla.
 
 ### 2.2.3.4
@@ -119,6 +122,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 
 ### 2.2.3
 * Cambio de nombre del plugin: de WooCommerce - APG Weight and Postcode/State/Country Shipping a WC - APG Weight Shipping.
+
 ### 2.2.2.2
 * Ajuste para optimizar la compatibilidad con WooCommerce Product Bundles.
 
@@ -178,6 +182,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 * Soporte para añadir imagen personalizada.
 * Soporte para añadir el tiempo estimado de entrega.
 * Actualización de la captura de pantalla.
+
 ### 2.0.3.1
 * Ajuste para optimizar la compatibilidad con WooCommerce 2.7.
 

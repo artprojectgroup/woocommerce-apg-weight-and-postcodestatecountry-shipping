@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.0.1
+Version: 2.3.0.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -247,34 +247,43 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					//No atiende a las categorías de producto excluidas
 					if ( !empty( $this->categorias_excluidas ) ) {
-						if ( !empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) {
-							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
-							
-							continue; 
-						} else if ( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' )  {
-							return false;
+						if ( $producto->is_type( 'variation' ) ) {
+							$parent = wc_get_product( $producto->get_parent_id() );
+							if ( ( !empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) || 
+								( empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+								return false;
+							}
+						} else {
+							if ( ( !empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) || 
+								( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+								return false;
+							}
 						}
 					}
 
 					//No atiende a las etiquetas de producto excluidas
 					if ( !empty( $this->etiquetas_excluidas ) ) {
-						if ( !empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) {
-							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
-							
-							continue; 
-						} else if ( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) {
-							return false;
+						if ( $producto->is_type( 'variation' ) ) {
+							$parent = wc_get_product( $producto->get_parent_id() );
+							if ( ( !empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) || 
+								( empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+								return false;
+							}
+						} else {
+							if ( ( !empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) || 
+								( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+								return false;
+							}
 						}
 					}
 
 					//No atiende a las clases de envío excluidas
 					if ( !empty( $this->clases_excluidas ) ) {
-						if ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) {
+						if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) ||
+							( !in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && !in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
 							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
 							
 							continue; 
-						} else if ( !in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && !in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) {
-							return false;
 						}
 					}
 					
@@ -305,17 +314,18 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$alto = $producto->get_height();
 					}
 
+					//Guardamos peso, cantidad de productos o total del pedido
+					$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
+					if ( $this->tipo_tarifas == "total" ) {
+						$cantidad = $precio;
+					}
+
 					//Clase de envío
 					if ( $producto->needs_shipping() ) {
 						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
 						//Inicializamos la clase general
 						if ( !isset ($clases[ 'todas' ] ) ) {
 							$clases[ 'todas' ] = 0;
-						}
-						//Guardamos peso, cantidad de productos o total del pedido
-						$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
-						if ( $this->tipo_tarifas == "total" ) {
-							$cantidad = $precio;
 						}
 						$clases[ 'todas' ] += $cantidad;
 						if ( !isset( $clases[ $clase ] ) ) {
@@ -604,9 +614,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 }
 
 //Busca en un array multidimensional
-function apg_busca_en_array( $busqueda, $array_de_busqueda, $extricto = true ) {
+function apg_busca_en_array( $busqueda, $array_de_busqueda, $estricto = true ) {
 	foreach ( $array_de_busqueda as $valor_a_comparar ) {
-		if ( ( $extricto ? $valor_a_comparar === $busqueda : $valor_a_comparar == $busqueda ) || ( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $extricto ) ) ) {
+		if ( ( $estricto ? $valor_a_comparar === $busqueda : $valor_a_comparar == $busqueda ) || ( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $estricto ) ) ) {
 			return true;
 		}
 	}

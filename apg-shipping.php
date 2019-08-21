@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3
+Version: 2.3.0.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -247,31 +247,34 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					//No atiende a las categorías de producto excluidas
 					if ( !empty( $this->categorias_excluidas ) ) {
-						if ( ( !empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) || 
-							( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+						if ( !empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) {
 							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
 							
 							continue; 
+						} else if ( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' )  {
+							return false;
 						}
 					}
 
 					//No atiende a las etiquetas de producto excluidas
 					if ( !empty( $this->etiquetas_excluidas ) ) {
-						if ( ( !empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) || 
-							( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+						if ( !empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) {
 							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
 							
 							continue; 
+						} else if ( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) {
+							return false;
 						}
 					}
 
 					//No atiende a las clases de envío excluidas
 					if ( !empty( $this->clases_excluidas ) ) {
-						if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) || 
-							( !in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && !in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
+						if ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) {
 							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
 							
 							continue; 
+						} else if ( !in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && !in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) {
+							return false;
 						}
 					}
 					

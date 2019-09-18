@@ -4,7 +4,7 @@ $apg_shipping = array(
 	'plugin' 		=> 'WC - APG Weight Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
 	'donacion' 		=> 'https://artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'https://artprojectgroup.es/tienda/ticket-de-soporte',
+	'soporte' 		=> 'https://artprojectgroup.es/tienda/soporte-tecnico',
 	'plugin_url' 	=> 'https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping', 
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
@@ -116,14 +116,3 @@ function apg_shipping_estilo() {
 	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ) );
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
-
-//Eliminamos todo rastro del plugin al desinstalarlo
-function apg_shipping_desinstalar() {
-	$contador = 0;
-	while( $contador < 100 ) {
-		delete_option( 'woocommerce_apg_shipping_' . $contador . 'settings' );
-		$contador++;
-	}
-	delete_transient( 'apg_shipping_plugin' );
-}
-register_uninstall_hook( __FILE__, 'apg_shipping_desinstalar' );

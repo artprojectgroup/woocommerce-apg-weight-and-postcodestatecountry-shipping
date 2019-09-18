@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.0.2
+Version: 2.3.0.3
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.2.3
+Tested up to: 5.2.4
 WC requires at least: 2.6
 WC tested up to: 3.7
 
@@ -485,9 +485,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$medidas_tarifa = strtolower( $tarifa[ 0 ] );
 					}
 					if ( isset( $tarifa[ 2 ] ) && stripos( $tarifa[ 2 ], "x" ) ) {
+						$calculo_volumetrico = true;
 						$medidas_tarifa = strtolower( $tarifa[ 2 ] );
 					}
 					if ( isset( $tarifa[ 3 ] ) && stripos( $tarifa[ 3 ], "x" ) ) {
+						$calculo_volumetrico = true;
 						$medidas_tarifa = strtolower( $tarifa[ 3 ] );
 					}
 					//¿Existen medidas?
@@ -515,7 +517,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					if ( $clase_de_envio == 'sin-clase' && !isset( $clases[ 'sin-clase' ] ) ) {
 						$clase_de_envio = 'todas';
 					}
-					if ( $clase_de_envio_anterior != $clase_de_envio ) {
+					if ( $clase_de_envio_anterior	!= $clase_de_envio ) {
 						$clase_de_envio_anterior	= $clase_de_envio;
 						$peso_anterior				= 0;
 						$largo_anterior				= 0;
@@ -525,14 +527,18 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					//Obtenemos la tarifa más barata
 					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
-						if ( ( !$peso_anterior && $tarifa[ 0 ] >= $clases[ $clase_de_envio ] ) || 
-							( $tarifa[ 0 ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
-							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
-						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
-							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+						if ( ( isset( $tarifa[ 2 ] ) && $tarifa[ 2 ] == $clase_de_envio ) || 
+							!isset( $tarifa[ 2 ] ) ) {
+							if ( ( !$peso_anterior && $tarifa[ 0 ] >= $clases[ $clase_de_envio ] ) || 
+								( $tarifa[ 0 ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
+								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+							} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
+								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+							}
+							
+							//Guardamos el peso actual
+							$peso_anterior = $tarifa[ 0 ];
 						}
-						//Guardamos el peso actual
-						$peso_anterior = $tarifa[ 0 ];
 					} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida
 						$volumen = $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ];
 
@@ -541,10 +547,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
 							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 						}
+						
 						//Guardamos las medidas actuales
-						$largo_anterior = $medida_tarifa[ 0 ];
-						$ancho_anterior = $medida_tarifa[ 1 ];
-						$alto_anterior = $medida_tarifa[ 2 ];
+						$largo_anterior	= $medida_tarifa[ 0 ];
+						$ancho_anterior	= $medida_tarifa[ 1 ];
+						$alto_anterior	= $medida_tarifa[ 2 ];
 					} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $tarifa[ 1 ] ) ) { //Las medidas son mayores que la de la tarifa máxima
 						$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 					}
@@ -657,3 +664,14 @@ function apg_shipping_requiere_wc() {
 	echo '<div class="error fade" id="message"><h3>' . $apg_shipping[ 'plugin' ] . '</h3><h4>' . __( "This plugin require WooCommerce active to run!", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4></div>';
 	deactivate_plugins( DIRECCION_apg_shipping );
 }
+
+//Eliminamos todo rastro del plugin al desinstalarlo
+function apg_shipping_desinstalar() {
+	$contador = 0;
+	while( $contador < 100 ) {
+		delete_option( 'woocommerce_apg_shipping_' . $contador . 'settings' );
+		$contador++;
+	}
+	delete_transient( 'apg_shipping_plugin' );
+}
+register_uninstall_hook( __FILE__, 'apg_shipping_desinstalar' );

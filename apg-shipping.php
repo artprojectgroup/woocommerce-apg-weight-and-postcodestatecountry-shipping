@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.0.3
+Version: 2.3.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -181,6 +181,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			
 			//Calcula el gasto de envío
 			public function calculate_shipping( $paquete = array() ) {
+				//Comprueba si está activo el plugin
 				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 					if ( $this->activo == 'no' ) {
 						return false; //No está activo
@@ -294,16 +295,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$precio_total		-= $precio;
 					}
 
-					//Medidas y volúmenes
+					//Volumen
 					if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
 						$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
 					}
+					
+					//Medidas
 					$medidas[] = array(
 						'largo'		=> $producto->get_length(),
 						'ancho'		=> $producto->get_width(),
 						'alto'		=> $producto->get_height(),
 						'cantidad'	=> $valores[ 'quantity' ],
 					);
+					
+					//Almacena el valor del lado más grande
 					if ( $producto->get_length() > $largo ) {
 						$largo = $producto->get_length();
 					}
@@ -314,7 +319,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$alto = $producto->get_height();
 					}
 
-					//Guardamos peso, cantidad de productos o total del pedido
+					//Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración)
 					$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
 					if ( $this->tipo_tarifas == "total" ) {
 						$cantidad = $precio;
@@ -328,6 +333,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 							$clases[ 'todas' ] = 0;
 						}
 						$clases[ 'todas' ] += $cantidad;
+						//Creamos o inicializamos la clase correspondiente
 						if ( !isset( $clases[ $clase ] ) ) {
 							$clases[ $clase ] = $cantidad;
 						} else if ( $clase != 'todas' ) {
@@ -341,15 +347,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
 				}
 				
+				//Reajusta el valor del peso total en caso de que se haya configurado cantidad de productos o total del pedido 
 				if ( $this->tipo_tarifas == "unidad" ) {
 					$peso_total = $productos_totales;
 				} else if ( $this->tipo_tarifas == "total" ) {
 					$peso_total = $precio_total;
 				}
 
+				//No hay productos a los que aplicar las tarifas
 				if ( empty( $medidas ) && empty( $clases ) ) {
-					return false; //No hay productos
+					return false;
 				}
+
+				//Obtenemos las tarifas
+				$tarifas = $this->dame_tarifas( $clases );
 				
 				//Muestra información de depuración
 				if ( $this->debug == 'yes' ) {
@@ -361,20 +372,22 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					echo "Alto: " . $alto . PHP_EOL;  
 					echo "Medidas: " . print_r( $medidas, true ) . PHP_EOL; 
 					echo "Clases: " . print_r( $clases, true );
+					echo "Tarifas: " . print_r( $tarifas, true );
 					echo "</pre>";
 				}
-
-				$tarifas = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases ); //Filtra las tarifas
-				if ( empty( $tarifas ) ) {
+				
+				//Obtiene la tarifa
+				$tarifa_mas_barata = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas ); //Filtra las tarifas
+				if ( empty( $tarifa_mas_barata ) ) {
 					return false; //No hay tarifa
 				}
 				
 				//Calculamos el importe total
 				$importe = 0;
 				if ( !empty( $this->suma ) &&  $this->suma == "yes" ) {
-					$importe = max( $tarifas );
+					$importe = max( $tarifa_mas_barata );
 				} else {
-					foreach( $tarifas as $tarifa ) {
+					foreach( $tarifa_mas_barata as $tarifa ) {
 						$importe += $tarifa;
 					}					
 				}
@@ -431,18 +444,56 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			}
 			
 			//Recoge las tarifas programadas
-			public function dame_tarifas() {
-				$tarifas = array();
-				
-				//Recoge las tarifas programadas
+			public function dame_tarifas( $clases ) {				
+				//Procesa las tarifas programadas
 				if ( !empty( $this->tarifas ) ) {
 					foreach ( $this->tarifas as $indice => $opcion ) {
 						$tarifa = preg_split( '~\s*\|\s*~', preg_replace( '/\s+/', '', $opcion ) );
 	
-						if ( sizeof( $tarifa ) < 2 ) {
+						if ( sizeof( $tarifa ) < 2 ) { //Tarifa incorrecta o salto de línea
 							continue;
 						} else {
-							$tarifas[] = $tarifa;
+							//Inicializa variables
+							$clase = 'sin-clase';
+							
+							//Medidas
+							if ( stripos( $tarifa[ 0 ], "x" ) ) { //El primer valor es una dimensión
+								$tarifa[ 'medidas' ]	= strtolower( $tarifa[ 0 ] );
+								unset( $tarifa[ 0 ] ); //Eliminamos las medidas
+							}
+							if ( isset( $tarifa[ 2 ] ) && stripos( $tarifa[ 2 ], "x" ) ) { //El tercer valor es una dimensiones
+								$tarifa[ 'medidas' ]	= strtolower( $tarifa[ 2 ] );
+							}
+							if ( isset( $tarifa[ 3 ] ) && stripos( $tarifa[ 3 ], "x" ) ) { //El cuarto valor es una dimensiones
+								$tarifa[ 'medidas' ]	= strtolower( $tarifa[ 3 ] );
+								unset( $tarifa[ 3 ] ); //Eliminamos las medidas
+							}
+							
+							//Clases de envío
+							if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && array_key_exists( $tarifa[ 2 ], $clases ) ) {
+								$clase	= $tarifa[ 2 ];
+							} else if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && !array_key_exists( $tarifa[ 2 ], $clases ) ) {
+								$clase	= 'todas';					
+							} else if ( !isset( $tarifa[ 2 ] ) || !stripos( $tarifa[ 2 ], "x" ) ) {
+								$clase	= 'sin-clase';					
+							}
+
+							//Pesos
+							if ( isset( $tarifa[ 0 ] ) ) {
+								$tarifa[ 'peso' ] = $tarifa[ 0 ];
+								unset( $tarifa[ 0 ] ); //Eliminamos el peso
+							}
+							
+							//Importes
+							$tarifa[ 'importe' ] = $tarifa[ 1 ];
+							unset( $tarifa[ 1 ] ); //Eliminamos el importe
+							
+							//Eliminamos las medidas o la clase de envío
+							if ( isset( $tarifa[ 2 ] ) ) {
+								unset( $tarifa[ 2 ] );
+							}
+							
+							$tarifas[ $clase ][] = $tarifa;
 						}
 					}
 				}
@@ -451,7 +502,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			}
 
 			//Selecciona la tarifa más barata
-			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases ) {
+			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases, $tarifas ) {
 				//Variables
 				$tarifa_mas_barata			= array();
 				$peso_parcial				= array();
@@ -461,9 +512,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$alto_anterior				= 0;
 				$clase_de_envio_anterior	= '';
 
-				//Obtenemos las tarifas
-				$tarifas = $this->dame_tarifas();
-
 				//Reajustamos pesos
 				foreach ( $clases as $clase => $peso ) {
 					if ( $clase != 'todas' && apg_busca_en_array( $clase, $tarifas ) ) {
@@ -472,47 +520,28 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				}
 
 				//Aplicamos tarifas
-				foreach ( $tarifas as $indice => $tarifa ) {	
-					//Variables
+				foreach ( $tarifas as $tipo => $tarifas_por_tipo ) {	
+					//Inicializa variables
 					$calculo_volumetrico	= false;
 					$excede_dimensiones		= false;
-					$clase_de_envio			= false;
-					unset( $medidas_tarifa ); //Fix by DJ Team Digital
-					
-					//Comprobamos medidas
-					if ( stripos( $tarifa[ 0 ], "x" ) ) { //Son dimensiones no pesos
-						$calculo_volumetrico = true;
-						$medidas_tarifa = strtolower( $tarifa[ 0 ] );
-					}
-					if ( isset( $tarifa[ 2 ] ) && stripos( $tarifa[ 2 ], "x" ) ) {
-						$calculo_volumetrico = true;
-						$medidas_tarifa = strtolower( $tarifa[ 2 ] );
-					}
-					if ( isset( $tarifa[ 3 ] ) && stripos( $tarifa[ 3 ], "x" ) ) {
-						$calculo_volumetrico = true;
-						$medidas_tarifa = strtolower( $tarifa[ 3 ] );
-					}
-					//¿Existen medidas?
-					if ( isset( $medidas_tarifa ) ) {
-						$medida_tarifa = explode( "x", $medidas_tarifa );
-						if ( ( $largo > $medida_tarifa[ 0 ] || $ancho > $medida_tarifa[ 1 ] || $alto > $medida_tarifa[ 2 ] ) || 
-							$volumen_total > ( $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ] ) ) {
-							$excede_dimensiones = true; //Excede el tamaño o volumen máximo
+					$clase_de_envio			= $tipo;
+
+					//Comprobamos si tiene medidas
+					foreach ( $tarifas_por_tipo as $tarifa ) {
+						if ( isset( $tarifa[ 'medidas' ] ) ) { 
+							if ( !isset( $tarifa[ 'peso' ] ) ) { //Son medidas sin peso
+								$calculo_volumetrico	= true;
+							}
+							
+							//Comprueba el volumen
+							$medida_tarifa = explode( "x", $tarifa[ 'medidas' ] );
+							if ( ( $largo > $medida_tarifa[ 0 ] || $ancho > $medida_tarifa[ 1 ] || $alto > $medida_tarifa[ 2 ] ) || 
+								$volumen_total > ( $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ] ) ) {
+								$excede_dimensiones = true; //Excede el tamaño o volumen máximo
+							}
 						}
 					}
-					
-					//Comprobamos clases de envío
-					if ( $clases[ 'todas' ] == $peso_total ) {
-						$clase_de_envio = 'todas';
-					} else {
-						if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && array_key_exists( $tarifa[ 2 ], $clases ) ) {
-							$clase_de_envio = $tarifa[ 2 ];
-						} else if ( isset( $tarifa[ 2 ] ) && !stripos( $tarifa[ 2 ], "x" ) && !array_key_exists( $tarifa[ 2 ], $clases ) ) {
-							$clase_de_envio = 'todas';					
-						} else if ( !isset( $tarifa[ 2 ] ) || !stripos( $tarifa[ 2 ], "x" ) ) {
-							$clase_de_envio = 'sin-clase';					
-						}
-					}
+
 					//Prevenimos errores
 					if ( $clase_de_envio == 'sin-clase' && !isset( $clases[ 'sin-clase' ] ) ) {
 						$clase_de_envio = 'todas';
@@ -526,42 +555,46 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 
 					//Obtenemos la tarifa más barata
-					if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
-						if ( ( isset( $tarifa[ 2 ] ) && $tarifa[ 2 ] == $clase_de_envio ) || 
-							!isset( $tarifa[ 2 ] ) ) {
-							if ( ( !$peso_anterior && $tarifa[ 0 ] >= $clases[ $clase_de_envio ] ) || 
-								( $tarifa[ 0 ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
-								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+					foreach ( $tarifas_por_tipo as $tarifa ) {
+						if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
+							if ( ( !$peso_anterior && $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] ) || 
+								( $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
+								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
 							} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
-								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
 							}
-							
-							//Guardamos el peso actual
-							$peso_anterior = $tarifa[ 0 ];
-						}
-					} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida
-						$volumen = $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ];
 
-						if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[ 0 ] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[ 1 ] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[ 2 ] >= $alto && $alto > $alto_anterior ) ) ) {
-							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];									
-						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
-							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
+							//Guardamos el peso actual
+							$peso_anterior = $tarifa[ 'peso' ];
+						} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida
+							if ( isset( $tarifa[ 'medidas' ] ) ) { 
+								$medida_tarifa = explode( "x", $tarifa[ 'medidas' ] );
+								$volumen = $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ];
+
+								if ( !$largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[ 0 ] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[ 1 ] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[ 2 ] >= $alto && $alto > $alto_anterior ) ) ) {
+									$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];									
+								} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
+									$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
+								}
+
+								//Guardamos las medidas actuales
+								$largo_anterior	= $medida_tarifa[ 0 ];
+								$ancho_anterior	= $medida_tarifa[ 1 ];
+								$alto_anterior	= $medida_tarifa[ 2 ];
+							}
+						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $tarifa[ 'importe' ] ) ) { //Las medidas son mayores que la de la tarifa máxima
+							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
 						}
-						
-						//Guardamos las medidas actuales
-						$largo_anterior	= $medida_tarifa[ 0 ];
-						$ancho_anterior	= $medida_tarifa[ 1 ];
-						$alto_anterior	= $medida_tarifa[ 2 ];
-					} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $tarifa[ 1 ] ) ) { //Las medidas son mayores que la de la tarifa máxima
-						$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 1 ];
 					}
 				}
 
-				if ( $clases[ 'todas' ] == 0 && count( $tarifa_mas_barata ) > 1 ) { //Prevenimos errores de duplicación de tarifas
+				//Prevenimos errores de duplicación de tarifas
+				if ( $clases[ 'todas' ] == 0 && count( $tarifa_mas_barata ) > 1 ) {
 					unset( $tarifa_mas_barata[ 'todas' ] );
 				}
 				
-				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[ $clase_de_envio ] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) { //Se ha excedido la tarifa máxima
+				//Se ha excedido la tarifa máxima
+				if ( $this->maximo == "no" && ( ( $peso_anterior && $clases[ $clase_de_envio ] > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) {
 					unset( $tarifa_mas_barata[ $clase_de_envio ] );
 				}
 
@@ -622,8 +655,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 //Busca en un array multidimensional
 function apg_busca_en_array( $busqueda, $array_de_busqueda, $estricto = true ) {
-	foreach ( $array_de_busqueda as $valor_a_comparar ) {
-		if ( ( $estricto ? $valor_a_comparar === $busqueda : $valor_a_comparar == $busqueda ) || ( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $estricto ) ) ) {
+	foreach ( $array_de_busqueda as $indice => $valor_a_comparar ) {
+		if ( ( $estricto ? $indice === $busqueda : $indice == $busqueda ) || 
+			( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $estricto ) ) ) {
 			return true;
 		}
 	}

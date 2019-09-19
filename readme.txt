@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles, WPML
 Requires at least: 3.8
 Tested up to: 5.2.4
-Stable tag: 2.3.0.3
+Stable tag: 2.3.1
 WC requires at least: 2.6
 WC tested up to: 3.7
 License: GPLv3
@@ -93,6 +93,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.3.1 = 
+* Rates generation function rewritten.
 = 2.3.0.2 = 
 * Small fixes in shipping cost calculations. **Reported by [lepress](https://wordpress.org/support/topic/fee-is-wrong-for-being-ignorant-the-shipping-class/#post-11943232)**.
 = 2.3.0.2 = 
@@ -391,8 +393,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 2.3.0.2 = 
-* Small fixes in shipping cost calculations. **Reported by [lepress](https://wordpress.org/support/topic/fee-is-wrong-for-being-ignorant-the-shipping-class/#post-11943232)**.
+= 2.3.1 = 
+* Rates generation function rewritten.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

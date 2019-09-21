@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.1
+Version: 2.3.1.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -521,27 +521,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				//Aplicamos tarifas
 				foreach ( $tarifas as $tipo => $tarifas_por_tipo ) {	
-					//Inicializa variables
-					$calculo_volumetrico	= false;
-					$excede_dimensiones		= false;
+					//Variable
 					$clase_de_envio			= $tipo;
-
-					//Comprobamos si tiene medidas
-					foreach ( $tarifas_por_tipo as $tarifa ) {
-						if ( isset( $tarifa[ 'medidas' ] ) ) { 
-							if ( !isset( $tarifa[ 'peso' ] ) ) { //Son medidas sin peso
-								$calculo_volumetrico	= true;
-							}
-							
-							//Comprueba el volumen
-							$medida_tarifa = explode( "x", $tarifa[ 'medidas' ] );
-							if ( ( $largo > $medida_tarifa[ 0 ] || $ancho > $medida_tarifa[ 1 ] || $alto > $medida_tarifa[ 2 ] ) || 
-								$volumen_total > ( $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ] ) ) {
-								$excede_dimensiones = true; //Excede el tamaño o volumen máximo
-							}
-						}
-					}
-
+					
 					//Prevenimos errores
 					if ( $clase_de_envio == 'sin-clase' && !isset( $clases[ 'sin-clase' ] ) ) {
 						$clase_de_envio = 'todas';
@@ -556,6 +538,25 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					//Obtenemos la tarifa más barata
 					foreach ( $tarifas_por_tipo as $tarifa ) {
+						//Inicializa variables
+						$calculo_volumetrico	= false;
+						$excede_dimensiones		= false;
+						unset( $medidas_tarifa ); //Fix by DJ Team Digital
+						
+						//Comprobamos si tiene medidas
+						if ( isset( $tarifa[ 'medidas' ] ) ) { 
+							if ( !isset( $tarifa[ 'peso' ] ) ) { //Son medidas sin peso
+								$calculo_volumetrico	= true;
+							}
+							
+							//Comprueba el volumen
+							$medida_tarifa = explode( "x", $tarifa[ 'medidas' ] );
+							if ( ( $largo > $medida_tarifa[ 0 ] || $ancho > $medida_tarifa[ 1 ] || $alto > $medida_tarifa[ 2 ] ) || 
+								$volumen_total > ( $medida_tarifa[ 0 ] * $medida_tarifa[ 1 ] * $medida_tarifa[ 2 ] ) ) {
+								$excede_dimensiones = true; //Excede el tamaño o volumen máximo
+							}
+						}
+
 						if ( !$calculo_volumetrico && !$excede_dimensiones ) { //Es un peso
 							if ( ( !$peso_anterior && $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] ) || 
 								( $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
@@ -563,7 +564,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 							} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
 								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
 							}
-
+							
 							//Guardamos el peso actual
 							$peso_anterior = $tarifa[ 'peso' ];
 						} else if ( $calculo_volumetrico && !$excede_dimensiones ) { //Es una medida

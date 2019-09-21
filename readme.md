@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 5.2.4
 
-Stable tag: 2.3.1
+Stable tag: 2.3.1.1
 
 WC requires at least: 2.6
 
@@ -98,6 +98,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.3.1.1
+* Pequeñas correcciones en el cálculo de los costes de envío. **Notificado por [aceone999](https://wordpress.org/support/topic/bug-for-dimensions-in-2-3-1/)**.
+
 ### 2.3.1
 * Función de generación de tarifas reescrita.
 

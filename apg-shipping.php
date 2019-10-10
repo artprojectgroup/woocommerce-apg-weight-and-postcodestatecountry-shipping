@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.1.1
+Version: 2.3.1.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.2.4
+Tested up to: 5.3
 WC requires at least: 2.6
-WC tested up to: 3.7
+WC tested up to: 3.8
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -72,6 +72,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				
 				//Inicializamos variables
 				$campos = array(
+					'activo',
 					'title',
 					'tax_status',
 					'fee',
@@ -95,9 +96,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'entrega',
 					'debug',
 				);
-				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-					$campos[ 'activo' ];
-				}
 				foreach ( $campos as $campo ) {
 					$this->$campo = $this->get_option( $campo );
 				}
@@ -428,7 +426,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				//Actualizamos precio
 				$importe	+= $suma_cargos;
 				//¿Impuestos?
-				$impuestos	= ( $this->tax_status != 'none' ) ? '' : false;
+				$impuestos	= ( !empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
 
 				$tarifa = array(
 					'id'		=> $this->get_rate_id(),
@@ -512,11 +510,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$alto_anterior				= 0;
 				$clase_de_envio_anterior	= '';
 
-				//Reajustamos pesos
+				//Prevenimos errores y reajustamos pesos
 				foreach ( $clases as $clase => $peso ) {
 					if ( $clase != 'todas' && apg_busca_en_array( $clase, $tarifas ) ) {
 						$clases[ 'todas' ] -= $peso;
 					}
+				}
+				if ( $clases[ 'todas' ] > 0 ) {
+					$clases[ 'sin-clase' ]	+= $clases[ 'todas' ];
 				}
 
 				//Aplicamos tarifas

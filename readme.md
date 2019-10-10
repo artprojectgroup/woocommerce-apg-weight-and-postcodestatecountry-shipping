@@ -7,13 +7,13 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 5.2.4
+Tested up to: 5.3
 
-Stable tag: 2.3.1.1
+Stable tag: 2.3.1.2
 
 WC requires at least: 2.6
 
-WC tested up to: 3.7
+WC tested up to: 3.8
 
 License: GPLv3
 
@@ -98,6 +98,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.3.1.2
+* Pequeñas correcciones en el cálculo de los costes de envío. **Notificado por [aceone999](https://wordpress.org/support/topic/version-2-3-1-1-still-broken/)**.
+
 ### 2.3.1.1
 * Pequeñas correcciones en el cálculo de los costes de envío. **Notificado por [aceone999](https://wordpress.org/support/topic/bug-for-dimensions-in-2-3-1/)**.
 

@@ -112,7 +112,9 @@ add_action( 'admin_init', 'apg_shipping_pago' );
 
 //Hoja de estilo y JavaScript
 function apg_shipping_estilo() {
-	wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ) ); //Carga la hoja de estilo global
-	wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ) );
+	if ( strpos( $_SERVER[ 'REQUEST_URI' ], 'wc-settings&tab=shipping&instance_id' ) !== false ) {
+		wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ) ); //Carga la hoja de estilo global
+		wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ) );
+	}
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );

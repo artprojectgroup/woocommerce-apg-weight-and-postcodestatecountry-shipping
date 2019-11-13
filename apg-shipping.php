@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.1.3
+Version: 2.3.1.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -516,7 +516,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$clases[ 'todas' ] -= $peso;
 					}
 				}
-				if ( $clases[ 'todas' ] > 0 ) {
+				if ( isset( $clases[ 'sin-clase' ] ) && $clases[ 'todas' ] > 0 ) {
 					$clases[ 'sin-clase' ]	+= $clases[ 'todas' ];
 				}
 
@@ -672,6 +672,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	$gasto_de_envio	= explode( ":", $etiqueta );
 	$id				= explode( ":", $metodo->id );
 	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] .'_settings' ) );
+	
 	//¿Mostramos el icono?
 	if ( !empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
 		$tamano = @getimagesize( $apg_shipping_settings[ 'icono' ] );
@@ -684,6 +685,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 			$etiqueta = $imagen . ':' . $gasto_de_envio[ 1 ]; //Sólo icono
 		}
 	}
+	
 	//Tiempo de entrega
 	if ( !empty( $apg_shipping_settings[ 'entrega' ] ) ) {
 		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>';

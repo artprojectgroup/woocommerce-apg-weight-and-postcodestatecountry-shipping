@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.1.4
+Version: 2.3.1.5
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.3
+Tested up to: 5.6
 WC requires at least: 2.6
-WC tested up to: 3.8
+WC tested up to: 4.4
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -39,11 +39,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 		class WC_apg_shipping extends WC_Shipping_Method {				
 			//Variables
-			public $categorias_de_producto	= array();
-			public $etiquetas_de_producto	= array();
-			public $clases_de_envio			= array();
-			public $roles_de_usuario		= array();
-			public $metodos_de_pago			= array();
+			public $categorias_de_producto	= [];
+			public $etiquetas_de_producto	= [];
+			public $clases_de_envio			= [];
+			public $roles_de_usuario		= [];
+			public $metodos_de_pago			= [];
 			public $clases_de_envio_tarifas	= "";
 	
 			public function __construct( $instance_id = 0 ) {
@@ -51,11 +51,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->instance_id			= absint( $instance_id );
 				$this->method_title			= __( "APG Shipping", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 				$this->method_description	= __( 'Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
-				$this->supports				= array(
+				$this->supports				= [
 					'shipping-zones',
 					'instance-settings',
 					'instance-settings-modal',
-				);
+				];
 				$this->init();
 			}
 
@@ -71,7 +71,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->init_form_fields(); //Crea los campos de opciones
 				
 				//Inicializamos variables
-				$campos = array(
+				$campos = [
 					'activo',
 					'title',
 					'tax_status',
@@ -95,14 +95,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'muestra_icono',
 					'entrega',
 					'debug',
-				);
+				];
 				foreach ( $campos as $campo ) {
 					$this->$campo = $this->get_option( $campo );
 				}
 				$this->tarifas = (array) explode( "\n", $this->tarifas );
 
 				//Acción
-				add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
+				add_action( 'woocommerce_update_options_shipping_' . $this->id, [ $this, 'process_admin_options' ] );
 			}
 			
 			//Formulario de datos
@@ -119,7 +119,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function apg_shipping_dame_datos_de_producto( $tipo ) {
 				$taxonomy = ( $tipo == 'categorias_de_producto' ) ? 'product_cat' : 'product_tag';
 				
-				$argumentos = array(
+				$argumentos = [
 					'taxonomy'		=> $taxonomy,
 					'orderby'		=> 'name',
 					'show_count'	=> 0,
@@ -127,7 +127,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'hierarchical'	=> 1,
 					'title_li'		=> '',
 					'hide_empty'	=> 0
-				);
+				];
 				$datos = get_categories( $argumentos );
 				
 				foreach ( $datos as $dato ) {
@@ -178,7 +178,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			}
 			
 			//Calcula el gasto de envío
-			public function calculate_shipping( $paquete = array() ) {
+			public function calculate_shipping( $paquete = [] ) {
 				//Comprueba si está activo el plugin
 				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 					if ( $this->activo == 'no' ) {
@@ -210,8 +210,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$largo		= 0;
 				$ancho		= 0;
 				$alto		= 0;
-				$clases		= array();
-				$medidas	= array();
+				$clases		= [];
+				$medidas	= [];
 
 				//Peso total del pedido
 				$peso_total = WC()->cart->get_cart_contents_weight();
@@ -299,12 +299,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 					
 					//Medidas
-					$medidas[] = array(
+					$medidas[] = [
 						'largo'		=> $producto->get_length(),
 						'ancho'		=> $producto->get_width(),
 						'alto'		=> $producto->get_height(),
 						'cantidad'	=> $valores[ 'quantity' ],
-					);
+					];
 					
 					//Almacena el valor del lado más grande
 					if ( $producto->get_length() > $largo ) {
@@ -428,13 +428,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				//¿Impuestos?
 				$impuestos	= ( !empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
 
-				$tarifa = array(
+				$tarifa = [
 					'id'		=> $this->get_rate_id(),
 					'label'		=> $this->title,
 					'cost'		=> $importe,
 					'taxes'		=> $impuestos,
 					'calc_tax'	=> 'per_order'
-				);
+				];
 				
 				$this->add_rate( $tarifa );
 				
@@ -502,8 +502,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			//Selecciona la tarifa más barata
 			public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases, $tarifas ) {
 				//Variables
-				$tarifa_mas_barata			= array();
-				$peso_parcial				= array();
+				$tarifa_mas_barata			= [];
+				$peso_parcial				= [];
 				$peso_anterior				= 0;
 				$largo_anterior				= 0;
 				$ancho_anterior				= 0;
@@ -603,7 +603,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				if ( !empty( $tarifa_mas_barata ) ) {
 					return $tarifa_mas_barata;
 				} else {
-					return array();
+					return [];
 				}
 			}
 		}

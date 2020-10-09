@@ -9,7 +9,7 @@ Requires at least: 3.8
 
 Tested up to: 5.6
 
-Stable tag: 2.3.1.7
+Stable tag: 2.3.2
 
 WC requires at least: 2.6
 
@@ -98,8 +98,12 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.3.2
+* Mejora del rendimiento.
+* Pequeños arreglos.
+
 ### 2.3.1.7
-Vuelta a la versión 2.3.1.5
+* Vuelta a la versión 2.3.1.5
 
 ### 2.3.1.6
 * Pequeños arreglos.

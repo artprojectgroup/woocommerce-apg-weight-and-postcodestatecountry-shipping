@@ -1,4 +1,6 @@
 <?php
+defined( 'ABSPATH' ) || exit;
+
 //Definimos las variables
 $apg_shipping = [	
 	'plugin' 		=> 'WC - APG Weight Shipping', 
@@ -101,12 +103,11 @@ function apg_shipping_plugin( $nombre ) {
 function apg_shipping_pago() {
 	global $medios_de_pago;
 	
-	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
-		$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
-	}
+	$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
 }
-add_action( 'admin_init', 'apg_shipping_pago' );
+if ( strpos( $_SERVER[ 'REQUEST_URI' ], 'wc-settings&tab=shipping&instance_id' ) !== false || strpos( $_SERVER[ 'REQUEST_URI' ], 'plugins.php' ) !== false ) {
+    add_action( 'admin_init', 'apg_shipping_pago' );
+}
 
 //Hoja de estilo y JavaScript
 function apg_shipping_estilo() {
@@ -118,3 +119,4 @@ function apg_shipping_estilo() {
 	}
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
+

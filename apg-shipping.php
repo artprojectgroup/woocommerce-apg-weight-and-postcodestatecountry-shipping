@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.1.7
+Version: 2.3.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -156,7 +156,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$this->roles_de_usuario[ $rol ] = $nombre;
 				}
 			}
-
+			
 			//Función que lee y devuelve los métodos de pago
 			public function apg_shipping_dame_metodos_de_pago() {
 				global $medios_de_pago;
@@ -165,15 +165,15 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$this->metodos_de_pago[ $medio_de_pago->id ] = $medio_de_pago->title;
 				}
 			}
-			
-			//Reduce valores en categorías, etiquetas y clases de envío excluídas
+
+            //Reduce valores en categorías, etiquetas y clases de envío excluídas
 			public function reduce_valores( &$peso_total, $peso, &$productos_totales, $valores, &$precio_total, $producto ) {
 				$peso_total			-= $peso;
 				$productos_totales	-= $valores[ 'quantity' ];
 				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 					$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - $producto->get_price_excluding_tax() * $valores[ 'quantity' ] : $precio_total - $producto->get_price_including_tax() * $valores[ 'quantity' ];
 				} else {
-					$precio_total = ( WC()->cart->tax_display_cart == 'excl' ) ? $precio_total - wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : $precio_total - wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];	
+					$precio_total = ( WC()->cart->get_tax_price_display_mode() == 'excl' ) ? $precio_total - wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : $precio_total - wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];	
 				}
 			}
 			
@@ -237,7 +237,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? $producto->get_price_excluding_tax() * $valores[ 'quantity' ] : $producto->get_price_including_tax() * $valores[ 'quantity' ];
 					} else {
-						$precio = ( WC()->cart->tax_display_cart == 'excl' ) ? wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];
+						$precio = ( WC()->cart->get_tax_price_display_mode() == 'excl' ) ? wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];
 					}
 					//Compatibilidad con WooCommerce Product Bundles
 					if ( $producto->is_type( 'bundle' ) ) {
@@ -657,12 +657,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 //Busca en un array multidimensional
 function apg_busca_en_array( $busqueda, $array_de_busqueda, $estricto = true ) {
-	foreach ( $array_de_busqueda as $indice => $valor_a_comparar ) {
-		if ( ( $estricto ? $indice === $busqueda : $indice == $busqueda ) || 
-			( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $estricto ) ) ) {
-			return true;
-		}
-	}
+    if ( is_array( $array_de_busqueda ) || is_object( $array_de_busqueda ) ) {
+        foreach ( $array_de_busqueda as $indice => $valor_a_comparar ) {
+            if ( ( $estricto ? $indice === $busqueda : $indice == $busqueda ) || 
+                ( is_array( $valor_a_comparar ) && apg_busca_en_array( $busqueda, $valor_a_comparar, $estricto ) ) ) {
+                return true;
+            }
+        }
+    }
 
 	return false;
 }

@@ -68,12 +68,12 @@ function apg_shipping_plugin( $nombre ) {
 	global $apg_shipping;
 
 	$argumentos = ( object ) [ 
-		'slug' => $nombre 
+		'slug'		=> $nombre 
 	];
 	$consulta = [ 
-		'action' => 'plugin_information', 
-		'timeout' => 15, 
-		'request' => serialize( $argumentos )
+		'action'	=> 'plugin_information', 
+		'timeout'	=> 15, 
+		'request'	=> serialize( $argumentos )
 	];
 	$respuesta = get_transient( 'apg_shipping_plugin' );
 	if ( false === $respuesta ) {
@@ -87,9 +87,9 @@ function apg_shipping_plugin( $nombre ) {
 	}
 	
 	$rating = [
-	   'rating'	=> $plugin[ 'rating' ],
-	   'type'	=> 'percent',
-	   'number'	=> $plugin[ 'num_ratings' ],
+	   'rating'		=> $plugin[ 'rating' ],
+	   'type'		=> 'percent',
+	   'number'		=> $plugin[ 'num_ratings' ],
 	];
 	ob_start();
 	wp_star_rating( $rating );
@@ -119,4 +119,3 @@ function apg_shipping_estilo() {
 	}
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
-

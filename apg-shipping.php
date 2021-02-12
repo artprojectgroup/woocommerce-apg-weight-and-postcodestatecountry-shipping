@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.2.2
+Version: 2.3.2.3
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.6
+Tested up to: 5.7
 WC requires at least: 2.6
-WC tested up to: 4.7
+WC tested up to: 5.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -36,6 +36,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		if ( !class_exists( 'WC_Shipping_Method' ) ) {
 			return;
 		}
+		
+		//Cargamos funciones necesarias
+		include_once( 'includes/admin/funciones.php' );
 
 		class WC_apg_shipping extends WC_Shipping_Method {				
 			//Variables
@@ -62,7 +65,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			//Inicializa los datos
 			public function init() {
 				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
-				$this->apg_shipping_dame_datos_de_producto('etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
+				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
 				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
 				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
 				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
@@ -672,34 +675,6 @@ function apg_busca_en_array( $busqueda, $array_de_busqueda, $estricto = true ) {
 
 	return false;
 }
-
-//Muestra el icono
-function apg_shipping_icono( $etiqueta, $metodo ) {
-	$gasto_de_envio	= explode( ":", $etiqueta );
-	$id				= explode( ":", $metodo->id );
-	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] .'_settings' ) );
-	
-	//¿Mostramos el icono?
-	if ( !empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
-		$tamano = @getimagesize( $apg_shipping_settings[ 'icono' ] );
-		$imagen	= '<img class="apg_shipping_icon" src="' . $apg_shipping_settings[ 'icono' ] . '" witdh="' . $tamano[ 0 ] . '" height="' . $tamano[ 1 ] . '" />';
-		if ( $apg_shipping_settings[ 'muestra_icono' ] == 'delante' ) {
-			$etiqueta = $imagen . ' ' . $etiqueta; //Icono delante
-		} else if ( $apg_shipping_settings[ 'muestra_icono' ] == 'detras' ) {
-			$etiqueta = $gasto_de_envio[ 0 ] . ' ' . $imagen . ':' . $gasto_de_envio[ 1 ]; //Icono detrás
-		} else {
-			$etiqueta = $imagen . ':' . $gasto_de_envio[ 1 ]; //Sólo icono
-		}
-	}
-	
-	//Tiempo de entrega
-	if ( !empty( $apg_shipping_settings[ 'entrega' ] ) ) {
-		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>';
-	}
-	
-	return $etiqueta;
-}
-add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', 10, 2 );
 
 //Muestra el mensaje de activación de WooCommerce y desactiva el plugin
 function apg_shipping_requiere_wc() {

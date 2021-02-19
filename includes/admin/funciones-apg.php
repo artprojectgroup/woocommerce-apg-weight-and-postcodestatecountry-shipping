@@ -12,6 +12,7 @@ $apg_shipping = [
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 ];
 $medios_de_pago = [];
+$zonas_de_envio = [];
 
 //Carga el idioma
 load_plugin_textdomain( 'woocommerce-apg-weight-and-postcodestatecountry-shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );
@@ -97,16 +98,6 @@ function apg_shipping_plugin( $nombre ) {
 	ob_end_clean();
 
 	return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
-}
-
-//Actualiza los medios de pago 
-function apg_shipping_pago() {
-	global $medios_de_pago;
-	
-	$medios_de_pago = WC()->payment_gateways->payment_gateways(); //Guardamos los medios de cobro
-}
-if ( strpos( $_SERVER[ 'REQUEST_URI' ], 'wc-settings&tab=shipping&instance_id' ) !== false || strpos( $_SERVER[ 'REQUEST_URI' ], 'plugins.php' ) !== false ) {
-    add_action( 'admin_init', 'apg_shipping_pago' );
 }
 
 //Hoja de estilo y JavaScript

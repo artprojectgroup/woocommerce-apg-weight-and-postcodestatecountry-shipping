@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles, WPML
 Requires at least: 3.8
 Tested up to: 5.7
-Stable tag: 2.3.2.3
+Stable tag: 2.4
 WC requires at least: 2.6
-WC tested up to: 5.0
+WC tested up to: 5.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can exclude shipping for one, several or all shipping classes.
 * You can exclude user roles.
 * You can hide payment gateways.
+* You can hide shipping methods from the same shipping zone.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
 * Fully compatible with [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
@@ -93,6 +94,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.4 = 
+* Added option to exclude shipping methods from the same shipping zone. **Update sponsored by [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
 = 2.3.2.3 = 
 * Small fixes.
 = 2.3.2.2 = 
@@ -416,8 +419,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 2.3.2.3 = 
-* Small fixes.
+= 2.4 = 
+* Added option to exclude shipping methods from the same shipping zone. **Update sponsored by [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

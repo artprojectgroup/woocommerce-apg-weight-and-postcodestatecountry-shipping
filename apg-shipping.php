@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.3.2.3
+Version: 2.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -9,7 +9,7 @@ Author: Art Project Group
 Requires at least: 3.8
 Tested up to: 5.7
 WC requires at least: 2.6
-WC tested up to: 5.0
+WC tested up to: 5.1
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -42,12 +42,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 		class WC_apg_shipping extends WC_Shipping_Method {				
 			//Variables
-			public $categorias_de_producto	= [];
-			public $etiquetas_de_producto	= [];
-			public $clases_de_envio			= [];
-			public $roles_de_usuario		= [];
-			public $metodos_de_pago			= [];
-			public $clases_de_envio_tarifas	= "";
+			public $categorias_de_producto   = [];
+			public $etiquetas_de_producto    = [];
+			public $clases_de_envio          = [];
+			public $roles_de_usuario         = [];
+			public $metodos_de_envio         = [];
+			public $metodos_de_pago          = [];
+			public $clases_de_envio_tarifas  = "";
 	
 			public function __construct( $instance_id = 0 ) {
 				$this->id					= 'apg_shipping';
@@ -68,12 +69,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
 				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
 				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
+				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
 				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
 	
 				$this->init_settings(); //Recogemos todos los valores
 				$this->init_form_fields(); //Crea los campos de opciones
-				
-				//Inicializamos variables
+
+                //Inicializamos variables
 				$campos = [
 					'activo',
 					'title',
@@ -94,6 +96,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'roles_excluidos',
 					'tipo_roles',
 					'pago',
+                    'envio',
 					'icono',
 					'muestra_icono',
 					'entrega',
@@ -156,8 +159,25 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$wp_roles = new WP_Roles();
 
 				foreach( $wp_roles->role_names as $rol => $nombre ) {
-					$this->roles_de_usuario[ $rol ] = $nombre;
+                    $this->roles_de_usuario[ $rol ] = $nombre;
 				}
+			}
+            
+			//Función que lee y devuelve los métodos de envío
+			public function apg_shipping_dame_metodos_de_envio() {
+                global $zonas_de_envio, $wpdb;
+                
+                if ( isset( $_REQUEST[ 'instance_id' ] ) ) {
+                    $zona_de_envio  = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods as methods WHERE methods.instance_id = %d LIMIT 1;", $_REQUEST[ 'instance_id' ] ) );
+
+                    foreach ( $zonas_de_envio as $zona ) {
+                        foreach ( $zona[ 'shipping_methods' ] as $gasto_envio ) {
+                            if ( $zona_de_envio == $zona[ 'id' ] && $gasto_envio->instance_id != $_REQUEST[ 'instance_id' ] ) {
+                                $this->metodos_de_envio[ $gasto_envio->instance_id ] = $gasto_envio->title;
+                            }
+                        }
+                    }
+                }
 			}
 			
 			//Función que lee y devuelve los métodos de pago
@@ -444,12 +464,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				];
 				
 				$this->add_rate( $tarifa );
-				
+                
 				do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
 			}
 			
 			//Recoge las tarifas programadas
-			public function dame_tarifas( $clases ) {				
+			public function dame_tarifas( $clases ) {
+                $tarifas    = [];
+                
 				//Procesa las tarifas programadas
 				if ( !empty( $this->tarifas ) ) {
 					foreach ( $this->tarifas as $indice => $opcion ) {
@@ -616,48 +638,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		}
 	}
 	add_action( 'plugins_loaded', 'apg_shipping_inicio', 0 );
-	
-	//Añade clases necesarias para nuevos gastos de envío
-	function apg_shipping_clases( $metodos ) {
-		$metodos[ 'apg_shipping' ] = 'WC_apg_shipping';
-	
-		return $metodos;
-	}
-	add_filter( 'woocommerce_shipping_methods', 'apg_shipping_clases', 0 );
-	
-	//Filtra los medios de pago
-	function apg_shipping_filtra_medios_de_pago( $medios ) {
-		if ( isset( WC()->session->chosen_shipping_methods ) ) {
-			$id = explode( ":", WC()->session->chosen_shipping_methods[ 0 ] );
-		} else if ( isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
-			$id = explode( ":", $_POST[ 'shipping_method' ][ 0 ] );
-		}
-		if ( !isset( $id[ 1 ] ) ) {
-			return $medios;
-		}
-		$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) );
-		
-		if ( isset( $_POST[ 'payment_method' ] ) && !$medios ) {
-			$medios = $_POST[ 'payment_method' ];
-		}
-
-		if ( !empty( $apg_shipping_settings[ 'pago' ] ) && $apg_shipping_settings[ 'pago' ][ 0 ] != 'todos' ) {
-			foreach ( $medios as $nombre => $medio ) {
-				if ( is_array( $apg_shipping_settings[ 'pago' ] ) ) {
-					if ( !in_array( $nombre, $apg_shipping_settings[ 'pago' ] ) ) {
-						unset( $medios[ $nombre ] );
-					}
-				} else { 
-					if ( $nombre != $apg_shipping_settings[ 'pago' ] ) {
-						unset( $medios[ $nombre ] );
-					}
-				}
-			}
-		}
-
-		return $medios;
-	}
-	add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago' );
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }
@@ -687,7 +667,7 @@ function apg_shipping_requiere_wc() {
 //Eliminamos todo rastro del plugin al desinstalarlo
 function apg_shipping_desinstalar() {
 	$contador = 0;
-	while( $contador < 100 ) {
+	while ( $contador < 100 ) {
 		delete_option( 'woocommerce_apg_shipping_' . $contador . 'settings' );
 		$contador++;
 	}

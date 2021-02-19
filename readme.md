@@ -9,11 +9,11 @@ Requires at least: 3.8
 
 Tested up to: 5.7
 
-Stable tag: 2.3.2.3
+Stable tag: 2.4
 
 WC requires at least: 2.6
 
-WC tested up to: 5.0
+WC tested up to: 5.1
 
 License: GPLv3
 
@@ -43,6 +43,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes excluir el envío de una, varias o todas las clases de envío del sistema.
 * Puedes excluir roles de usuario.
 * Puedes ocultar medios de pago.
+* Puedes ocultar métodos de envío de la misma zona de envío.
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
 * Totalmente compatible con el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
@@ -98,6 +99,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.4
+* Añadida opción para excluir métodos de envío de la misma zona de envío. **Actualización patrocinada por [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
+
 ### 2.3.2.3
 * Pequeños arreglos.
 

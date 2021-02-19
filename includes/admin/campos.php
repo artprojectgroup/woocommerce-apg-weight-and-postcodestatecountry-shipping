@@ -169,6 +169,22 @@ $campos[ 'pago' ] = [
 		'todos'			=> __( 'All enabled payments', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
 	] + $this->metodos_de_pago,
 ];
+if ( !empty( $this->metodos_de_envio ) ) {
+    $campos[ 'envio' ] = [
+        'title'			=> __( 'Shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+        'desc_tip'		=> sprintf( __( "Shipping methods available in the same shipping zone of %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+        'css'			=> 'width: 450px;',
+        'default'		=> [ 
+            'todos' 
+        ],
+        'type'			=> 'multiselect',
+        'class'			=> 'chosen_select',
+        'options' 		=> [ 
+            'todos'			=> __( 'All enabled shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+            'ninguno'       => __( 'No other shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
+        ] + $this->metodos_de_envio,
+    ];
+}
 $campos[ 'icono' ] = [ 
 		'title'			=> __( 'Icon image', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',

@@ -95,7 +95,7 @@ function apg_shipping_gestiona_envios( $envios ) {
 
     if ( isset( $apg_shipping_settings[ 'envio' ] ) && ! empty( $apg_shipping_settings[ 'envio' ] ) ) {
         foreach ( $envios[ 0 ][ 'rates' ] as $clave => $envio ) {
-            foreach( $configuracion[ 'envio' ] as $metodo ) {
+            foreach( $apg_shipping_settings[ 'envio' ] as $metodo ) {
                 if ( $metodo != 'todos' ) {
                     if ( ( $metodo == 'ninguno' && $id[ 1 ] != $envio->instance_id ) || ( ! in_array( $envio->instance_id, $apg_shipping_settings[ 'envio' ] ) && $id[ 1 ] != $envio->instance_id ) ) {
                         unset( $envios[ 0 ][ 'rates' ][ $clave ] );

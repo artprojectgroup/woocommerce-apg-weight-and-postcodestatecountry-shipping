@@ -8,14 +8,16 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	
 	//¿Mostramos el icono?
 	if ( !empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
+        $precio = ( WC()->cart->tax_display_cart == 'excl' ) ? wc_price( $metodo->cost ) : wc_price( $metodo->cost + $metodo->get_shipping_tax() );
+        $precio .= ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>';
 		$tamano = @getimagesize( $apg_shipping_settings[ 'icono' ] );
 		$imagen	= '<img class="apg_shipping_icon" src="' . $apg_shipping_settings[ 'icono' ] . '" witdh="' . $tamano[ 0 ] . '" height="' . $tamano[ 1 ] . '" />';
 		if ( $apg_shipping_settings[ 'muestra_icono' ] == 'delante' ) {
 			$etiqueta = $imagen . ' ' . $etiqueta; //Icono delante
 		} else if ( $apg_shipping_settings[ 'muestra_icono' ] == 'detras' ) {
-			$etiqueta = $metodo->label . ' ' . $imagen . ':' . wc_price( $metodo->cost ); //Icono detrás
+			$etiqueta = $metodo->label . ' ' . $imagen . ':' . $precio; //Icono detrás
 		} else {
-			$etiqueta = $imagen . ':' . wc_price( $metodo->cost ); //Sólo icono
+			$etiqueta = $imagen . ':' . $precio; //Sólo icono
 		}
 	}
 	

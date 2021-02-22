@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.4.0.1
+Version: 2.4.0.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -170,7 +170,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 if ( isset( $_REQUEST[ 'instance_id' ] ) ) {
                     $zona_de_envio  = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods as methods WHERE methods.instance_id = %d LIMIT 1;", $_REQUEST[ 'instance_id' ] ) );
 
-                    if ( !empty( $xona_de_envio ) ) {
+                    if ( !empty( $zona_de_envio ) ) {
                         foreach ( $zonas_de_envio as $zona ) {
                             foreach ( $zona[ 'shipping_methods' ] as $gasto_envio ) {
                                 if ( $zona_de_envio == $zona[ 'id' ] && $gasto_envio->instance_id != $_REQUEST[ 'instance_id' ] ) {

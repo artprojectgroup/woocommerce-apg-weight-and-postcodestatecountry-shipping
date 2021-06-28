@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.4.0.4
+Version: 2.4.0.5
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.7
+Tested up to: 5.8
 WC requires at least: 2.6
-WC tested up to: 5.1
+WC tested up to: 5.5
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -77,7 +77,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 //Inicializamos variables
 				$campos = [
-					'activo',
 					'title',
 					'tax_status',
 					'fee',
@@ -102,6 +101,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'entrega',
 					'debug',
 				];
+				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+					$campos[] = 'activo';
+				}
 				foreach ( $campos as $campo ) {
 					$this->$campo = $this->get_option( $campo );
 				}
@@ -218,20 +220,32 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				}
 				
 				//Comprobamos los roles excluidos
-				if ( !empty( $this->roles_excluidos ) ) {
-					if ( empty( wp_get_current_user()->roles ) &&
-						( ( in_array( 'invitado', $this->roles_excluidos ) && $this->tipo_roles == 'no' ) ||
-						( !in_array( 'invitado', $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) ) { //Usuario invitado
-						return false; //Role excluido
-					}
+                $validacion = true;
+                if ( ! empty( $this->roles_excluidos ) ) {
+					if ( empty( wp_get_current_user()->roles ) ) {
+                        if ( ( in_array( 'invitado', $this->roles_excluidos ) && $this->tipo_roles == 'no' ) ||
+                            ( ! in_array( 'invitado', $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) { //Usuario invitado
+                            $validacion = false; //Role excluido
+                        } else {
+                            $validacion = true;
+                        }                   
+                    } 
+                        
 					foreach( wp_get_current_user()->roles as $rol ) { //Usuario con rol
-						if ( ( in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'no' ) || 
-							( !in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) {
-							return false; //Role excluido
-						}
+						if ( ! $validacion ) {
+                            if ( ( in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'no' ) || 
+							( ! in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) {
+                                $validacion = false; //Role excluido
+                            } else {
+                                $validacion = true;
+                            } 
+                        }
 					}
 				}
-
+                if ( ! $validacion ) {
+                    return false; //No está activo
+                }
+                
 				//Variables
 				$volumen	= 0;
 				$largo		= 0;

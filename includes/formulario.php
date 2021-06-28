@@ -8,3 +8,15 @@
   <?php $this->generate_settings_html( $this->get_instance_form_fields() ); ?>
 </table>
 <!--/.form-table--> 
+<!--
+<script>
+jQuery( document ).ready( function ( $ ) {
+    $( 'tr:has( #woocommerce_apg_shipping_prueba2 )' ).hide();
+    $( '#woocommerce_apg_shipping_prueba' ).on( 'change', function () {
+        if ( $(this).children("option:selected").val() == 'si' ) {
+            $( 'tr:has( #woocommerce_apg_shipping_prueba2 )' ).toggle();
+        }
+    } );
+} );    
+</script>
+-->

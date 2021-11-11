@@ -169,7 +169,7 @@ $campos[ 'pago' ] = [
 		'todos'			=> __( 'All enabled payments', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
 	] + $this->metodos_de_pago,
 ];
-if ( !empty( $this->metodos_de_envio ) ) {
+if ( ! empty( $this->metodos_de_envio ) ) {
     $campos[ 'envio' ] = [
         'title'			=> __( 'Shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
         'desc_tip'		=> sprintf( __( "Shipping methods available in the same shipping zone of %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),

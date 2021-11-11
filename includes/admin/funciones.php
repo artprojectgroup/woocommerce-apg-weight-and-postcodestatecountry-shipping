@@ -7,7 +7,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	$apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $metodo->instance_id .'_settings' ) );
 	
 	//¿Mostramos el icono?
-	if ( !empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
+	if ( ! empty( $apg_shipping_settings[ 'icono' ] ) && @getimagesize( $apg_shipping_settings[ 'icono' ] ) && $apg_shipping_settings[ 'muestra_icono' ] != 'no' ) {
         $impuestos  = ( version_compare( WC_VERSION, '4.4', '<' ) ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
         if ( $impuestos == 'excl' ) {
             $precio = ( $metodo->get_shipping_tax() > 0 && WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost );
@@ -26,7 +26,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	}
 	
 	//Tiempo de entrega
-	if ( !empty( $apg_shipping_settings[ 'entrega' ] ) ) {
+	if ( ! empty( $apg_shipping_settings[ 'entrega' ] ) ) {
 		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>';
 	}
 	
@@ -49,19 +49,19 @@ function apg_shipping_filtra_medios_de_pago( $medios ) {
     } else if ( isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
         $id = explode( ":", $_POST[ 'shipping_method' ][ 0 ] );
     }
-    if ( !isset( $id[ 1 ] ) ) {
+    if ( ! isset( $id[ 1 ] ) ) {
         return $medios;
     }
     $apg_shipping_settings	= maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) );
 
-    if ( isset( $_POST[ 'payment_method' ] ) && !$medios ) {
+    if ( isset( $_POST[ 'payment_method' ] ) && ! $medios ) {
         $medios = $_POST[ 'payment_method' ];
     }
 
-    if ( !empty( $apg_shipping_settings[ 'pago' ] ) && $apg_shipping_settings[ 'pago' ][ 0 ] != 'todos' ) {
+    if ( ! empty( $apg_shipping_settings[ 'pago' ] ) && $apg_shipping_settings[ 'pago' ][ 0 ] != 'todos' ) {
         foreach ( $medios as $nombre => $medio ) {
             if ( is_array( $apg_shipping_settings[ 'pago' ] ) ) {
-                if ( !in_array( $nombre, $apg_shipping_settings[ 'pago' ] ) ) {
+                if ( ! in_array( $nombre, $apg_shipping_settings[ 'pago' ] ) ) {
                     unset( $medios[ $nombre ] );
                 }
             } else { 
@@ -94,7 +94,7 @@ function apg_shipping_gestiona_envios( $envios ) {
     } else if ( isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
         $id = explode( ":", $_POST[ 'shipping_method' ][ 0 ] );
     }
-    if ( !isset( $id[ 1 ] ) ) {
+    if ( ! isset( $id[ 1 ] ) ) {
         return $envios;
     }
     $apg_shipping_settings  = maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) );

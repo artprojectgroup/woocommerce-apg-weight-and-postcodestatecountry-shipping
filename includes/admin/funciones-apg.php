@@ -73,7 +73,7 @@ function apg_shipping_plugin( $nombre ) {
 		$respuesta = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]=' . $nombre  );
 		set_transient( 'apg_shipping_plugin', $respuesta, 24 * HOUR_IN_SECONDS );
 	}
-	if ( !is_wp_error( $respuesta ) ) {
+	if ( ! is_wp_error( $respuesta ) ) {
 		$plugin = json_decode( wp_remote_retrieve_body( $respuesta ) );
 	} else {
 	   return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . __( 'Unknown rating', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>';

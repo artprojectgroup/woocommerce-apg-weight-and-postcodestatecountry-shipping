@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.4.0.6
+Version: 2.4.0.7
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 5.9
+Tested up to: 6.0
 WC requires at least: 2.6
-WC tested up to: 5.9
+WC tested up to: 6.4
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -219,7 +219,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 				}
 				
-				//Comprobamos los roles excluidos
+				//Comprueba los roles excluidos
                 $validacion = true;
                 if ( ! empty( $this->roles_excluidos ) ) {
 					if ( empty( wp_get_current_user()->roles ) ) {
@@ -229,18 +229,16 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         } else {
                             $validacion = true;
                         }                   
-                    } 
-                        
-					foreach( wp_get_current_user()->roles as $rol ) { //Usuario con rol
-						if ( ! $validacion ) {
+                    } else {
+                        foreach( wp_get_current_user()->roles as $rol ) { //Usuario con rol
                             if ( ( in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'no' ) || 
-							( ! in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) {
+                            ( ! in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles == 'yes' ) ) {
                                 $validacion = false; //Role excluido
                             } else {
                                 $validacion = true;
-                            } 
+                            }
                         }
-					}
+                    }                        
 				}
                 if ( ! $validacion ) {
                     return false; //No está activo
@@ -254,25 +252,24 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$clases		= [];
 				$medidas	= [];
 
-				//Peso total del pedido
-				$peso_total = WC()->cart->get_cart_contents_weight();
-				//Productos totales del pedido
-				$productos_totales = WC()->cart->get_cart_contents_count();
-				//Precio total del pedido
-				$precio_total = WC()->cart->get_displayed_subtotal();
+				
+				$peso_total         = WC()->cart->get_cart_contents_weight(); //Peso total del pedido
+				$productos_totales  = WC()->cart->get_cart_contents_count(); //Productos totales del pedido
+				$precio_total       = WC()->cart->get_displayed_subtotal(); //Precio total del pedido
 
-				//Comprobamos si está activo WPML para coger la traducción correcta de la clase de envío
+				//Comprueba si está activo WPML para coger la traducción correcta de la clase de envío
 				if ( function_exists('icl_object_id') && ! function_exists( 'pll_the_languages' ) ) {
 					global $sitepress;
+                    
 					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
 				}
 
 				//Toma distintos datos de los productos
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
-					$producto = $valores[ 'data' ];
+					$producto  = $valores[ 'data' ];
 
 					//Toma el peso del producto
-					$peso = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
+					$peso      = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
 					
 					//Toma el precio del producto
 					if ( version_compare( WC_VERSION, '2.7', '<' ) ) {

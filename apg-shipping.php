@@ -562,6 +562,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$clases[ 'sin-clase' ]	+= $clases[ 'todas' ];
 				}
 
+				//Correct float values operations issues
+				if ( $clases[ 'todas' ] < 0.00001 ) {
+		                    $clases[ 'todas' ] = 0;
+                		}
+
 				//Aplicamos tarifas
 				foreach ( $tarifas as $tipo => $tarifas_por_tipo ) {	
 					//Variable

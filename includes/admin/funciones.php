@@ -27,8 +27,8 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	
 	//Tiempo de entrega
 	if ( ! empty( $apg_shipping_settings[ 'entrega' ] ) ) {
-		$etiqueta .= '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>';
-	}
+        $etiqueta .= ( apply_filters( 'apg_shipping_delivery', true ) ) ? '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>' : '<br /><small class="apg_shipping_delivery">' . $apg_shipping_settings[ 'entrega' ] . '</small>';
+    }
 	
 	return $etiqueta;
 }

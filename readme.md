@@ -7,13 +7,13 @@ Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, 
 
 Requires at least: 3.8
 
-Tested up to: 6.0
+Tested up to: 6.1
 
-Stable tag: 2.4.0.7
+Stable tag: 2.4.0.8
 
 WC requires at least: 2.6
 
-WC tested up to: 6.4
+WC tested up to: 6.6
 
 License: GPLv3
 
@@ -46,6 +46,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes ocultar métodos de envío de la misma zona de envío.
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
+* Puedes eliminar el texto previo del tiempo estimado de entrega con el filtro `apg_shipping_delivery`.
 * Totalmente compatible con el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
 * Totalmente compatible con el plugin [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS).
 
@@ -99,6 +100,10 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.4.0.8
+* Añadido filtro `apg_shipping_delivery`.
+* Pequeños arreglos.
+
 ### 2.4.0.7
 * Pequeños arreglos.
 

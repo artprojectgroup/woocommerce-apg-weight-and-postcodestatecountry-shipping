@@ -3,10 +3,10 @@ Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles, WPML
 Requires at least: 3.8
-Tested up to: 6.0
-Stable tag: 2.4.0.7
+Tested up to: 6.1
+Stable tag: 2.4.0.8
 WC requires at least: 2.6
-WC tested up to: 6.4
+WC tested up to: 6.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can hide shipping methods from the same shipping zone.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
+* You can remove the previous text of the estimated delivery time with the `apg_shipping_delivery` filter.
 * Fully compatible with [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 * Fully compatible with [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS) plugin.
 
@@ -94,6 +95,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.4.0.8 = 
+* Added `apg_shipping_delivery` filter.
+* Small fixes.
 = 2.4.0.7 = 
 * Small fixes.
 = 2.4.0.6 = 
@@ -433,7 +437,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 2.4.0.7 = 
+= 2.4.0.8 = 
+* Added `apg_shipping_delivery` filter.
 * Small fixes.
 
 == Translations ==

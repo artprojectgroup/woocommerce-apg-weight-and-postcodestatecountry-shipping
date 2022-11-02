@@ -3,7 +3,7 @@ Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles, WPML
 Requires at least: 3.8
-Tested up to: 6.5
+Tested up to: 6.2
 Stable tag: 2.5
 WC requires at least: 2.6
 WC tested up to: 7.1

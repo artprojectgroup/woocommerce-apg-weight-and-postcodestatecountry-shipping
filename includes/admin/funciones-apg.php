@@ -1,4 +1,5 @@
 <?php
+//Igual no deberías poder abrirme
 defined( 'ABSPATH' ) || exit;
 
 //Definimos las variables
@@ -15,7 +16,10 @@ $medios_de_pago = [];
 $zonas_de_envio = [];
 
 //Carga el idioma
-load_plugin_textdomain( 'woocommerce-apg-weight-and-postcodestatecountry-shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );
+function apg_shipping_inicia_idioma() {
+    load_plugin_textdomain( 'woocommerce-apg-weight-and-postcodestatecountry-shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );    
+}
+add_action( 'plugins_loaded', 'apg_shipping_inicia_idioma' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {

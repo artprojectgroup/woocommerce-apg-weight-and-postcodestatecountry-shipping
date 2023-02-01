@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.4.0.9
+Version: 2.5.0.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 6.1
+Tested up to: 6.2
 WC requires at least: 2.6
-WC tested up to: 6.7
+WC tested up to: 7.4
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -48,6 +48,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public $roles_de_usuario         = [];
 			public $metodos_de_envio         = [];
 			public $metodos_de_pago          = [];
+            public $atributos                = [];
 			public $clases_de_envio_tarifas  = "";
 	
 			public function __construct( $instance_id = 0 ) {
@@ -71,6 +72,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
 				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
 				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
+				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
 	
 				$this->init_settings(); //Recogemos todos los valores
 				$this->init_form_fields(); //Crea los campos de opciones
@@ -90,6 +92,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'tipo_categorias',
 					'etiquetas_excluidas',
 					'tipo_etiquetas',
+                    'atributos_excluidos',
+                    'tipo_atributos',
 					'clases_excluidas',
 					'tipo_clases',
 					'roles_excluidos',
@@ -194,6 +198,18 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     }
                 }
 			}
+
+			//Función que lee y devuelve los atributos
+			public function apg_shipping_dame_atributos() {
+                if ( wc_get_attribute_taxonomies() ) {
+                    foreach ( wc_get_attribute_taxonomies() as $atributo ) {
+                        $terminos   = get_terms( array( 'taxonomy' => 'pa_' . $atributo->attribute_name ) );
+                        foreach( $terminos as $termino ) {
+                            $this->atributos[ esc_attr( $atributo->attribute_label ) ][ 'pa_' . $atributo->attribute_name . "-" . $termino->slug ] = $termino->name;
+                        }
+                    }
+                }
+			}	
 
             //Reduce valores en categorías, etiquetas y clases de envío excluídas
 			public function reduce_valores( &$peso_total, $peso, &$productos_totales, $valores, &$precio_total, $producto ) {
@@ -316,6 +332,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 								return false;
 							}
 						}
+					}
+
+                    //No atiende a las atributos excluidos
+					if ( ! empty( $this->atributos_excluidos ) ) {
+                        $atributos_excluidos    = [];
+                        foreach ( $this->atributos_excluidos as $atributos ) {
+                            $atributos                              = explode( "-", $atributos );
+                            $atributos_excluidos[ $atributos[ 0 ] ] = $atributos[ 1 ]; 
+                        }
+                        
+                        if ( ( ! empty( array_intersect_assoc( $producto->get_attributes(), $atributos_excluidos ) ) && $this->tipo_atributos == 'no' ) || 
+                            ( empty( array_intersect_assoc( $producto->get_attributes(), $atributos_excluidos ) ) && $this->tipo_atributos == 'yes' ) ) {
+                            return false;
+                        }
 					}
 
 					//No atiende a las clases de envío excluidas
@@ -589,7 +619,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						//Inicializa variables
 						$calculo_volumetrico	= false;
 						$excede_dimensiones		= false;
-						unset( $medidas_tarifa ); //Fix by DJ Team Digital
+						unset( $medida_tarifa ); //Fix by DJ Team Digital
 						
 						//Comprobamos si tiene medidas
 						if ( isset( $tarifa[ 'medidas' ] ) ) { 
@@ -609,8 +639,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 							if ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] ) || 
 								( $tarifa[ 'peso' ] >= $clases[ $clase_de_envio ] && $clases[ $clase_de_envio ] > $peso_anterior ) ) {
 								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
+                                if ( $this->debug == 'yes' ) {
+                                    echo "Es un peso: <pre>";
+                                    echo "Peso anterior: $peso_anterior <br />";
+                                    print_r( $tarifa );
+                                    echo "</pre>";
+                                }
 							} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $clases[ $clase_de_envio ] > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
 								$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
+                                if ( $this->debug == 'yes' ) {
+                                    echo "Es un peso que excede la tarifa máxima: <pre>";
+                                    echo "Peso anterior: $peso_anterior <br />";
+                                    print_r( $tarifa );
+                                    echo "</pre>";
+                                }
 							}
 							
 							//Guardamos el peso actual
@@ -622,8 +664,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 								if ( ! $largo_anterior || ( ( $volumen > $volumen_total ) && ( $medida_tarifa[ 0 ] >= $largo && $largo > $largo_anterior ) && ( $medida_tarifa[ 1 ] >= $ancho && $ancho > $ancho_anterior ) && ( $medida_tarifa[ 2 ] >= $alto && $alto > $alto_anterior ) ) ) {
 									$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];									
+                                    if ( $this->debug == 'yes' ) {
+                                        echo "Es una medida: <pre>";
+                                        echo "Medida anterior: $largo_anterior x $ancho_anterior x $alto_anterior <br />";
+                                        print_r( $tarifa );
+                                        echo "</pre>";
+                                    }
 								} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
 									$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
+                                    if ( $this->debug == 'yes' ) {
+                                        echo "Es una medida que excede la tarifa máxima: <pre>";
+                                        echo "Medida anterior: $largo_anterior x $ancho_anterior x $alto_anterior <br />";
+                                        print_r( $tarifa );
+                                        echo "</pre>";
+                                    }
 								}
 
 								//Guardamos las medidas actuales
@@ -633,6 +687,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 							}
 						} else if ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $tarifa[ 'importe' ] ) ) { //Las medidas son mayores que la de la tarifa máxima
 							$tarifa_mas_barata[ $clase_de_envio ] = $tarifa[ 'importe' ];
+                            if ( $this->debug == 'yes' ) {
+                                echo "Es una medida que excede la tarifa máxima: <pre>";
+                                echo "Medida anterior: $largo_anterior x $ancho_anterior x $alto_anterior <br />";
+                                print_r( $tarifa );
+                                echo "</pre>";
+                            }
 						}
 					}
 				}

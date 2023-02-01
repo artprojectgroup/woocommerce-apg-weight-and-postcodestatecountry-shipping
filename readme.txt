@@ -3,10 +3,10 @@ Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: Art Project Group, APG, Plugins, WooCommerce, e-Commerce, Commerce, Shop, Virtual shop, Shipping, Weight, Dimensions, ZIP, Postcode, State, Country, Tax, Shipping classes, WooCommerce Product Bundles, WPML
 Requires at least: 3.8
-Tested up to: 6.1
-Stable tag: 2.4.0.9
+Tested up to: 6.2
+Stable tag: 2.5.0.4
 WC requires at least: 2.6
-WC tested up to: 6.7
+WC tested up to: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -31,12 +31,14 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can choose accept or not weight or dimensions excess.
 * You can exclude shipping for one or several product categories.
 * You can exclude shipping for one or several product tags.
+* You can exclude shipping for one or several attributes.
 * You can exclude shipping for one, several or all shipping classes.
 * You can exclude user roles.
 * You can hide payment gateways.
 * You can hide shipping methods from the same shipping zone.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
+* You can modify the shipping method title with the `apg_shipping_label` filter.
 * You can remove the previous text of the estimated delivery time with the `apg_shipping_delivery` filter.
 * Fully compatible with [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 * Fully compatible with [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS) plugin.
@@ -95,6 +97,18 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 2.5.0.4 = 
+* Fixed a compatibility issue with the CTT Express plugin.
+= 2.5.0.3 = 
+* Small fixes.
+= 2.5.0.2 = 
+* Small fixes.
+= 2.5.0.1 = 
+* Small fixes.
+= 2.5 =
+* Added option to exclude attributes. **Update sponsored by [YonofumoYovapeo](https://yonofumoyovapeo.com)**.
+* Added `apg_shipping_label ` filter.
+* Screenshot updated.
 = 2.4.0.9 = 
 * Small fixes.
 = 2.4.0.8 = 
@@ -439,8 +453,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 2.4.0.9 = 
-* Small fixes.
+= 2.5.0.4 = 
+* Fixed a compatibility issue with the CTT Express plugin.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

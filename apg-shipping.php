@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WC - APG Weight Shipping
-Version: 2.5.0.6
+Version: 2.6
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 Requires at least: 3.8
-Tested up to: 6.2
+Tested up to: 6.3
 WC requires at least: 2.6
-WC tested up to: 7.6
+WC tested up to: 7.8
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -31,7 +31,14 @@ include_once( 'includes/admin/funciones-apg.php' );
 //¿Está activo WooCommerce?
 include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
-	//Contine la clase que crea los nuevos gastos de envío
+    //Añade compatibilidad con HPOS
+    add_action( 'before_woocommerce_init', function() {
+        if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+        }
+    } );
+
+    //Contine la clase que crea los nuevos gastos de envío
 	function apg_shipping_inicio() {
 		if ( ! class_exists( 'WC_Shipping_Method' ) ) {
 			return;
@@ -65,15 +72,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			}
 
 			//Inicializa los datos
-			public function init() {
-				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
-				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
-				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
-				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
-				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
-				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
-				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
-	
+			public function init() {	
 				$this->init_settings(); //Recogemos todos los valores
 				$this->init_form_fields(); //Crea los campos de opciones
 
@@ -124,6 +123,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	
 			//Pinta el formulario
 			public function admin_options() {
+				$this->apg_shipping_obtiene_datos(); //Recoge los datos
 				include_once( 'includes/formulario.php' );
 			}
 			
@@ -145,6 +145,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				foreach ( $datos as $dato ) {
 					$this->{$tipo}[ $dato->term_id ] = $dato->name;
 				}
+			}
+			
+			//Obtiene todos los datos necesarios
+			public function apg_shipping_obtiene_datos() {
+				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
+				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
+				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
+				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
+				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
+				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
+				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
 			}
 
 			//Función que lee y devuelve los tipos de clases de envío
@@ -201,16 +212,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 			//Función que lee y devuelve los atributos
 			public function apg_shipping_dame_atributos() {
-                if ( wc_get_attribute_taxonomies() ) {
-                    foreach ( wc_get_attribute_taxonomies() as $atributo ) {
-                        $terminos   = get_terms( array( 'taxonomy' => 'pa_' . $atributo->attribute_name ) );
-                        foreach( $terminos as $termino ) {
-                            $this->atributos[ esc_attr( $atributo->attribute_label ) ][ 'pa_' . $atributo->attribute_name . "-" . $termino->slug ] = $termino->name;
-                        }
-                    }
-                }
-			}	
-
+				if ( wc_get_attribute_taxonomies() ) {
+					foreach ( wc_get_attribute_taxonomies() as $atributo ) {
+						$terminos	= get_terms( array( 'taxonomy' => 'pa_' . $atributo->attribute_name ) );
+						if ( ! is_wp_error( $terminos ) ) {
+							foreach ( $terminos as $termino ) {
+								$this->atributos[ esc_attr( $atributo->attribute_label ) ][ 'pa_' . $atributo->attribute_name . "-" . $termino->slug ] = $termino->name;
+							}
+						}
+					}
+				}
+			}
             //Reduce valores en categorías, etiquetas y clases de envío excluídas
 			public function reduce_valores( &$peso_total, $peso, &$productos_totales, $valores, &$precio_total, $producto ) {
 				$peso_total			-= $peso;
@@ -223,20 +235,28 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$precio_total = ( WC()->cart->get_tax_price_display_mode() == 'excl' ) ? $precio_total - wc_get_price_excluding_tax( $producto ) * $valores[ 'quantity' ] : $precio_total - wc_get_price_including_tax( $producto ) * $valores[ 'quantity' ];	
 				}
 			}
-			
-			//Calcula el gasto de envío
-			public function calculate_shipping( $paquete = [] ) {
+
+			//Habilita el envío
+			public function is_available( $paquete ) {
 				//Comprueba si está activo el plugin
 				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 					if ( $this->activo == 'no' ) {
-						return false; //No está activo
+						return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', false, $paquete, $this ); //No está activo
 					}
 				} else {
 					if ( ! $this->is_enabled() ) {
-						return false; //No está activo
+						return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', false, $paquete, $this ); //No está activo
 					}
 				}
 				
+				return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', true, $paquete, $this );
+			}
+			
+			//Calcula el gasto de envío
+			public function calculate_shipping( $paquete = [] ) {
+				//Recoge los datos
+				$this->apg_shipping_obtiene_datos();
+
 				//Comprueba los roles excluidos
                 $validacion = true;
                 if ( ! empty( $this->roles_excluidos ) ) {

@@ -1,6 +1,8 @@
 <?php 
 defined( 'ABSPATH' ) || exit;
 
+$this->apg_shipping_obtiene_datos(); //Recoge los datos
+
 //Campos del formulario
 $campos = [];
 if ( version_compare( WC_VERSION, '2.7', '<' ) ) {

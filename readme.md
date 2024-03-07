@@ -102,7 +102,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
-### 2.6.1
+### 2.6.2
 * Pequeños arreglos.
 
 ### 2.6.1

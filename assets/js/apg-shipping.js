@@ -4,4 +4,9 @@ jQuery( function( $ ) {
             $( this ).removeClass( 'wc-shipping-zone-method-settings' );
         }
 	} );
+    $( document.body ).on( 'wc_backbone_modal_loaded', function( evt, target ) {
+        if ( 'wc-modal-shipping-method-settings' === target ) {
+            $( 'select' ).selectWoo();
+        }
+    } );
 } );

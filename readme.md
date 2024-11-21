@@ -7,13 +7,13 @@ Tags: WooCommerce, Shipping, Weight, Dimensions
 
 Requires at least: 3.8
 
-Tested up to: 6.6
+Tested up to: 6.8
 
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 
 WC requires at least: 5.6
 
-WC tested up to: 9.1
+WC tested up to: 9.5
 
 License: GPLv3
 
@@ -102,6 +102,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 2.6.4
+* Pequeños arreglos.
+
 ### 2.6.3
 * Pequeños arreglos.
 

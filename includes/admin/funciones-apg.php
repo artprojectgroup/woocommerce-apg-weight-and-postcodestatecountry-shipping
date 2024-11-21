@@ -19,7 +19,7 @@ $zonas_de_envio = [];
 function apg_shipping_inicia_idioma() {
     load_plugin_textdomain( 'woocommerce-apg-weight-and-postcodestatecountry-shipping', FALSE, basename( dirname( __FILE__ ) ) . '/languages' );    
 }
-add_action( 'plugins_loaded', 'apg_shipping_inicia_idioma' );
+add_action( 'after_setup_theme', 'apg_shipping_inicia_idioma' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {

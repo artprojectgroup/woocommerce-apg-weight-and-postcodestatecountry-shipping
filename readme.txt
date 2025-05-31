@@ -102,6 +102,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 = 3.0 = 
 * Added option to create rates with a minimum weight greater than zero.
 * Added option to create repetitive rates with a maximum number of steps.
+* Improved the debug option.
 * Security improvement.
 * General performance enhancement.
 * Full code compliance with WordPress security standards.
@@ -486,6 +487,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 = 3.0 = 
 * Added option to create rates with a minimum weight greater than zero.
 * Added option to create repetitive rates with a maximum number of steps.
+* Improved the debug option.
 * Security improvement.
 * General performance enhancement.
 * Full code compliance with WordPress security standards.

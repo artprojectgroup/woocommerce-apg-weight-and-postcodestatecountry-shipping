@@ -107,6 +107,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 ### 3.0
 * Añadida opción para crear tarifas con peso mínimo distinto de cero.
 * Añadida opción para crear tarifas repetitivas con un número máximo de tarifas.
+* Mejorada la opción de depuración.
 * Mejora de la seguridad.
 * Mejora de rendimiento general.
 * Adecuación completa del código a los estándares de seguridad marcadas por WordPress.

@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.0
+Stable tag: 3.0.0.1
 WC requires at least: 5.6
 WC tested up to: 9.9
 License: GPLv2 or later
@@ -99,7 +99,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
-= 3.0 = 
+= 3.0.0.1 = 
+* Small fixes.
+= 3.0 =
 * Added option to create rates with a minimum weight greater than zero.
 * Added option to create repetitive rates with a maximum number of steps.
 * Improved the debug option.
@@ -484,13 +486,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.0 = 
-* Added option to create rates with a minimum weight greater than zero.
-* Added option to create repetitive rates with a maximum number of steps.
-* Improved the debug option.
-* Security improvement.
-* General performance enhancement.
-* Full code compliance with WordPress security standards.
+= 3.0.0.1 = 
 * Small fixes.
 
 == Translations ==

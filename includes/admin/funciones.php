@@ -26,7 +26,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
         }
         $tamano     = @getimagesize( $apg_shipping_settings[ 'icono' ] );
         // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage -- Static plugin image
-        $imagen     = '<img class="apg_shipping_icon" src="' . $apg_shipping_settings[ 'icono' ] . '" witdh="' . $tamano[ 0 ] . '" height="' . $tamano[ 1 ] . '" />';
+        $imagen     = '<img class="apg_shipping_icon" src="' . esc_url( $apg_shipping_settings[ 'icono' ] ) . '" width="' . esc_attr( $tamano[ 0 ] ) . '" height="' . esc_attr( $tamano[ 1 ] ) . '" />';
 		if ( $apg_shipping_settings[ 'muestra_icono' ] == 'delante' ) {
             $etiqueta   = $imagen . ' ' . apply_filters( 'apg_shipping_label', $etiqueta ); //Icono delante
 		} else if ( $apg_shipping_settings[ 'muestra_icono' ] == 'detras' ) {
@@ -48,7 +48,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 	
 	return $etiqueta;
 }
-add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', 10, 2 );
+add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', PHP_INT_MAX, 2 );
 	
 //Añade clases necesarias para nuevos gastos de envío
 function apg_shipping_clases( $metodos ) {
@@ -109,13 +109,15 @@ if ( strpos( $request_uri, 'wc-settings&tab=shipping' ) !== false ) {
 //Gestiona los gastos de envío
 function apg_shipping_gestiona_envios( $envios ) {
     $apg_shipping_settings  = apg_shipping_dame_configuracion();
-    
-    if ( isset( $apg_shipping_settings[ 'envio' ] ) && ! empty( $apg_shipping_settings[ 'envio' ] ) ) {
+
+    if ( isset( $apg_shipping_settings[ 'envio' ] ) && is_array( $apg_shipping_settings[ 'envio' ] ) && !empty( $apg_shipping_settings[ 'envio' ] ) ) {
         if ( isset( $envios[ 0 ][ 'rates' ] ) ) {
             foreach ( $envios[ 0 ][ 'rates' ] as $clave => $envio ) {
-                foreach( $apg_shipping_settings[ 'envio' ] as $metodo ) {
-                    if ( $metodo != 'todos' ) {
-                        if ( ( $metodo == 'ninguno' && $id[ 1 ] != $envio->instance_id ) || ( ! in_array( $envio->instance_id, $apg_shipping_settings[ 'envio' ] ) && $id[ 1 ] != $envio->instance_id ) ) {
+                $instance_id = $envio->instance_id;
+
+                foreach ( $apg_shipping_settings[ 'envio' ] as $metodo ) {
+                    if ( $metodo !== 'todos' ) {
+                        if ( $metodo === 'ninguno' || ! in_array( $instance_id, $apg_shipping_settings[ 'envio' ], true ) ) {
                             unset( $envios[ 0 ][ 'rates' ][ $clave ] );
                         }
                     }
@@ -131,11 +133,12 @@ add_filter( 'woocommerce_cart_shipping_packages', 'apg_shipping_gestiona_envios'
 
 //Devuelve la configuración del método de envío
 function apg_shipping_dame_configuracion() {
+    $id = [];
     //Corrección propuesta por @rabbitshavefangs en https://wordpress.org/support/topic/problem-in-line-50-of-functiones-php/
     if ( isset( WC()->session ) && is_object( WC()->session ) ) {
         $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
         if ( ! empty( $chosen_shipping_methods ) && isset( $chosen_shipping_methods[ 0 ] ) ) {
-            $id = explode( ":", $chosen_shipping_methods[ 0 ] ?? '' );
+            $id = explode( ":", $chosen_shipping_methods[ 0 ] );
         }
     // phpcs:ignore WordPress.Security.NonceVerification.Missing
     } elseif ( isset( $_POST[ 'shipping_method' ] ) && isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
@@ -145,7 +148,7 @@ function apg_shipping_dame_configuracion() {
         return;
     }
     
-    return ( ! empty( $id ) && isset( $id[ 1 ] ) ) ? maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) ) : null;
+    return ( isset( $id[ 1 ] ) ) ? maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) ) : null;
 }
 
 //Limpia la caché de taxonomías

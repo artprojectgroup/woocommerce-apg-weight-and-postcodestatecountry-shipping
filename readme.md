@@ -5,19 +5,19 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 
 Tags: WooCommerce, Shipping, Weight, Dimensions
 
-Requires at least: 3.8
+Requires at least: 5.0
 
-Tested up to: 6.8
+Tested up to: 6.9
 
-Stable tag: 2.6.5
+Stable tag: 3.0
 
 WC requires at least: 5.6
 
-WC tested up to: 9.7
+WC tested up to: 9.9
 
-License: GPLv3
+License: GPLv2 or later
 
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensiones y el código postal, provincia (estado) y/o país del cliente.
 
@@ -102,6 +102,12 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.0
+* Mejora de la seguridad.
+* Mejora de rendimiento general.
+* Adecuación completa del código a los estándares de seguridad marcadas por WordPress.
+* Pequeños arreglos.
+
 ### 2.6.5
 * Pequeños arreglos.
 

@@ -2,13 +2,13 @@
 Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
-Requires at least: 3.8
-Tested up to: 6.8
-Stable tag: 2.6.5
+Requires at least: 5.0
+Tested up to: 6.9
+Stable tag: 3.0
 WC requires at least: 5.6
-WC tested up to: 9.7
-License: GPLv3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+WC tested up to: 9.9
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Add to WooCommerce shipping costs calculating based on weight, size and post code, state (province) and/or customer’s country.
 
@@ -97,6 +97,11 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.0 = 
+* Security improvement.
+* General performance enhancement.
+* Full code compliance with WordPress security standards.
+* Small fixes.
 = 2.6.5 = 
 * Small fixes.
 = 2.6.4 = 
@@ -474,7 +479,10 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 2.6.5 = 
+= 3.0 = 
+* Security improvement.
+* General performance enhancement.
+* Full code compliance with WordPress security standards.
 * Small fixes.
 
 == Translations ==

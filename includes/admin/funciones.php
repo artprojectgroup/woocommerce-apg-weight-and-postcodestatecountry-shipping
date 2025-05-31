@@ -94,7 +94,7 @@ function apg_shipping_toma_de_datos() {
         $medios_de_pago = WC()->payment_gateways->payment_gateways();
         set_transient( 'apg_shipping_payment_gateways', $medios_de_pago, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
     }
-        
+    
     $zonas_de_envio    = get_transient( 'apg_shipping_zonas_de_envio' ); //Obtiene las zonas de envío
     if ( false === $zonas_de_envio ) {
         $zonas_de_envio = WC_Shipping_Zones::get_zones();

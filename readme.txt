@@ -24,6 +24,8 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can add, also cost of packing, an additional fixed cost as amount or percentage, per shipping or product.
 * You can create an unlimited number of rates.
 * You can create rates with maximum weight and/or dimensions.
+* You can now create rates starting from a minimum weight greater than zero.
+* You can now create repetitive rates with a defined maximum number of steps.
 * You can create rates for number of items.
 * You can create rates for cart total.
 * You can assign rates to specific shipping classes.
@@ -98,6 +100,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 
 == Changelog ==
 = 3.0 = 
+* Added option to create rates with a minimum weight greater than zero.
+* Added option to create repetitive rates with a maximum number of steps.
 * Security improvement.
 * General performance enhancement.
 * Full code compliance with WordPress security standards.
@@ -480,6 +484,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 
 == Upgrade Notice ==
 = 3.0 = 
+* Added option to create rates with a minimum weight greater than zero.
+* Added option to create repetitive rates with a maximum number of steps.
 * Security improvement.
 * General performance enhancement.
 * Full code compliance with WordPress security standards.

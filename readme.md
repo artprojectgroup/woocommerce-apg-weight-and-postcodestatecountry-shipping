@@ -33,6 +33,8 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje, por envío o producto.
 * Puedes crear un número ilimitado de tarifas.
 * Puedes crear las tarifas con un peso y/o dimensiones máximos.
+* Puedes crear tarifas con peso mínimo distinto de cero.
+* Puedes crear tarifas repetitivas con un número máximo de tarifas.
 * Puedes crear tarifas por número de productos.
 * Puedes crear tarifas por total del pedido.
 * Puedes asignar tarifas a clases de envío específicas.
@@ -103,6 +105,8 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 
 ## Changelog
 ### 3.0
+* Añadida opción para crear tarifas con peso mínimo distinto de cero.
+* Añadida opción para crear tarifas repetitivas con un número máximo de tarifas.
 * Mejora de la seguridad.
 * Mejora de rendimiento general.
 * Adecuación completa del código a los estándares de seguridad marcadas por WordPress.

@@ -62,6 +62,7 @@ $unidad_medidas = get_option( 'woocommerce_dimension_unit' );
 $clases_envio   = WC()->shipping->get_shipping_classes();
 
 $descripcion    = '<code>1000|6.95|10x10x10</code><br /><code>10x10x10|6.95</code><br />';
+$descripcion   .= '<code>500-1000|4.95</code><br /><code>500+100|2.00+0.25</code><br /><code>500+100-50|2.00+0.25</code><br />';
 if ( $clases_envio ) {
     $descripcion    .= __( 'Remember your shipping class name: ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . esc_attr( $this->clases_de_envio_tarifas ) . '<br />';
 }
@@ -70,7 +71,7 @@ $descripcion            .= sprintf( __( 'Remember your weight unit: %1$s, and di
 $campos[ 'tarifas' ]    = [ 
 	'title'			=> __( 'Shipping Rates', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'textarea',
-	'desc_tip'		=> __( 'Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions, e.g. <code>Max weight|Cost|Shipping class name (optional)|LxWxH (optional)</code>. Also you can set your dimensions based rates, e.g. <code>LxWxH|Cost|Shipping class name (optional)</code>.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+    'desc_tip'      => __( 'Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions, e.g. "Max weight|Cost|Shipping class name (optional)|LxWxH (optional)". Also you can set your dimensions based rates, e.g. "LxWxH|Cost|Shipping class name (optional)". New: use "Min-Max|Cost" for ranges, or "Start+Step|Cost+Step" for repetitive rates with optional maximum as "Start+Step-Max|Cost+Step".', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'css'			=> 'width:300px;',
 	'default'		=> '',
 	'description'	=> $descripcion,

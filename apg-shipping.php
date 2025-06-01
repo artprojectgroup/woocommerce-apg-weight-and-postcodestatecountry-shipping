@@ -1013,7 +1013,7 @@ add_action( 'enqueue_block_assets', 'apg_shipping_script_bloques' );
 //Añade la etiqueta a los bloques
 function apg_shipping_ajax_datos() {
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
-    $metodo = sanitize_text_field( $_POST[ 'metodo' ] ?? '' );
+    $metodo = isset( $_POST[ 'metodo' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'metodo' ] ) ) : '';;
     if ( ! preg_match( '/^([a-zA-Z0-9_]+):(\d+)$/', $metodo, $method ) ) {
         wp_send_json_error( __( 'Invalid format', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
     }

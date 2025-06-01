@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.0.0.1
+Stable tag: 3.0.0.2
 WC requires at least: 5.6
 WC tested up to: 9.9
 License: GPLv2 or later
@@ -99,6 +99,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.0.0.2 = 
+* Small fixes.
 = 3.0.0.1 = 
 * Small fixes.
 = 3.0 =
@@ -486,7 +488,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.0.0.1 = 
+= 3.0.0.2 = 
 * Small fixes.
 
 == Translations ==
@@ -511,3 +513,10 @@ Did you liked and you have proved useful **WC - APG Weight Shipping** on your we
 * All that you encourage us with your comments.
 
 Thank you very much to all!
+
+== External Services ==
+This plugin connects to the WordPress.org Plugins API to fetch plugin information.
+
+It sends the plugin slug when requesting data.
+
+More info: https://wordpress.org/about/privacy/

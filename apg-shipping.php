@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.0.0.1
+Version: 3.0.0.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -129,8 +129,23 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				include_once( 'includes/formulario.php' );
 			}
 			
+			//Obtiene todos los datos necesarios
+			public function apg_shipping_obtiene_datos() {
+				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
+				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
+				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
+				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
+				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
+				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
+				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
+			}
+			
 			//Función que lee y devuelve las categorías/etiquetas de producto
 			public function apg_shipping_dame_datos_de_producto( $tipo ) {
+                if ( ! in_array( $tipo, [ 'categorias_de_producto', 'etiquetas_de_producto' ], true ) ) {
+                    return;
+                }
+
                 //Tipo de taxonomía
                 $taxonomy   = ( $tipo === 'categorias_de_producto' ) ? 'product_cat' : 'product_tag';
                 $transient  = 'apg_shipping_' . $taxonomy;
@@ -156,22 +171,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $this->{$tipo}[ $dato->term_id ] = $dato->name;
                     }
 
-                    // Guardar en caché por un mes
+                    //Guarda en caché por un mes
                     set_transient( $transient, $this->{$tipo}, 30 * DAY_IN_SECONDS );
                 }
 			}
-			
-			//Obtiene todos los datos necesarios
-			public function apg_shipping_obtiene_datos() {
-				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
-				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
-				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
-				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
-				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
-				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
-				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
-			}
-
+            
 			//Función que lee y devuelve los tipos de clases de envío
 			public function apg_shipping_dame_clases_de_envio() {
                 //Obtiene las clases de envío desde la caché
@@ -217,7 +221,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $this->roles_de_usuario[ $rol ] = $nombre;
                     }
 
-                    // Guardar en caché por un mes
+                    //Guarda en caché por un mes
                     set_transient( 'apg_shipping_roles_usuario', $this->roles_de_usuario, 30 * DAY_IN_SECONDS );
                 }
 			}
@@ -239,8 +243,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 if ( empty( $this->metodos_de_envio ) ) {
                     $this->metodos_de_envio = [];
-                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
-                    $zona_de_envio          = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE instance_id = %d LIMIT 1;", $instancia ) );
+                    $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}" );
+                    if ( false === $zona_de_envio ) {
+                        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
+                        $zona_de_envio  = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE instance_id = %d LIMIT 1;", $instancia ) );
+                        wp_cache_set( "apg_zone_{$instancia}", $zona_de_envio );
+                    }
 
                     if ( ! empty( $zona_de_envio ) && is_array( $zonas_de_envio ) ) {
                         foreach ( $zonas_de_envio as $zona ) {
@@ -261,7 +269,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			
 			//Función que lee y devuelve los métodos de pago
 			public function apg_shipping_dame_metodos_de_pago() {
-                //Obtiene los atributos desde la caché
+                //Obtiene los métodos de pago desde la caché
                 $this->metodos_de_pago  = get_transient( 'apg_shipping_metodos_pago' );
 
                 if ( empty( $this->metodos_de_pago ) ) {
@@ -1010,6 +1018,5 @@ function apg_shipping_desinstalar() {
     
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Limpieza forzada de opciones temporales propias del plugin
     $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '%woocommerce_apg_shipping_%'" );
-	delete_transient( 'apg_shipping_plugin' );
 }
 register_uninstall_hook( __FILE__, 'apg_shipping_desinstalar' );

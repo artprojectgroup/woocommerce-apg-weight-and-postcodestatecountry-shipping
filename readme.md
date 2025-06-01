@@ -9,7 +9,7 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.0.0.1
+Stable tag: 3.0.0.2
 
 WC requires at least: 5.6
 
@@ -104,6 +104,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.0.0.2
+* Pequeños arreglos.
+
 ### 3.0.0.1
 * Pequeños arreglos.
 
@@ -667,3 +670,10 @@ Dado que **WC - APG Weight Shipping** es totalmente gratuito, **Art Project Grou
 * A todos los que nos animáis con vuestros comentarios.
 
 ¡Muchas gracias a todos!
+
+## Servicios Externos
+Este plugin se conecta a la API de plugins de WordPress.org para obtener información sobre plugins.
+
+Envía el enlace permanente del plugin cuando solicita datos.
+
+Más información: https://wordpress.org/about/privacy/

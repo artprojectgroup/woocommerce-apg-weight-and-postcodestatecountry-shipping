@@ -96,10 +96,10 @@ function apg_shipping_plugin( $nombre ) {
 function apg_shipping_estilo() {
     $request_uri    = isset( $_SERVER[ 'REQUEST_URI' ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ 'REQUEST_URI' ] ) ) : '';
     if ( strpos( $request_uri, 'wc-settings&tab=shipping&instance_id' ) !== false || strpos( $request_uri, 'plugins.php' ) !== false ) {
-		wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ), [], filemtime( plugin_dir_path( __FILE__ ) . '../../assets/css/style.css' ) ); //Carga la hoja de estilo global
+		wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ), [], VERSION_apg_shipping ); //Carga la hoja de estilo global
 	}
     if ( strpos( $request_uri, 'wc-settings&tab=shipping' ) !== false ) {
-		wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ), [ 'jquery' ], filemtime( plugin_dir_path( __FILE__ ) . '../../assets/js/apg-shipping.js' ), true );
+		wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ), [ 'jquery' ], VERSION_apg_shipping, true );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );

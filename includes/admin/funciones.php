@@ -64,15 +64,27 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
     }
 	
 	//Tiempo de entrega
-	if ( ! empty( $apg_shipping_settings[ 'entrega' ] ) ) {
+    $entrega    = $apg_shipping_settings[ 'entrega' ];
+	if ( ! empty( $entrega ) ) {
         // translators: %s is the estimated delivery time (e.g., "24-48 hours").
-        $etiqueta   .= ( apply_filters( 'apg_shipping_delivery', true ) ) ? '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping_settings[ 'entrega' ] ) . '</small>' : '<br /><small class="apg_shipping_delivery">' . $apg_shipping_settings[ 'entrega' ] . '</small>';
+        $etiqueta   .= ( apply_filters( 'apg_shipping_delivery', true ) ) ? '<br /><small class="apg_shipping_delivery">' . sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $entrega ) . '</small>' : '<br /><small class="apg_shipping_delivery">' . $entrega . '</small>';
     }
 
     //Guarda en caché durante una hora
     set_transient( $cache_key, $etiqueta, HOUR_IN_SECONDS );
-	
-	return $etiqueta;
+    
+    // Inyecta los datos como <span data-apg="..."> para bloques
+    if ( defined( 'REST_REQUEST' ) && REST_REQUEST && ( is_cart() || is_checkout() ) ) {
+        $json_data = base64_encode( wp_json_encode( [
+            'icono'     => $icon_url,
+            'muestra'   => $mostrar_icono,
+            'entrega'   => $entrega,
+        ] ) );
+
+        $etiqueta .= '<span class="apg_shipping_data" style="display:none" data-apg="' . esc_attr( $json_data ) . '"></span>';
+    }
+
+    return $etiqueta;
 }
 add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', PHP_INT_MAX, 2 );
 	

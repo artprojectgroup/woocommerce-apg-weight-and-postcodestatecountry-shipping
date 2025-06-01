@@ -9,7 +9,7 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.0.0.2
+Stable tag: 3.1
 
 WC requires at least: 5.6
 
@@ -29,6 +29,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 **WC - APG Weight Shipping** añade a tu tienda WooCommerce la posibilidad de calcular los gastos de envío basándose en el peso y en el código postal, provincia (estado) y/o país de la dirección de envío.
 
 ### Características
+* Totalmente compatible con los bloques Carrito y Finalizar compra del editor de bloques de WordPress.
 * Puedes añadir un coste fijo de embalaje y/o manipulación por envío.
 * Puedes añadir, además del coste de embalaje, un coste fijo adicional en forma de cantidad o porcentaje, por envío o producto.
 * Puedes crear un número ilimitado de tarifas.
@@ -104,6 +105,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.1
+* Añade soporte a los bloques Carrito y Finalizar compra.
+
 ### 3.0.0.2
 * Pequeños arreglos.
 

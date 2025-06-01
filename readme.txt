@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.0.0.2
+Stable tag: 3.1
 WC requires at least: 5.6
 WC tested up to: 9.9
 License: GPLv2 or later
@@ -20,6 +20,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 **WC - APG Weight Shipping** add to your WooCommerce store the ability to calculate shipping costs based on weight and postcode, state (province) and/or country address shipping.
 
 = Features =
+* Fully compatible with the Cart and Checkout blocks from the WordPress block editor.
 * You can add a fixed cost of packing and/or handling per shipping.
 * You can add, also cost of packing, an additional fixed cost as amount or percentage, per shipping or product.
 * You can create an unlimited number of rates.
@@ -99,6 +100,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.1 =
+* Adds support for the Cart and Checkout blocks.
 = 3.0.0.2 = 
 * Small fixes.
 = 3.0.0.1 = 
@@ -488,8 +491,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.0.0.2 = 
-* Small fixes.
+= 3.1 =
+* Adds support for the Cart and Checkout blocks.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.0.0.2
+Version: 3.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -27,6 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
+define( 'VERSION_apg_shipping', '3.1' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -230,7 +231,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function apg_shipping_dame_metodos_de_envio() {
                 global $zonas_de_envio, $wpdb;
                 
-                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- No se puede usar nonce en este contexto (lectura segura con absint)
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
                 $instancia  = isset( $_REQUEST[ 'instance_id' ] ) ? absint( wp_unslash( $_REQUEST[ 'instance_id' ] ) ) : absint( $this->instance_id );
                 
                 if ( ! $instancia ) {
@@ -609,8 +610,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'label'		=> $this->title,
 					'cost'		=> $importe,
 					'taxes'		=> $impuestos,
-					'calc_tax'	=> 'per_order'
-				];
+					'calc_tax'	=> 'per_order',
+                ];
                 
 				$this->add_rate( $tarifa );
                 
@@ -986,6 +987,58 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }
+
+//Añade soporte a Checkout y Cart Block
+function apg_shipping_script_bloques() {
+    //Evita ejecución en backend/editor REST
+    if ( is_admin() || wp_doing_ajax() || defined( 'REST_REQUEST' ) ) {
+        return; 
+    }
+    
+	//Detecta bloques de WooCommerce para carrito o checkout
+	$bloques   = function_exists( 'has_block' ) && ( has_block( 'woocommerce/cart', wc_get_page_id( 'cart' ) ) || has_block( 'woocommerce/checkout', wc_get_page_id( 'checkout' ) ) );
+
+	if ( ! $bloques ) {
+        return; //No se están usando bloques de carrito o checkout
+	}
+
+    $script_handle  = 'apg-shipping-bloques';
+    if ( ! wp_script_is( $script_handle, 'enqueued' ) ) {
+        wp_enqueue_script( $script_handle, plugins_url( 'assets/js/apg-shipping-bloques.js', DIRECCION_apg_shipping ), [ 'jquery' ], VERSION_apg_shipping, true );
+        wp_localize_script( $script_handle, 'apg_shipping', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
+    }
+}
+add_action( 'enqueue_block_assets', 'apg_shipping_script_bloques' );
+
+//Añade la etiqueta a los bloques
+function apg_shipping_ajax_datos() {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
+    $metodo = sanitize_text_field( $_POST[ 'metodo' ] ?? '' );
+    if ( ! preg_match( '/^([a-zA-Z0-9_]+):(\d+)$/', $metodo, $method ) ) {
+        wp_send_json_error( __( 'Invalid format', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
+    }
+
+    list( , $slug, $instance_id )   = $method;
+    $opciones                       = get_option( "woocommerce_{$slug}_{$instance_id}_settings" );
+    if ( ! is_array( $opciones ) ) {
+        wp_send_json_error( __( 'No data available', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
+    }
+    
+	//Tiempo de entrega
+    $entrega    = $opciones[ 'entrega' ] ?? '';
+	if ( ! empty( $entrega ) ) {
+        // translators: %s is the estimated delivery time (e.g., "24-48 hours").
+        $entrega    = ( apply_filters( 'apg_shipping_delivery', true ) ) ? sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $entrega ) : $entrega;
+    }
+    wp_send_json_success( [
+        'titulo'    => $opciones[ 'title' ] ?? ucfirst( $slug ),
+        'entrega'   => $entrega,
+        'icono'     => $opciones[ 'icono' ] ?? '',
+        'muestra'   => $opciones[ 'muestra_icono' ] ?? '',
+    ] );
+}
+add_action( 'wp_ajax_apg_shipping_ajax_datos', 'apg_shipping_ajax_datos' );
+add_action( 'wp_ajax_nopriv_apg_shipping_ajax_datos', 'apg_shipping_ajax_datos' );
 
 //Busca en un array multidimensional
 function apg_busca_en_array( $busqueda, $array_de_busqueda, $estricto = true ) {

@@ -9,7 +9,7 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.2
+Stable tag: 3.2.0.1
 
 WC requires at least: 5.6
 
@@ -105,6 +105,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.2.0.1
+* Corrección en el cálculo de tarifas.
+
 ### 3.2
 * Refactorización del código encargado de gestionar las tarifas y realizar el cálculo del total del gasto de envío.
 * Añadida opción de copiado del texto de depuración al portapapeles.

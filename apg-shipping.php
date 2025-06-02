@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.2
+Version: 3.2.0.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.2' );
+define( 'VERSION_apg_shipping', '3.2.0.1' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -726,7 +726,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 //Ordena por prioridad: clases reales > sin-clase > todas
                 $prioridad  = array_merge( array_diff( array_keys( $clases ), [ 'sin-clase', 'todas' ] ), array_intersect( [ 'sin-clase', 'todas' ], array_keys( $tarifas ) ) );
-                
+
                 //Aplica tarifas en orden de prioridad
                 foreach ( $prioridad as $clase_envio ) {
                     if ( ! isset( $tarifas[ $clase_envio ] ) ) {
@@ -738,7 +738,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                     $peso_anterior[ $clase_envio ] = 0;
 
-                    foreach ( $tarifas_por_clase as $tarifa ) {
+                    foreach ( $tarifas_por_clase as $tarifa ) {                        
                         //Formato X-Y
                         if ( isset( $tarifa[ 'peso_min' ], $tarifa[ 'peso_max' ] ) ) {
                             if ( $peso_clase >= $tarifa[ 'peso_min' ] && $peso_clase <= $tarifa[ 'peso_max' ] ) {
@@ -751,11 +751,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                         //Formato X+
                         if ( isset( $tarifa[ 'peso' ] ) && is_numeric( $tarifa[ 'peso' ] ) ) {
-                            if ( $peso_clase >= $tarifa[ 'peso' ] && $tarifa[ 'peso' ] > $peso_anterior[ $clase_envio ] ) {
-                                $tarifa_mas_barata[ $clase_envio ]  = $tarifa[ 'importe' ];
-                                $peso_anterior[ $clase_envio ]      = $tarifa[ 'peso' ];
+                            if ( $peso_clase < $tarifa[ 'peso' ] ) {
+                                $tarifa_mas_barata[ $clase_envio ] = $tarifa[ 'importe' ];
+                                break;
                             }
-                            
+
                             continue;
                         }
 

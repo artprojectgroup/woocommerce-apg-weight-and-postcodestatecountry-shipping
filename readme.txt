@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.1
+Stable tag: 3.2
 WC requires at least: 5.6
 WC tested up to: 9.9
 License: GPLv2 or later
@@ -100,6 +100,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.2 =
+* Refactoring of the code responsible for managing the rates and calculating the total shipping cost.
+* Added option to copy the debug text to the clipboard.
 = 3.1 =
 * Adds support for the Cart and Checkout blocks.
 = 3.0.0.2 = 
@@ -491,8 +494,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.1 =
-* Adds support for the Cart and Checkout blocks.
+= 3.2 =
+* Refactoring of the code responsible for managing the rates and calculating the total shipping cost.
+* Added option to copy the debug text to the clipboard.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

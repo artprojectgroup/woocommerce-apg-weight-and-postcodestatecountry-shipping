@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: WooCommerce - APG Weight and Postcode/State/Country "
 "Shipping\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-01 16:28+0000\n"
+"POT-Creation-Date: 2025-06-02 01:56+0000\n"
 "POT-Revision-Date: Thu Aug 11 2016 14:13:55 GMT+0200 (CEST)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
@@ -116,35 +116,31 @@ msgstr ""
 msgid "Before title"
 msgstr ""
 
-#: apg-shipping.php:787
+#: apg-shipping.php:710
 msgid "Calculated totals."
-msgstr ""
-
-#: apg-shipping.php:795
-msgid "Calculations completed."
 msgstr ""
 
 #: includes/admin/campos.php:87
 msgid "Cart total"
 msgstr ""
 
-#: apg-shipping.php:793
+#: apg-shipping.php:717
 msgid "Cart total height:"
 msgstr ""
 
-#: apg-shipping.php:791
+#: apg-shipping.php:715
 msgid "Cart total length:"
 msgstr ""
 
-#: apg-shipping.php:790
+#: apg-shipping.php:714
 msgid "Cart total volume:"
 msgstr ""
 
-#: apg-shipping.php:789
+#: apg-shipping.php:713
 msgid "Cart total weight:"
 msgstr ""
 
-#: apg-shipping.php:792
+#: apg-shipping.php:716
 msgid "Cart total width:"
 msgstr ""
 
@@ -174,6 +170,14 @@ msgstr ""
 msgid "Contact with us:"
 msgstr ""
 
+#: apg-shipping.php:797
+msgid "Copy full debug info"
+msgstr ""
+
+#: includes/admin/funciones-apg.php:132
+msgid "Debug text copied to clipboard."
+msgstr ""
+
 #: includes/admin/campos.php:271
 msgid "Define estimation for delivery time for this shipping method."
 msgstr ""
@@ -199,9 +203,13 @@ msgid "Estimated delivery time"
 msgstr ""
 
 #. %s is the estimated delivery time (e.g., "24-48 hours").
-#: apg-shipping.php:1021 includes/admin/funciones.php:70
+#: apg-shipping.php:858 includes/admin/funciones.php:70
 #, php-format
 msgid "Estimated delivery time: %s"
+msgstr ""
+
+#: includes/admin/funciones-apg.php:134
+msgid "Failed to copy debug text."
 msgstr ""
 
 #: includes/admin/campos.php:40
@@ -256,7 +264,7 @@ msgid "Icon image URL. APG recommends a 60x21px image."
 msgstr ""
 
 #. %1$s is the HTML link to the shipping method settings page with the method name as anchor text.
-#: apg-shipping.php:971
+#: apg-shipping.php:799
 #, php-format
 msgid ""
 "If you do not want these data to be displayed, disable the debug option in "
@@ -267,7 +275,7 @@ msgstr ""
 msgid "If you enjoyed and find helpful this plugin, please make a donation:"
 msgstr ""
 
-#: apg-shipping.php:1008
+#: apg-shipping.php:845
 msgid "Invalid format"
 msgstr ""
 
@@ -295,7 +303,7 @@ msgstr ""
 msgid "More plugins:"
 msgstr ""
 
-#: apg-shipping.php:1014
+#: apg-shipping.php:851
 msgid "No data available"
 msgstr ""
 
@@ -313,6 +321,10 @@ msgstr ""
 #: includes/admin/campos.php:197
 #, php-format
 msgid "No shipping (%s)"
+msgstr ""
+
+#: apg-shipping.php:783
+msgid "No shipping rate found for class:"
 msgstr ""
 
 #: includes/admin/campos.php:265
@@ -348,26 +360,19 @@ msgstr ""
 msgid "Please, rate %s:"
 msgstr ""
 
-#. 1: previous length, 2: previous width, 3: previous height
-#. 1: largo anterior, 2: ancho anterior, 3: alto anterior
-#: apg-shipping.php:928 apg-shipping.php:939 apg-shipping.php:956
-#, php-format
-msgid "Previous size: %1$s x %2$s x %3$s"
-msgstr ""
-
-#: apg-shipping.php:908
-msgid "Previous weight:"
-msgstr ""
-
-#: apg-shipping.php:799
+#: apg-shipping.php:722
 msgid "Processed classes:"
 msgstr ""
 
-#: apg-shipping.php:797
-msgid "Processed dimensions:"
+#: apg-shipping.php:719
+msgid "Processed data."
 msgstr ""
 
-#: apg-shipping.php:801
+#: apg-shipping.php:721
+msgid "Processed measures:"
+msgstr ""
+
+#: apg-shipping.php:723
 msgid "Processed rates:"
 msgstr ""
 
@@ -435,6 +440,10 @@ msgstr ""
 msgid "Select the %1$s where %2$s doesn't accept shippings."
 msgstr ""
 
+#: apg-shipping.php:794
+msgid "Selected rate:"
+msgstr ""
+
 #: includes/admin/campos.php:74
 msgid ""
 "Set your weight based rates for postcode/state/country groups (one per line)."
@@ -491,6 +500,10 @@ msgstr ""
 msgid "shipping classes"
 msgstr ""
 
+#: apg-shipping.php:711
+msgid "Shipping method:"
+msgstr ""
+
 #: includes/admin/campos.php:234
 msgid "Shipping methods"
 msgstr ""
@@ -529,23 +542,7 @@ msgstr ""
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
-#: apg-shipping.php:937 apg-shipping.php:954
-msgid "This is a size that exceeds the maximum rate."
-msgstr ""
-
-#: apg-shipping.php:926
-msgid "This is a size."
-msgstr ""
-
-#: apg-shipping.php:907
-msgid "This is a weight that exceeds the maximum rate."
-msgstr ""
-
-#: apg-shipping.php:897
-msgid "This is a weight."
-msgstr ""
-
-#: apg-shipping.php:1053
+#: apg-shipping.php:876
 msgid "This plugin requires WooCommerce to be active in order to run!"
 msgstr ""
 
@@ -587,8 +584,4 @@ msgstr ""
 
 #. Name of the plugin
 msgid "WC - APG Weight Shipping"
-msgstr ""
-
-#: apg-shipping.php:898
-msgid "Weight range:"
 msgstr ""

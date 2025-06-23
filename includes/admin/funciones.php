@@ -125,24 +125,60 @@ add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medio
 
 //Actualiza los medios de pago y las zonas de envío
 function apg_shipping_toma_de_datos() {
-	global $medios_de_pago, $zonas_de_envio;
-	
-	$medios_de_pago    = get_transient( 'apg_shipping_payment_gateways' ); //Obtiene los medios de pago
+    //Obtiene los métodos de pago
+    $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
     if ( false === $medios_de_pago ) {
-        $medios_de_pago = WC()->payment_gateways->payment_gateways();
-        set_transient( 'apg_shipping_payment_gateways', $medios_de_pago, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+        $medios_de_pago = [];
+        $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
+
+        foreach ( $gateways as $gateway ) {
+            $medios_de_pago[ $gateway->id ] = $gateway->get_title();
+        }
+
+        set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
     }
-    
-    $zonas_de_envio    = get_transient( 'apg_shipping_zonas_de_envio' ); //Obtiene las zonas de envío
+
+    //Obtiene las zonas de envío
+    $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
     if ( false === $zonas_de_envio ) {
-        $zonas_de_envio = WC_Shipping_Zones::get_zones();
-		set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
-	}
+        $zonas_de_envio = [];
+        foreach ( WC_Shipping_Zones::get_zones() as $zona ) {
+            $metodos    = [];
+            foreach ( $zona[ 'shipping_methods' ] as $metodo ) {
+                $metodos[]      = [
+                    'id'           => $metodo->id,
+                    'instance_id'  => $metodo->instance_id,
+                    'method_id'    => is_object( $metodo ) && method_exists( $metodo, 'get_method_id' ) && $metodo->get_method_id() ? $metodo->get_method_id() : ( isset( $metodo->id ) ? $metodo->id : '' ),
+                    'title'        => isset( $metodo->instance_settings[ 'title' ] ) ? $metodo->instance_settings[ 'title' ] : $metodo->get_method_title(),
+                ];
+            }
+
+            $zonas_de_envio[]   = [
+                'id'               => $zona[ 'id' ],
+                'zone_name'        => $zona[ 'zone_name' ],
+                'shipping_methods' => $metodos,
+            ];
+        }
+
+        set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+    }
 }
-$request_uri    = isset( $_SERVER[ 'REQUEST_URI' ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ 'REQUEST_URI' ] ) ) : '';
-if ( strpos( $request_uri, 'wc-settings&tab=shipping' ) !== false ) {
-    add_action( 'admin_init', 'apg_shipping_toma_de_datos' );
+
+//Carga apg_shipping_toma_de_datos()
+function apg_shipping_condicional_toma_de_datos() {
+    // Ejecutar solo en frontend con carrito o checkout activo
+    if ( ! is_admin() && ( is_cart() || is_checkout() || defined( 'WC_DOING_AJAX' ) ) ) {
+        apg_shipping_toma_de_datos();
+        return;
+    }
+
+    // Ejecutar también en el backend SOLO cuando estás en configuración de envío
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ( is_admin() && isset( $_GET[ 'page' ], $_GET[ 'tab' ], $_GET[ 'instance_id' ] ) && $_GET[ 'page' ] === 'wc-settings' && $_GET[ 'tab' ] === 'shipping' && is_numeric( $_GET[ 'instance_id' ] ) ) {
+        apg_shipping_toma_de_datos();
+    }
 }
+add_action( 'init', 'apg_shipping_condicional_toma_de_datos', 5 );
 
 //Gestiona los gastos de envío
 function apg_shipping_gestiona_envios( $envios ) {
@@ -227,8 +263,7 @@ add_action( 'user_register', 'apg_shipping_borra_cache_roles_usuario' );
 
 //Limpia la caché de métodos de pago
 function apg_shipping_borra_cache_metodos_pago() {
-	delete_transient( 'apg_shipping_payment_gateways' );
-	delete_transient( 'apg_shipping_metodos_pago' );
+	delete_transient( 'apg_shipping_metodos_de_pago' );
 }
 add_action( 'update_option_woocommerce_gateway_order', 'apg_shipping_borra_cache_metodos_pago' );
 add_action( 'woocommerce_update_options_payment_gateways', 'apg_shipping_borra_cache_metodos_pago' );

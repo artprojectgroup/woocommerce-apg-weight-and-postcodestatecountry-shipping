@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="informacion">
 	<div class="fila">
 		<div class="columna">

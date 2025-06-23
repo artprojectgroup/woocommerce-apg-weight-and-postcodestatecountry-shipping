@@ -1,5 +1,19 @@
 jQuery(function($) {
-	function actualizarIconosAPG() {
+    // Solo aplica en la página del carrito
+    if ( $('body').hasClass('woocommerce-cart') ) {
+        // Inyecta el CSS personalizado
+        const estiloAPG = `
+            .wc-block-components-radio-control__option.wc-block-components-radio-control__option-checked {
+                padding-right: 0;
+            }
+        `;
+        const styleTag = document.createElement('style');
+        styleTag.type = 'text/css';
+        styleTag.appendChild(document.createTextNode(estiloAPG));
+        document.head.appendChild(styleTag);
+    }
+
+    function actualizarIconosAPG() {
 		$('input[type="radio"][name^="radio-control-"]').each(function() {
 			const $input = $(this);
 			const valor  = $input.val(); // ej. "apg_shipping:2"
@@ -23,7 +37,7 @@ jQuery(function($) {
 				if ( d.muestra === 'delante' ) {
 					html = icono + " " + d.titulo;
 				} else if ( d.muestra === 'detras' ) {
-					html = d.titulo + icono;
+					html = d.titulo + " " + icono;
 				} else if ( d.muestra === 'solo' ) {
 					html = icono;
 				} else {

@@ -12,8 +12,8 @@ $apg_shipping = [
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 ];
-$medios_de_pago = [];
-$zonas_de_envio = [];
+$medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
+$zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
 
 //Enlaces adicionales personalizados
 function apg_shipping_enlaces( $enlaces, $archivo ) {

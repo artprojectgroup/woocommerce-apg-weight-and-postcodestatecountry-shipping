@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.2.0.1
+Stable tag: 3.3
 WC requires at least: 5.6
-WC tested up to: 9.9
+WC tested up to: 9.9.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 

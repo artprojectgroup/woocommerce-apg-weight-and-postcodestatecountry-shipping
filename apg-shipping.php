@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 9.9.4
+WC tested up to: 10.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages

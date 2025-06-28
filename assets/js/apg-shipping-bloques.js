@@ -12,14 +12,16 @@ jQuery(function($) {
         styleTag.appendChild(document.createTextNode(estiloAPG));
         document.head.appendChild(styleTag);
     }
-
+    
     function actualizarIconosAPG() {
-		$('input[type="radio"][name^="radio-control-"]').each(function() {
+		$('.wc-block-components-shipping-rates-control input[type="radio"][name^="radio-control-"]').each(function() {
 			const $input = $(this);
-			const valor  = $input.val(); // ej. "apg_shipping:2"
+			const valor  = $input.val();
 			const $label = $input.closest('label').find('.wc-block-components-radio-control__label');
 
-			if ( ! valor || $input.data('apg-cargado') ) return;
+            if ( ! valor || $label.attr('data-apg-cargado') === '1' ) return;
+            
+            $label.attr('data-apg-cargado', '1');
 
 			$.post(apg_shipping.ajax_url, {
 				action: 'apg_shipping_ajax_datos',
@@ -49,7 +51,6 @@ jQuery(function($) {
 				}
 
 				$label.html(html);
-				$input.data('apg-cargado', true);
 			});
 		});
 	}
@@ -58,5 +59,5 @@ jQuery(function($) {
 	const observer = new MutationObserver(actualizarIconosAPG);
 	observer.observe(document.body, { childList: true, subtree: true });
 
-	actualizarIconosAPG();
+	actualizarIconosAPG();      
 });

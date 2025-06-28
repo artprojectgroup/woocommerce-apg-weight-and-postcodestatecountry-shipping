@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.2.0.1' );
+define( 'VERSION_apg_shipping', '3.3' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -926,7 +926,7 @@ add_action( 'enqueue_block_assets', 'apg_shipping_script_bloques' );
 //Añade la etiqueta a los bloques
 function apg_shipping_ajax_datos() {
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
-    $metodo = isset( $_POST[ 'metodo' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'metodo' ] ) ) : '';;
+    $metodo = isset( $_POST[ 'metodo' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'metodo' ] ) ) : '';
     if ( ! preg_match( '/^([a-zA-Z0-9_]+):(\d+)$/', $metodo, $method ) ) {
         wp_send_json_error( __( 'Invalid format', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
     }
@@ -945,8 +945,8 @@ function apg_shipping_ajax_datos() {
     }
     wp_send_json_success( [
         'titulo'    => $opciones[ 'title' ] ?? ucfirst( $slug ),
-        'entrega'   => $entrega,
-        'icono'     => $opciones[ 'icono' ] ?? '',
+        'entrega'   => wp_kses_post( $entrega ),
+        'icono'     => esc_url_raw( $opciones[ 'icono' ] ?? '' ),
         'muestra'   => $opciones[ 'muestra_icono' ] ?? '',
     ] );
 }

@@ -100,6 +100,18 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.3 =
+* Added option to create rates with a minimum weight greater than zero.
+* Added option to create repetitive rates with a maximum number of steps.
+* Improved the debug option.
+* Added option to copy the debug text to the clipboard.
+* Security improvement.
+* General performance enhancement.
+* Full code compliance with WordPress security standards.
+* Adds support for the Checkout block.
+* Small fixes.
+= 3.2.1 =
+* Version 2.6.5 temporarily restored.
 = 3.2.0.1 = 
 * Fix in rate calculation.
 = 3.2 =
@@ -496,8 +508,16 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.2.0.1 = 
-* Fix in rate calculation.
+= 3.3 =
+* Added option to create rates with a minimum weight greater than zero.
+* Added option to create repetitive rates with a maximum number of steps.
+* Improved the debug option.
+* Added option to copy the debug text to the clipboard.
+* Security improvement.
+* General performance enhancement.
+* Full code compliance with WordPress security standards.
+* Adds support for the Checkout block.
+* Small fixes.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

@@ -105,6 +105,20 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.3
+* Añadida opción para crear tarifas con peso mínimo distinto de cero.
+* Añadida opción para crear tarifas repetitivas con un número máximo de tarifas.
+* Mejorada la opción de depuración.
+* Añadida opción de copiado del texto de depuración al portapapeles.
+* Mejora de la seguridad.
+* Mejora de rendimiento general.
+* Adecuación completa del código a los estándares de seguridad marcadas por WordPress.
+* Añade soporte al bloque Finalizar compra.
+* Pequeños arreglos.
+
+### 3.2.1
+* Versión 2.6.5 temporalmente restablecida.
+
 ### 3.2.0.1
 * Corrección en el cálculo de tarifas.
 

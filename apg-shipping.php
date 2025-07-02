@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.3.0.1
+Version: 3.4
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.3.0.1' );
+define( 'VERSION_apg_shipping', '3.4' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -666,9 +666,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     }
                     
                     //Tarifas repetitivas del tipo PESO+INCREMENTO[-MAXIMO]|PRECIO+INCREMENTO[|CLASE][|MEDIDAS]
-                    if ( isset( $partes[ 0 ], $partes[ 1 ] ) && preg_match( '/^(\d+)\+(\d+)(?:-(\d+))?$/', $partes[ 0 ], $tarifa_peso ) && preg_match( '/^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)/', $partes[ 1 ], $tarifa_importe ) ) {
-                        $peso_inicial       = ( int ) $tarifa_peso[ 1 ];
-                        $incremento         = ( int ) $tarifa_peso[ 2 ];
+                    if ( isset( $partes[ 0 ], $partes[ 1 ] ) && preg_match( '/^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)(?:-(\d+))?$/', $partes[ 0 ], $tarifa_peso ) && preg_match( '/^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)/', $partes[ 1 ], $tarifa_importe ) ) {
+                        $peso_inicial       = ( float ) $tarifa_peso[ 1 ];
+                        $incremento         = ( float ) $tarifa_peso[ 2 ];
                         $maximo             = isset( $tarifa_peso[ 3 ] ) ? ( int ) $tarifa_peso[ 3 ] : 10;
 
                         $importe_inicial    = ( float ) $tarifa_importe[ 1 ];
@@ -707,10 +707,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     //Asigna pesos
                     if ( isset( $partes[0] ) ) {
                         if ( preg_match( '/^(\d+)-(\d+)$/', $partes[ 0 ], $matches ) ) {
-                            $tarifa[ 'peso_min' ]   = ( int )$matches[ 1 ];
-                            $tarifa[ 'peso' ]       = ( int )$matches[ 2 ];
+                            $tarifa[ 'peso_min' ]   = ( float ) $matches[ 1 ];
+                            $tarifa[ 'peso' ]       = ( float ) $matches[ 2 ];
                         } else {
-                            $tarifa[ 'peso' ]       = ( int )$partes[ 0 ];
+                            $tarifa[ 'peso' ]       = ( float ) $partes[ 0 ];
                         }
                         unset( $partes[ 0 ] );
                     }
@@ -795,7 +795,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             }
 
                             //Comprueba el volumen
-                            $medida_tarifa  = array_map( 'intval', explode( 'x', $tarifa[ 'medidas' ] ) );
+                            $medida_tarifa  = array_map( 'floatval', explode( 'x', $tarifa[ 'medidas' ] ) );
                             if ( count( $medida_tarifa ) !== 3 || in_array( 0, $medida_tarifa, true ) ) {
                                 continue;  //Medida malformada
                             }
@@ -806,16 +806,24 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             }
                         }
                         
-                        $valor_clase    = isset( $clases[ $clase_de_envio ] ) ? $clases[ $clase_de_envio ] : 0;
+                        $valor_clase    = floatval( $clases[ $clase_de_envio ] ?? 0 );
                         $importe        = floatval( str_replace( ',', '.', $tarifa[ 'importe' ] ) );
 
                         if ( ! $calculo_volumetrico && ! $excede_dimensiones ) { //Es un peso
-                            if ( ( isset( $tarifa[ 'peso_min' ] ) && $valor_clase >= $tarifa[ 'peso_min' ] && $valor_clase <= $tarifa[ 'peso' ] ) || ( ! isset( $tarifa[ 'peso_min' ] ) && ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $valor_clase ) || ( $tarifa[ 'peso' ] >= $valor_clase && $valor_clase > $peso_anterior ) ) ) ) {
-                                if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
-                                    $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
+                            //Tramos definidos con peso mínimo y máximo (X-Y)
+                            if ( isset( $tarifa[ 'peso_min' ], $tarifa[ 'peso' ] ) ) {
+                                if ( $valor_clase >= $tarifa[ 'peso_min' ] && $valor_clase <= $tarifa[ 'peso' ] ) {
+                                    if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
+                                        $tarifa_mas_barata[ $clase_de_envio ] = $importe;
+                                    }
                                 }
-                            } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $valor_clase > $peso_anterior ) ) { //El peso es mayor que el de la tarifa máxima
-                                $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
+                            //Tarifa simple con peso máximo
+                            } elseif ( ! isset( $tarifa[ 'peso_min' ] ) && isset( $tarifa[ 'peso' ] ) ) {
+                                if ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $valor_clase ) || ( $tarifa[ 'peso' ] >= $valor_clase && $valor_clase > $peso_anterior ) ) {
+                                    if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
+                                        $tarifa_mas_barata[ $clase_de_envio ] = $importe;
+                                    }
+                                }
                             }
                             
                             //Guarda el peso actual
@@ -828,7 +836,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
                                 $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
                             }
-                                //Guarda las medidas actuales
+                            //Guarda las medidas actuales
                             $largo_anterior = $largo_tarifa;
                             $ancho_anterior = $ancho_tarifa;
                             $alto_anterior  = $alto_tarifa;
@@ -849,9 +857,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     unset( $tarifa_mas_barata[ $clase_de_envio ] );
                 }
                 
-                //Muestra información de depuración
+                //Muestra información de depuración a los administradores
                 $es_peticion_rest   = defined( 'REST_REQUEST' ) && REST_REQUEST;
-                if ( $this->debug === 'yes' && empty( $debugs_mostrados[ '__resumen__' ] ) && $debug_mostrado === false && ! $es_peticion_rest ) {
+                if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && empty( $debugs_mostrados[ '__resumen__' ] ) && $debug_mostrado === false && ! $es_peticion_rest ) {
                     echo '<div id="apg-shipping-debug-wrapper">';
                     echo '<h4>' . esc_html__( 'Calculated totals.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
                     echo '<p><strong>' . esc_html__( 'Shipping method:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . ' ' . esc_html( $this->method_title ) . ' - ID: ' . esc_html( $this->instance_id ) . '.</strong></p>';

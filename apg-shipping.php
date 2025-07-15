@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.4
+Version: 3.4.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.0
+WC tested up to: 10.0.2
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.4' );
+define( 'VERSION_apg_shipping', '3.4.1' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -65,12 +65,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function __construct( $instance_id = 0 ) {
 				$this->id					= 'apg_shipping';
 				$this->instance_id			= absint( $instance_id );
-				$this->method_title			= __( "APG Shipping", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
+				$this->method_title			= __( 'APG Shipping', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 				$this->method_description	= __( 'Lets you calculate shipping cost based on Postcode/State/Country and weight of the cart. Lets you set an unlimited weight bands on per postcode/state/country basis and group the groups that that share same delivery cost/bands.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '<span class="apg-weight-marker"></span>';
 				$this->supports				= [
 					'shipping-zones',
 					'instance-settings',
 					'instance-settings-modal',
+                    'shipping-calculation',
 				];
 				$this->init();
 			}
@@ -194,7 +195,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             $this->clases_de_envio[ $slug ] = $name;
                             $this->clases_de_envio_tarifas  .= $slug . ' -> ' . $name . ', ';                            
                         }
-                        // Elimina la última coma y añade punto final
+                        //Elimina la última coma y añade punto final
                         $this->clases_de_envio_tarifas  = rtrim( $this->clases_de_envio_tarifas, ', ' ) . '.';
                     } else {
                         $this->clases_de_envio[]        = __( 'Select a class&hellip;', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
@@ -623,6 +624,9 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				
 				$this->add_rate( $tarifa );
                 
+                //Limpieza del transient del icono para evitar datos obsoletos
+                delete_transient( 'apg_shipping_icono_' . $this->instance_id );
+                
                 //Limpia la caché si cambia el total
                 if ( WC()->session ) {
                     WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
@@ -881,6 +885,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     echo '</div>';
                     echo '<p><button type="button" id="apg-copy-debug-button" style="margin-top:10px;">📋 ' . esc_html__( 'Copy full debug info', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</button></p>';
 
+					// translators: %1$s: shipping method name with a link to its settings.
                     $mensaje = __( 'If you do not want these data to be displayed, disable the debug option in the settings of the %1$s method.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
                     echo '<p><strong>' . sprintf( esc_html( $mensaje ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=shipping&instance_id=' . $this->instance_id ) ) . '" target="_blank">' . esc_html( $this->method_title ) . '</a>' ) . '</strong></p>';
                     $debug_mostrado = true;
@@ -976,10 +981,10 @@ function apg_shipping_requiere_wc() {
 function apg_shipping_desinstalar() {
     global $wpdb;
     
-    // Elimina opciones residuales del plugin en desinstalación. Cache no necesaria aquí.
+    //Elimina opciones residuales del plugin en desinstalación. Cache no necesaria aquí.
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '%woocommerce_apg_shipping_%'" );
-    // Borra los transientes antiguos.  Cache no necesaria aquí.
+    //Borra los transientes antiguos.  Cache no necesaria aquí.
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_apg_shipping_%'" );
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

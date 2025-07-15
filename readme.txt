@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.4
+Stable tag: 3.4.1
 WC requires at least: 5.6
-WC tested up to: 10.0
+WC tested up to: 10.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.4.1 =
+* Small fixes.
 = 3.4 =
 * Fixed the handling of rates with decimal weights.
 * Limited the display of the debug option to administrator users.
@@ -514,9 +516,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.4 =
-* Fixed the handling of rates with decimal weights.
-* Limited the display of the debug option to administrator users.
+= 3.4.1 =
 * Small fixes.
 
 == Translations ==

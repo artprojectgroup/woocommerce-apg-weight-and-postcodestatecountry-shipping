@@ -104,42 +104,81 @@ function apg_shipping_estilo() {
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
 
-//JavaScript para depuración
+//JavaScript para las opciones de depuración
 function apg_shipping_debug_script() {
-    if ( is_admin() || ! class_exists( 'WC_Session_Handler' ) || ! WC()->session ) {
+	if ( ! ( is_cart() || is_checkout() ) ) {
         return;
     }
 
-    // Busca cualquier instancia de debug activa
-    foreach ( WC()->session->get_session_data() as $key => $val ) {
-        if ( strpos( $key, 'apg_shipping_debug_' ) === 0 && $val ) {
-            wp_register_script( 'apg-shipping-debug', '', [], VERSION_apg_shipping, true );
-            wp_enqueue_script( 'apg-shipping-debug' );
-
-            wp_add_inline_script( 'apg-shipping-debug', "
-            document.addEventListener('DOMContentLoaded', function () {
-                const btn = document.getElementById('apg-copy-debug-button');
-                const debugWrapper = document.getElementById('apg-shipping-debug-wrapper');
-                if (btn && debugWrapper) {
-                    btn.addEventListener('click', function () {
-                        const range = document.createRange();
-                        range.selectNodeContents(debugWrapper);
-                        const selection = window.getSelection();
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                        try {
-                            document.execCommand('copy');
-                            alert('" . esc_js( __( 'Debug text copied to clipboard.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) . "');
-                        } catch (err) {
-                            alert('" . esc_js( __( 'Failed to copy debug text.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) . "');
-                        }
-                        selection.removeAllRanges();
-                    });
-                }
-            });
-            " );
-            break;
-        }
+    if ( is_admin() || ! apg_shipping_debug_activo() ) {
+        return;
     }
+
+	wp_register_script( 'apg-shipping-debug', '', [], VERSION_apg_shipping, true );
+	wp_enqueue_script( 'apg-shipping-debug' );
+
+	wp_add_inline_script( 'apg-shipping-debug', "
+	document.addEventListener('DOMContentLoaded', function () {
+		const btn = document.getElementById('apg-copy-debug-button');
+		const debugWrapper = document.getElementById('apg-shipping-debug-wrapper');
+		if (btn && debugWrapper) {
+			btn.addEventListener('click', function () {
+				const range = document.createRange();
+				range.selectNodeContents(debugWrapper);
+				const selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+				try {
+					document.execCommand('copy');
+					alert('" . esc_js( __( 'Debug text copied to clipboard.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) . "');
+				} catch (err) {
+					alert('" . esc_js( __( 'Failed to copy debug text.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) . "');
+				}
+				selection.removeAllRanges();
+			});
+		}
+	});
+	" );
 }
 add_action( 'wp_enqueue_scripts', 'apg_shipping_debug_script' );
+
+//Comprueba si hay que mostrar las opciones de depuración o no
+function apg_shipping_debug_activo() {
+	if ( ! WC()->session || ! current_user_can( 'manage_options' ) ) {
+		return false;
+	}
+
+	$shipping_methods	= WC()->session->get( 'chosen_shipping_methods', [] );
+
+	foreach ( $shipping_methods as $shipping_method ) {
+		if ( strpos( $shipping_method, 'apg_shipping' ) !== false ) {
+			$partes			= explode( ':', $shipping_method );
+			$instance_id	= $partes[ 1 ] ?? '';
+			if ( ! $instance_id ) {
+				continue;
+			}
+
+			$settings	= get_option( 'woocommerce_apg_shipping_' . $instance_id . '_settings', [] );
+			if ( isset( $settings[ 'debug' ] ) && $settings[ 'debug' ] === 'yes' ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+//Fuerza las opciones de depuración en el carrito y checkout clásicos
+add_action( 'woocommerce_before_calculate_totals', function() {
+    if ( ! apg_shipping_debug_activo() ) {
+        return;
+    }
+
+	if ( WC()->session ) {
+        foreach ( WC()->session->get_session_data() as $key => $value ) {
+            if ( strpos( $key, 'shipping_for_package_' ) === 0 ) {
+                WC()->session->__unset( $key );
+            }
+        }
+    }
+}, 99 );

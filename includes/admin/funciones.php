@@ -80,7 +80,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
     //Tiempo de entrega
     if ( ! empty( $apg_shipping_settings[ 'entrega' ] ) ) {
 		// translators: %s: estimated delivery time defined in shipping settings.
-        $texto_entrega  = apply_filters( 'apg_shipping_delivery', true ) ? sprintf( __( 'Estimated delivery time: %s', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), esc_html( $apg_shipping_settings[ 'entrega' ] ) ) : esc_html( $apg_shipping_settings[ 'entrega' ] );
+        $texto_entrega  = apply_filters( 'apg_shipping_delivery', true ) ? sprintf( __( 'Estimated delivery time: %s', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), wp_kses_post( $apg_shipping_settings[ 'entrega' ] ) ) : wp_kses_post( $apg_shipping_settings[ 'entrega' ] );
         $nueva_etiqueta .= '<br /><small class="apg_shipping_delivery">' . $texto_entrega . '</small>';
     }
 

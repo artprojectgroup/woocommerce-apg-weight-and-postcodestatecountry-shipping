@@ -283,6 +283,18 @@ function apg_shipping_borra_cache_metodos_envio( $instance_id ) {
 }
 add_action( 'woocommerce_update_shipping_method', 'apg_shipping_borra_cache_metodos_envio' );
 
+// Limpia la caché de métodos de envío al crear uno nuevo
+function apg_shipping_borra_todos_los_transients_metodos_envio( $zone_id, $method_id, $instance_id ) {
+	$all_options = wp_load_alloptions();
+
+	foreach ( $all_options as $key => $value ) {
+		if ( str_starts_with( $key, '_transient_apg_shipping_metodos_envio_' ) ) {
+			delete_transient( str_replace( '_transient_', '', $key ) );
+		}
+	}
+}
+add_action( 'woocommerce_shipping_zone_method_added', 'apg_shipping_borra_todos_los_transients_metodos_envio', 10, 3 );
+
 //Limpia la caché de atributos
 function apg_shipping_borra_cache_atributos() {
 	delete_transient( 'apg_shipping_atributos' );

@@ -9,11 +9,11 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.4.2
+Stable tag: 3.5
 
 WC requires at least: 5.6
 
-WC tested up to: 10.0.2
+WC tested up to: 10.1.0
 
 License: GPLv2 or later
 
@@ -105,6 +105,11 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.5
+* Corregida la gestión de las tarifas con la opción "Mostrar el precio máximo" activada.
+* Corregida la visualización de la opción de depuración en el entorno clásico (sin bloques).
+* Pequeños arreglos.
+
 ### 3.4.2
 * Pequeños arreglos.
 

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.4.2
+Version: 3.5
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.0.2
+WC tested up to: 10.1.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 
 //Definimos constantes
 define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.4.2' );
+define( 'VERSION_apg_shipping', '3.5' );
 
 //Funciones generales de APG
 include_once( 'includes/admin/funciones-apg.php' );
@@ -823,7 +823,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                                 }
                             //Tarifa simple con peso máximo
                             } elseif ( ! isset( $tarifa[ 'peso_min' ] ) && isset( $tarifa[ 'peso' ] ) ) {
-                                if ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $valor_clase ) || ( $tarifa[ 'peso' ] >= $valor_clase && $valor_clase > $peso_anterior ) ) {
+								if ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $valor_clase ) || ( $tarifa[ 'peso' ] >= $valor_clase && $valor_clase > $peso_anterior ) || ( $this->maximo === 'yes' && $valor_clase > $tarifa[ 'peso' ] && ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) ) ) {
                                     if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
                                         $tarifa_mas_barata[ $clase_de_envio ] = $importe;
                                     }
@@ -862,8 +862,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
                 
                 //Muestra información de depuración a los administradores
-                $es_peticion_rest   = defined( 'REST_REQUEST' ) && REST_REQUEST;
-                if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && empty( $debugs_mostrados[ '__resumen__' ] ) && $debug_mostrado === false && ! $es_peticion_rest ) {
+				if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && ! is_admin() && ! wp_doing_ajax() && ! wp_is_json_request() && $debug_mostrado === false && empty( $debugs_mostrados[ '__resumen__' ] ) ) {
                     echo '<div id="apg-shipping-debug-wrapper">';
                     echo '<h4>' . esc_html__( 'Calculated totals.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
                     echo '<p><strong>' . esc_html__( 'Shipping method:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . ' ' . esc_html( $this->method_title ) . ' - ID: ' . esc_html( $this->instance_id ) . '.</strong></p>';

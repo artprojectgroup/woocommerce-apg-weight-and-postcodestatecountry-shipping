@@ -31,7 +31,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Constante con la ruta base del plugin.
  * @var string
- */define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
+ */
+define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
 
 /**
  * Constante con la versión actual del plugin.

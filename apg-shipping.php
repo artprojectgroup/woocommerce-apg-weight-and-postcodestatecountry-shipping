@@ -18,7 +18,7 @@ Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
 */
 /**
- * Bootstrap del plugin WC – APG NIF/CIF/NIE Field.
+ * Bootstrap del plugin WC - APG Weight Shipping
  *
  * @package    WC-APG-Weight-Shipping
  * @category  Core

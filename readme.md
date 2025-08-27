@@ -9,11 +9,11 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.5.0.2
+Stable tag: 3.6
 
 WC requires at least: 5.6
 
-WC tested up to: 10.1.0
+WC tested up to: 10.1.2
 
 License: GPLv2 or later
 
@@ -51,6 +51,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
 * Puedes modificar el título del método de envío con el filtro `apg_shipping_label`.
+* Puedes modificar la etiqueta del método de envío con el filtro `apg_shipping_final_label`.
 * Puedes eliminar el texto previo del tiempo estimado de entrega con el filtro `apg_shipping_delivery`.
 * Totalmente compatible con el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
 * Totalmente compatible con el plugin [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS).
@@ -58,10 +59,10 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 ### Traducciones
 * Español ([**Art Project Group**](https://artprojectgroup.es/)).
 * English ([**Art Project Group**](https://artprojectgroup.es/)).
-* Français ([**Guillaume**](http://guillaume-thibord.com/)).
-* Português ([**Alain Aubry**](http://www.casa-indigo.com/)).
-* Português (Brasil) ([**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/)).
-* Italiano ([**Angelo Lazzari**](http://www.redtulp.com/)).
+* Français ([**Guillaume**](https://guillaume-thibord.com/)).
+* Português ([**Alain Aubry**](https://www.casa-indigo.com/)).
+* Português (Brasil) ([**Danilo Lopes da Silva**](https://www.armarinhosdonaflor.com.br/)).
+* Italiano ([**Angelo Lazzari**](https://www.redtulp.com/)).
 
 ### Soporte técnico
 **Art Project Group** te ofrece [**Soporte técnico**](https://artprojectgroup.es/tienda/ticket-de-soporte) para configurar o instalar ***WC - APG Weight Shipping***.
@@ -105,6 +106,11 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.6
+* Añadido filtro `apg_shipping_final_label`.
+* Añadidos los phpDocs en el código.
+* Pequeños arreglos.
+
 ### 3.5.0.2
 * Pequeños arreglos.
 

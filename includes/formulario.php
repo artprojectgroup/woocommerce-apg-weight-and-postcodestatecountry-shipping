@@ -1,8 +1,25 @@
 <?php 
-//Igual no deberías poder abrirme
+/**
+ * Vista del panel de ajustes del método de envío APG Shipping para WooCommerce.
+ *
+ * Este archivo genera la interfaz de administración para configurar el método de envío, mostrando el título, la descripción,
+ * un cuadro de información, la cabecera gráfica y el formulario de opciones personalizadas.
+ *
+ * Seguridad: No debe accederse directamente. Solo se debe cargar dentro del contexto de WooCommerce Shipping.
+ *
+ * Variables globales utilizadas:
+ * - $apg_shipping  Array con información básica del plugin (nombre, URL, etc.).
+ * - $this          Instancia del método de envío (WC_apg_shipping).
+ *
+ * @package WC-APG-Weight-Shipping
+ * @subpackage Admin/Templates
+ * @author Art Project Group
+ */
+
+// Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-global $apg_shipping; 
+global $apg_shipping;
 ?>
 <h3><a href="<?php echo esc_url( $apg_shipping[ 'plugin_url' ] ?? '' ); ?>" title="Art Project Group"><?php echo esc_html( $apg_shipping[ 'plugin' ] ?? '' ); ?></a></h3>
 <p> <?php echo wp_kses_post( $this->method_description ); ?> </p>

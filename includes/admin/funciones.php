@@ -1,53 +1,74 @@
 <?php
-//Igual no deberías poder abrirme
+/**
+ * Funciones auxiliares para el método de envío APG Shipping.
+ *
+ * Incluye utilidades para mostrar iconos, gestionar la caché, filtrar medios y zonas,
+ * y obtener configuraciones relacionadas con el plugin y WooCommerce.
+ *
+ * Seguridad: Solo debe cargarse dentro del entorno de WordPress.
+ *
+ * @package WC-APG-Weight-Shipping
+ * @subpackage Includes/Admin
+ * @author Art Project Group
+ */
+
+// Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-//Muestra el icono
+/**
+ * Genera la etiqueta personalizada para el método de envío, incluyendo icono, precio y tiempo de entrega.
+ *
+ * Utiliza la configuración del método (icono, posición, entrega) y cachea la etiqueta generada por instancia.
+ *
+ * @param string        $etiqueta Etiqueta original del método de envío.
+ * @param WC_Shipping_Rate $metodo Objeto del método de envío.
+ * @return string Etiqueta final personalizada con icono, precio y datos extra.
+ */
 function apg_shipping_icono( $etiqueta, $metodo ) {
-    //Previene errores
+    // Previene errores.
     if ( ! isset( $metodo->instance_id ) || ! isset( $metodo->cost ) ) {
         return $etiqueta;
     }
 
-    //Variables
+    // Variables.
     $instance_id = $metodo->instance_id;
     $cache_key   = "apg_shipping_icono_{$instance_id}";
 
-    //Intenta obtener desde caché
+    // Intenta obtener desde caché.
     $etiqueta_cacheada = get_transient( $cache_key );
     if ( false !== $etiqueta_cacheada ) {
         return $etiqueta_cacheada;
     }
 
-    //Obtiene configuración del método de envío
+    // Obtiene configuración del método de envío.
     $opcion_bruta          = get_option( "woocommerce_apg_shipping_{$instance_id}_settings" );
     $apg_shipping_settings = is_array( $opcion_bruta ) ? $opcion_bruta : maybe_unserialize( $opcion_bruta );
 
-    //Previene errores
+    // Previene errores.
     if ( ! is_array( $apg_shipping_settings ) ) {
         return $etiqueta;
     }
 
-    //Precio y título
+    // Precio y título.
     $impuestos  = ( version_compare( WC_VERSION, '4.4', '<' ) ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
     if ( $impuestos === 'excl' ) {
         $precio = ( $metodo->get_shipping_tax() > 0 && WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost );
     } else {
         $precio = ( $metodo->get_shipping_tax() > 0 && ! WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost + $metodo->get_shipping_tax() ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost + $metodo->get_shipping_tax() );
     }
-    $titulo     = apply_filters( 'apg_shipping_label', $metodo->label );
+    $titulo     = apply_filters( 'apg_shipping_label', $metodo->label, $metodo );
 
-    //¿Mostramos el icono?
+    // ¿Mostramos el icono?.
     $icon_url      = $apg_shipping_settings[ 'icono' ] ?? '';
     $mostrar_icono = $apg_shipping_settings[ 'muestra_icono' ] ?? '';
 
-    //Construye el icono si aplica
+    // Construye el icono si aplica.
     $imagen = '';
     if ( ! empty( $icon_url ) && filter_var( $icon_url, FILTER_VALIDATE_URL ) && $mostrar_icono !== 'no' ) {
         $ancho = $alto = null;
 
-        //Procesa imagen y obtiene su tamaño
-        require_once ABSPATH . 'wp-admin/includes/file.php'; //Asegura que download_url() existe
+        // Procesa imagen y obtiene su tamaño.
+        require_once ABSPATH . 'wp-admin/includes/file.php'; // Asegura que download_url() existe.
         $icon_temp  = download_url( $icon_url );
         
         if ( ! is_wp_error( $icon_temp ) ) {
@@ -58,7 +79,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
             wp_delete_file( $icon_temp );
         }
 
-        //Construye la etiqueta <img>
+        // Construye la etiqueta <img>.
         // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage -- Static plugin image
         $imagen = '<img class="apg_shipping_icon apg_icon" src="' . esc_url( $icon_url ) . '"';
         $imagen .= $ancho ? ' width="' . intval( $ancho ) . '"' : '';
@@ -66,7 +87,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
         $imagen .= ' style="display:inline;" />';
     }
 
-    //Construye la etiqueta
+    // Construye la etiqueta.
     if ( $imagen && $mostrar_icono === 'delante' ) {
         $nueva_etiqueta = $imagen . ' ' . $titulo . ': ' . $precio;
     } elseif ( $imagen && $mostrar_icono === 'detras' ) {
@@ -77,21 +98,29 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
         $nueva_etiqueta = $titulo . ': ' . $precio;
     }
 
-    //Tiempo de entrega
+    // Tiempo de entrega.
+    $texto_entrega  = '';
     if ( ! empty( $apg_shipping_settings[ 'entrega' ] ) ) {
 		// translators: %s: estimated delivery time defined in shipping settings.
         $texto_entrega  = apply_filters( 'apg_shipping_delivery', true ) ? sprintf( __( 'Estimated delivery time: %s', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), wp_kses_post( $apg_shipping_settings[ 'entrega' ] ) ) : wp_kses_post( $apg_shipping_settings[ 'entrega' ] );
         $nueva_etiqueta .= '<br /><small class="apg_shipping_delivery">' . $texto_entrega . '</small>';
     }
 
-    //Guarda en caché la etiqueta final
+    $nueva_etiqueta	= apply_filters( 'apg_shipping_final_label', $nueva_etiqueta, $titulo, $precio, $imagen, $texto_entrega, $metodo );
+	
+    // Guarda en caché la etiqueta final.
     set_transient( $cache_key, $nueva_etiqueta, HOUR_IN_SECONDS );
 
     return $nueva_etiqueta;
 }
 add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', PHP_INT_MAX, 2 );
 	
-//Añade clases necesarias para nuevos gastos de envío
+/**
+ * Añade la clase principal del método de envío APG Shipping a los métodos disponibles de WooCommerce.
+ *
+ * @param array $metodos Array de métodos de envío disponibles.
+ * @return array Métodos de envío actualizados.
+ */
 function apg_shipping_clases( $metodos ) {
     $metodos[ 'apg_shipping' ]  = 'WC_apg_shipping';
 
@@ -99,7 +128,12 @@ function apg_shipping_clases( $metodos ) {
 }
 add_filter( 'woocommerce_shipping_methods', 'apg_shipping_clases', 0 );
 
-//Filtra los medios de pago
+/**
+ * Filtra los métodos de pago disponibles según la configuración del método de envío.
+ *
+ * @param array $medios Métodos de pago disponibles.
+ * @return array Métodos de pago filtrados.
+ */
 function apg_shipping_filtra_medios_de_pago( $medios ) {
     $apg_shipping_settings  = apg_shipping_dame_configuracion();
 
@@ -126,9 +160,15 @@ function apg_shipping_filtra_medios_de_pago( $medios ) {
 }
 add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medios_de_pago' );
 
-//Actualiza los medios de pago y las zonas de envío
+/**
+ * Recopila y cachea los métodos de pago y las zonas de envío disponibles en WooCommerce.
+ *
+ * Guarda en transients la información relevante para su reutilización.
+ *
+ * @return void
+ */
 function apg_shipping_toma_de_datos() {
-    //Obtiene los métodos de pago
+    // Obtiene los métodos de pago.
     $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
     if ( false === $medios_de_pago ) {
         $medios_de_pago = [];
@@ -138,10 +178,10 @@ function apg_shipping_toma_de_datos() {
             $medios_de_pago[ $gateway->id ] = $gateway->get_title();
         }
 
-        set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+        set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
     }
 
-    //Obtiene las zonas de envío
+    // Obtiene las zonas de envío.
     $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
     if ( false === $zonas_de_envio ) {
         $zonas_de_envio = [];
@@ -163,11 +203,15 @@ function apg_shipping_toma_de_datos() {
             ];
         }
 
-        set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+        set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
     }
 }
 
-//Carga apg_shipping_toma_de_datos()
+/**
+ * Ejecuta la actualización de métodos de pago y zonas de envío solo en los contextos adecuados (frontend o admin).
+ *
+ * @return void
+ */
 function apg_shipping_condicional_toma_de_datos() {
     // Ejecutar solo en frontend con carrito o checkout activo
     if ( ! is_admin() && ( is_cart() || is_checkout() || defined( 'WC_DOING_AJAX' ) ) ) {
@@ -183,7 +227,12 @@ function apg_shipping_condicional_toma_de_datos() {
 }
 add_action( 'init', 'apg_shipping_condicional_toma_de_datos', 5 );
 
-//Gestiona los gastos de envío
+/**
+ * Filtra y gestiona los gastos de envío mostrados al usuario según las configuraciones avanzadas.
+ *
+ * @param array $envios Array de paquetes de envío de WooCommerce.
+ * @return array Paquetes de envío filtrados.
+ */
 function apg_shipping_gestiona_envios( $envios ) {
     $apg_shipping_settings  = apg_shipping_dame_configuracion();
 
@@ -208,10 +257,14 @@ function apg_shipping_gestiona_envios( $envios ) {
 add_filter( 'woocommerce_shipping_packages', 'apg_shipping_gestiona_envios', 20, 1 );
 add_filter( 'woocommerce_cart_shipping_packages', 'apg_shipping_gestiona_envios', 20, 1 );
 
-//Devuelve la configuración del método de envío
+/**
+ * Obtiene la configuración del método de envío seleccionado según el contexto actual.
+ *
+ * @return array Configuración del método de envío o array vacío si no está disponible.
+ */
 function apg_shipping_dame_configuracion() {
     $id = [];
-    //Corrección propuesta por @rabbitshavefangs en https://wordpress.org/support/topic/problem-in-line-50-of-functiones-php/
+    // Corrección propuesta por @rabbitshavefangs en https://wordpress.org/support/topic/problem-in-line-50-of-functiones-php/
     if ( isset( WC()->session ) && is_object( WC()->session ) ) {
         $chosen_shipping_methods = WC()->session->get( 'chosen_shipping_methods' );
         if ( ! empty( $chosen_shipping_methods ) && isset( $chosen_shipping_methods[ 0 ] ) ) {
@@ -222,16 +275,23 @@ function apg_shipping_dame_configuracion() {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $id = explode( ":", sanitize_text_field( wp_unslash( $_POST[ 'shipping_method' ][ 0 ] ) ?? '' ) );
     } else {
-        return;
+        return [];
     }
     
     return ( isset( $id[ 1 ] ) ) ? maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) ) : [];
 }
 
-//Limpia la caché de los iconos
+/**
+ * Elimina la caché del icono del método de envío cuando se actualizan los ajustes.
+ *
+ * @param string $option    Nombre de la opción actualizada.
+ * @param mixed  $old_value Valor antiguo.
+ * @param mixed  $value     Valor nuevo.
+ * @return void
+ */
 function apg_shipping_borra_cache_icono_dinamico( $option, $old_value, $value ) {
 	if ( strpos( $option, 'woocommerce_apg_shipping_' ) === 0 && strpos( $option, '_settings' ) !== false ) {
-		//Extrae el instance_id desde la opción
+		// Extrae el instance_id desde la opción.
 		if ( preg_match( '/woocommerce_apg_shipping_(\d+)_settings/', $option, $matches ) ) {
 			$instance_id = $matches[ 1 ];
 			$cache_key   = "apg_shipping_icono_{$instance_id}";
@@ -241,7 +301,14 @@ function apg_shipping_borra_cache_icono_dinamico( $option, $old_value, $value ) 
 }
 add_action( 'updated_option', 'apg_shipping_borra_cache_icono_dinamico', 10, 3 );
 
-//Limpia la caché de taxonomías
+/**
+ * Elimina la caché de taxonomías de producto (categoría o etiqueta) cuando se editan o eliminan términos.
+ *
+ * @param int    $term_id   ID del término.
+ * @param int    $tt_id     Term taxonomy ID.
+ * @param string $taxonomy  Nombre de la taxonomía.
+ * @return void
+ */
 function apg_shipping_borra_cache_taxonomias_producto( $term_id, $tt_id, $taxonomy ) {
 	if ( in_array( $taxonomy, [ 'product_cat', 'product_tag' ], true ) ) {
 		delete_transient( 'apg_shipping_' . $taxonomy );
@@ -250,52 +317,85 @@ function apg_shipping_borra_cache_taxonomias_producto( $term_id, $tt_id, $taxono
 add_action( 'edited_term', 'apg_shipping_borra_cache_taxonomias_producto', 10, 3 );
 add_action( 'delete_term', 'apg_shipping_borra_cache_taxonomias_producto', 10, 3 );
 
-//Limpia la caché de clases de envío
+/**
+ * Elimina la caché de clases de envío cuando se guardan o eliminan clases.
+ *
+ * @return void
+ */
 function apg_shipping_borra_cache_clases_envio() {
 	delete_transient( 'apg_shipping_clases_envio' );
 }
 add_action( 'woocommerce_shipping_classes_save_class', 'apg_shipping_borra_cache_clases_envio' );
 add_action( 'woocommerce_shipping_classes_delete_class', 'apg_shipping_borra_cache_clases_envio' );
 
-//Limpia la caché de roles
+/**
+ * Elimina la caché de roles de usuario cuando se actualiza el perfil o se registra un nuevo usuario.
+ *
+ * @return void
+ */
 function apg_shipping_borra_cache_roles_usuario() {
 	delete_transient( 'apg_shipping_roles_usuario' );
 }
 add_action( 'profile_update', 'apg_shipping_borra_cache_roles_usuario' );
 add_action( 'user_register', 'apg_shipping_borra_cache_roles_usuario' );
 
-//Limpia la caché de métodos de pago
+/**
+ * Elimina la caché de métodos de pago cuando se actualiza el orden o la configuración de pasarelas.
+ *
+ * @return void
+ */
 function apg_shipping_borra_cache_metodos_pago() {
 	delete_transient( 'apg_shipping_metodos_de_pago' );
 }
 add_action( 'update_option_woocommerce_gateway_order', 'apg_shipping_borra_cache_metodos_pago' );
 add_action( 'woocommerce_update_options_payment_gateways', 'apg_shipping_borra_cache_metodos_pago' );
 
-//Limpia la caché de los zonas de envío
+/**
+ * Elimina la caché de zonas de envío cuando se actualiza la configuración de métodos de envío.
+ *
+ * @return void
+ */
 function apg_shipping_borra_cache_zonas_envio() {
 	delete_transient( 'apg_shipping_zonas_de_envio' );
 }
 add_action( 'woocommerce_update_options_shipping', 'apg_shipping_borra_cache_zonas_envio' );
 
-//Limpia la caché de métodos de envío al guardar opciones
+/**
+ * Elimina la caché de métodos de envío para una instancia específica.
+ *
+ * @param int $instance_id Identificador de la instancia.
+ * @return void
+ */
 function apg_shipping_borra_cache_metodos_envio( $instance_id ) {
 	delete_transient( 'apg_shipping_metodos_envio_' . absint( $instance_id ) );
 }
 add_action( 'woocommerce_update_shipping_method', 'apg_shipping_borra_cache_metodos_envio' );
 
-// Limpia la caché de métodos de envío al crear uno nuevo
+/**
+ * Elimina todos los transients relacionados con los métodos de envío al crear uno nuevo.
+ *
+ * @param int $zone_id     ID de la zona de envío.
+ * @param int $method_id   ID del método de envío.
+ * @param int $instance_id ID de la instancia.
+ * @return void
+ */
 function apg_shipping_borra_todos_los_transients_metodos_envio( $zone_id, $method_id, $instance_id ) {
 	$all_options = wp_load_alloptions();
 
 	foreach ( $all_options as $key => $value ) {
-		if ( str_starts_with( $key, '_transient_apg_shipping_metodos_envio_' ) ) {
-			delete_transient( str_replace( '_transient_', '', $key ) );
-		}
-	}
+        // Comprueba que la clave comience con nuestro prefijo utilizando strpos para mantener compatibilidad con versiones de PHP anteriores a 8.
+        if ( 0 === strpos( $key, '_transient_apg_shipping_metodos_envio_' ) ) {
+                delete_transient( str_replace( '_transient_', '', $key ) );
+        }
+    }
 }
 add_action( 'woocommerce_shipping_zone_method_added', 'apg_shipping_borra_todos_los_transients_metodos_envio', 10, 3 );
 
-//Limpia la caché de atributos
+/**
+ * Elimina la caché de atributos de producto cuando se añade, actualiza o elimina un atributo.
+ *
+ * @return void
+ */
 function apg_shipping_borra_cache_atributos() {
 	delete_transient( 'apg_shipping_atributos' );
 }

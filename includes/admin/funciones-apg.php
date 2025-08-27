@@ -1,8 +1,19 @@
 <?php
-//Igual no deberías poder abrirme
+/**
+ * Funciones administrativas, enlaces y utilidades para WC - APG Weight Shipping.
+ *
+ * Define variables globales, enlaces personalizados en la administración,
+ * carga de hojas de estilo, integración de scripts y utilidades de depuración.
+ *
+ * @package WC-APG-Weight-Shipping
+ * @subpackage Includes/Admin
+ * @author Art Project Group
+ */
+
+// Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-//Definimos las variables
+// Definimos las variables.
 $apg_shipping = [	
 	'plugin' 		=> 'WC - APG Weight Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
@@ -15,7 +26,15 @@ $apg_shipping = [
 $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
 $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
 
-//Enlaces adicionales personalizados
+/**
+ * Añade enlaces personalizados en la fila del plugin en la lista de plugins.
+ *
+ * Incluye enlaces a donación, perfil del autor, redes sociales, otros plugins, contacto y valoración.
+ *
+ * @param array  $enlaces  Enlaces actuales.
+ * @param string $archivo  Archivo del plugin procesado.
+ * @return array Enlaces modificados.
+ */
 function apg_shipping_enlaces( $enlaces, $archivo ) {
 	global $apg_shipping;
 
@@ -33,7 +52,12 @@ function apg_shipping_enlaces( $enlaces, $archivo ) {
 }
 add_filter( 'plugin_row_meta', 'apg_shipping_enlaces', 10, 2 );
 
-//Añade el botón de configuración
+/**
+ * Añade enlaces de acceso rápido a la configuración y soporte del plugin en la página de plugins.
+ *
+ * @param array $enlaces Enlaces de acción actuales.
+ * @return array Enlaces de acción con ajustes y soporte añadidos al principio.
+ */
 function apg_shipping_enlace_de_ajustes( $enlaces ) { 
 	global $apg_shipping;
 
@@ -50,7 +74,13 @@ function apg_shipping_enlace_de_ajustes( $enlaces ) {
 $plugin = DIRECCION_apg_shipping; 
 add_filter( "plugin_action_links_$plugin", 'apg_shipping_enlace_de_ajustes' );
 
-//Añade notificación de actualización
+/**
+ * Muestra un aviso especial en la pantalla de actualización cuando hay cambios mayores en el plugin.
+ *
+ * @param array    $datos_version_actual Datos de la versión instalada.
+ * @param stdClass $datos_nueva_version  Datos de la nueva versión del repositorio.
+ * @return void
+ */
 function apg_shipping_noficacion( $datos_version_actual, $datos_nueva_version ) {
 	if ( isset( $datos_nueva_version->upgrade_notice ) && strlen( trim( $datos_nueva_version->upgrade_notice ) ) > 0 && (float) $datos_version_actual[ 'Version' ] < 2.0 ){
         $mensaje = '</p><div class="wc_plugin_upgrade_notice">';
@@ -62,7 +92,14 @@ function apg_shipping_noficacion( $datos_version_actual, $datos_nueva_version ) 
 }
 add_action( 'in_plugin_update_message-woocommerce-apg-weight-and-postcodestatecountry-shipping/apg-shipping.php', 'apg_shipping_noficacion', 10, 2 );
 
-//Obtiene toda la información sobre el plugin
+/**
+ * Obtiene la información pública del plugin desde la API de WordPress.org y muestra la valoración.
+ *
+ * Cachea la respuesta durante 24 horas.
+ *
+ * @param string $nombre Slug del plugin.
+ * @return string HTML con las estrellas de valoración o un mensaje de error.
+ */
 function apg_shipping_plugin( $nombre ) {
 	global $apg_shipping;
 	
@@ -92,11 +129,17 @@ function apg_shipping_plugin( $nombre ) {
 	return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
 }
 
-//Hoja de estilo y JavaScript
+/**
+ * Encola la hoja de estilo y el JavaScript necesarios en la administración del plugin.
+ *
+ * Solo carga los recursos en las páginas relevantes de ajustes de WooCommerce o plugins.
+ *
+ * @return void
+ */
 function apg_shipping_estilo() {
     $request_uri    = isset( $_SERVER[ 'REQUEST_URI' ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ 'REQUEST_URI' ] ) ) : '';
     if ( strpos( $request_uri, 'wc-settings&tab=shipping&instance_id' ) !== false || strpos( $request_uri, 'plugins.php' ) !== false ) {
-		wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ), [], VERSION_apg_shipping ); //Carga la hoja de estilo global
+		wp_enqueue_style( 'apg_shipping_hoja_de_estilo', plugins_url( 'assets/css/style.css', DIRECCION_apg_shipping ), [], VERSION_apg_shipping ); // Carga la hoja de estilo global.
 	}
     if ( strpos( $request_uri, 'wc-settings&tab=shipping' ) !== false ) {
 		wp_enqueue_script( 'apg_shipping_script', plugins_url( 'assets/js/apg-shipping.js', DIRECCION_apg_shipping ), [ 'jquery' ], VERSION_apg_shipping, true );
@@ -104,7 +147,13 @@ function apg_shipping_estilo() {
 }
 add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
 
-//JavaScript para las opciones de depuración
+/**
+ * Encola y configura el JavaScript necesario para la copia rápida del debug de envío en el frontend.
+ *
+ * Solo activa si el modo debug del método de envío está activo y en páginas de carrito/checkout.
+ *
+ * @return void
+ */
 function apg_shipping_debug_script() {
 	if ( ! ( is_cart() || is_checkout() ) ) {
         return;
@@ -142,7 +191,11 @@ function apg_shipping_debug_script() {
 }
 add_action( 'wp_enqueue_scripts', 'apg_shipping_debug_script' );
 
-//Comprueba si hay que mostrar las opciones de depuración o no
+/**
+ * Comprueba si el modo debug está activado para el método de envío seleccionado y el usuario actual.
+ *
+ * @return bool True si está activo, false si no.
+ */
 function apg_shipping_debug_activo() {
 	if ( ! WC()->session || ! current_user_can( 'manage_options' ) ) {
 		return false;
@@ -167,8 +220,11 @@ function apg_shipping_debug_activo() {
 
 	return false;
 }
-
-//Fuerza las opciones de depuración en el carrito y checkout clásicos
+/**
+ * Limpia los datos de métodos de envío en la sesión al recalcular totales si está activo el modo debug.
+ *
+ * @hook woocommerce_before_calculate_totals
+ */
 add_action( 'woocommerce_before_calculate_totals', function() {
     if ( ! apg_shipping_debug_activo() ) {
         return;

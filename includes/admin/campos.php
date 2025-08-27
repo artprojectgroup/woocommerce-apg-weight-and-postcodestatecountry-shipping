@@ -1,12 +1,41 @@
-<?php 
+<?php
+/**
+ * Generador de campos de configuración para el método de envío APG Shipping.
+ *
+ * Devuelve un array asociativo con los campos de opciones y ajustes para el método
+ * de envío, compatible con WooCommerce. Los campos incluyen controles para título,
+ * tarifas, exclusiones por categoría/rol/atributo, métodos de pago y otros parámetros avanzados.
+ *
+ * Seguridad: No debe accederse directamente, solo debe incluirse desde la clase del método de envío.
+ *
+ * Variables de entorno utilizadas:
+ * - $this->categorias_de_producto
+ * - $this->etiquetas_de_producto
+ * - $this->atributos
+ * - $this->clases_de_envio
+ * - $this->clases_de_envio_tarifas
+ * - $this->roles_de_usuario
+ * - $this->metodos_de_pago
+ * - $this->metodos_de_envio
+ *
+ * @return array[] Array asociativo de campos de configuración para el método de envío.
+ *
+ * @package WC-APG-Weight-Shipping
+ * @subpackage Admin/Settings
+ * @author Art Project Group
+ */
+
+// Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-$this->apg_shipping_obtiene_datos(); //Recoge los datos
+$this->apg_shipping_obtiene_datos(); // Recoge los datos.
 
-//Campos del formulario
+// Campos del formulario.
 // translators: %1$s is a context-dependent item name (e.g., product category, tag, attribute, role, or shipping class); %2$s is the shipping method title.
 $texto  = __( "Select the %1\$s where %2\$s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 $campos = [];
+
+// Campo: Activar/desactivar (solo WC < 2.7)
 if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
 	$campos[ 'activo' ] = [ 
 		'title'			=> __( 'Enable/Disable', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -56,7 +85,7 @@ $campos[ 'tipo_cargo' ] = [
 	'desc_tip'		=> __( 'To apply additional fee for the number of items.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'default'		=> 'no',
 ];
-//Descripción
+// Descripción.
 $unidad_peso    = get_option( 'woocommerce_weight_unit' );
 $unidad_medidas = get_option( 'woocommerce_dimension_unit' );
 $clases_envio   = WC()->shipping->get_shipping_classes();

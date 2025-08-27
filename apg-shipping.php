@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.5.0.2
+Version: 3.6
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,47 +12,77 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.1.0
+WC tested up to: 10.1.2
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
-
-@package WC - APG Weight Shipping
-@category Core
-@author Art Project Group
 */
+/**
+ * Bootstrap del plugin WC – APG NIF/CIF/NIE Field.
+ *
+ * @package    WC-APG-Weight-Shipping
+ * @category  Core
+ * @author    Art Project Group
+ */
 
-//Igual no deberías poder abrirme
+// Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-//Definimos constantes
-define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
-define( 'VERSION_apg_shipping', '3.5.0.2' );
+/**
+ * Constante con la ruta base del plugin.
+ * @var string
+ */define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
 
-//Funciones generales de APG
+/**
+ * Constante con la versión actual del plugin.
+ * @var string
+ */
+define( 'VERSION_apg_shipping', '3.6' );
+
+// Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
 
-//¿Está activo WooCommerce?
+// ¿Está activo WooCommerce?.
 if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
-    //Añade compatibilidad con HPOS
-    add_action( 'before_woocommerce_init', function() {
-        if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-        }
-    } );
 
-    //Contine la clase que crea los nuevos gastos de envío
+	/**
+	 * Declara compatibilidad con HPOS (`custom_order_tables`) y Checkout Blocks (`cart_checkout_blocks`).
+	 *
+	 * @return void
+	 */
+	add_action( 'before_woocommerce_init', function() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	} );
+
+    /**
+     * Inicializa el método de envío personalizado de APG.
+     *
+     * Carga funciones auxiliares y define la clase responsable de calcular los
+     * nuevos gastos de envío.
+     *
+     * @return void
+     */
 	function apg_shipping_inicio() {
 		if ( ! class_exists( 'WC_Shipping_Method' ) ) {
 			return;
 		}
 		
-		//Cargamos funciones necesarias
+		// Cargamos funciones necesarias.
         include_once( 'includes/admin/funciones.php' );
 
+        /**
+         * Clase principal para el método de envío APG Shipping.
+         * Permite calcular tarifas de envío según peso, medidas, clases, roles, atributos y condiciones avanzadas.
+         * Compatible con WooCommerce y HPOS.
+         *
+         * @package WC-APG-Weight-Shipping
+         * @extends WC_Shipping_Method
+         */
 		#[AllowDynamicProperties]
 		class WC_apg_shipping extends WC_Shipping_Method {				
-			//Variables
+			// Variables.
             public $categorias_de_producto      = [];
             public $etiquetas_de_producto       = [];
             public $clases_de_envio             = [];
@@ -62,6 +92,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
             public $atributos                   = [];
             public $clases_de_envio_tarifas     = "";
             
+            /**
+             * Inicializa la clase, define los valores principales y soportes de la pasarela de envío.
+             *
+             * @param int $instance_id Identificador de la instancia.
+             */
 			public function __construct( $instance_id = 0 ) {
 				$this->id					= 'apg_shipping';
 				$this->instance_id			= absint( $instance_id );
@@ -76,12 +111,16 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->init();
 			}
 
-			//Inicializa los datos
+			/**
+             * Inicializa los ajustes y campos del método de envío.
+             *
+             * @return void
+             */
 			public function init() {	
-				$this->init_settings(); //Recogemos todos los valores
-				$this->init_form_fields(); //Crea los campos de opciones
+				$this->init_settings(); // Recogemos todos los valores.
+				$this->init_form_fields(); // Crea los campos de opciones.
 
-                //Inicializamos variables
+                // Inicializamos variables.
 				$campos = [
 					'title',
 					'tax_status',
@@ -117,42 +156,59 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				}
                 $this->tarifas  = (array) explode( "\n", $this->tarifas ?? '' );
                 
-				//Acción
+				// Acción.
 				add_action( 'woocommerce_update_options_shipping_' . $this->id, [ $this, 'process_admin_options' ] );
 			}
 			
-			//Formulario de datos
+			/**
+             * Inicializa los campos de formulario del método de envío.
+             *
+             * @return void
+             */
 			public function init_form_fields() {
 				$this->instance_form_fields = include( 'includes/admin/campos.php' );
 			}
 	
-			//Pinta el formulario
+			/**
+			 * Renderiza las opciones del método de envío en el admin de WooCommerce.
+			 *
+			 * @return void
+			 */
 			public function admin_options() {
 				include_once( 'includes/formulario.php' );
 			}
 			
-			//Obtiene todos los datos necesarios
+			/**
+             * Obtiene y almacena los datos clave de categorías, etiquetas, clases de envío, roles, métodos de envío, métodos de pago y atributos de producto.
+             *
+             * @return void
+             */
 			public function apg_shipping_obtiene_datos() {
-				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); //Obtiene todas las categorías de producto
-				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); //Obtiene todas las etiquetas de producto
-				$this->apg_shipping_dame_clases_de_envio(); //Obtiene todas las clases de envío
-				$this->apg_shipping_dame_roles_de_usuario(); //Obtiene todos los roles de usuario
-				$this->apg_shipping_dame_metodos_de_envio(); //Obtiene todas los métodos de envío
-				$this->apg_shipping_dame_metodos_de_pago(); //Obtiene todos los métodos de pago
-				$this->apg_shipping_dame_atributos(); //Obtiene todos los atributos
+				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); // Obtiene todas las categorías de producto.
+				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); // Obtiene todas las etiquetas de producto.
+				$this->apg_shipping_dame_clases_de_envio(); // Obtiene todas las clases de envío.
+				$this->apg_shipping_dame_roles_de_usuario(); // Obtiene todos los roles de usuario.
+				$this->apg_shipping_dame_metodos_de_envio(); // Obtiene todas los métodos de envío.
+				$this->apg_shipping_dame_metodos_de_pago(); // Obtiene todos los métodos de pago.
+				$this->apg_shipping_dame_atributos(); // Obtiene todos los atributos.
 			}
 			
-			//Función que lee y devuelve las categorías/etiquetas de producto
+            /**
+             * Obtiene categorías o etiquetas de producto y las cachea durante 30 días.
+             *
+             * @param string $tipo Tipo de dato: 'categorias_de_producto' o 'etiquetas_de_producto'.
+             * @return void
+             */
 			public function apg_shipping_dame_datos_de_producto( $tipo ) {
                 if ( ! in_array( $tipo, [ 'categorias_de_producto', 'etiquetas_de_producto' ], true ) ) {
                     return;
                 }
 
-                //Tipo de taxonomía
+                // Tipo de taxonomía.
                 $taxonomy   = ( $tipo === 'categorias_de_producto' ) ? 'product_cat' : 'product_tag';
                 $transient  = 'apg_shipping_' . $taxonomy;
 
-                //Obtiene las taxonomías desde la caché
+                // Obtiene las taxonomías desde la caché.
                 $this->{$tipo}  = get_transient( $transient );
 
                 if ( empty( $this->{$tipo} ) ) {
@@ -173,13 +229,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $this->{$tipo}[ $dato->term_id ] = $dato->name;
                     }
 
-                    set_transient( $transient, $this->{$tipo}, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+                    set_transient( $transient, $this->{$tipo}, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
                 }
 			}
             
-			//Función que lee y devuelve los tipos de clases de envío
+            /**
+             * Obtiene las clases de envío disponibles y las cachea durante 30 días.
+             *
+             * @return void
+             */
 			public function apg_shipping_dame_clases_de_envio() {
-                //Obtiene las clases de envío desde la caché
+                // Obtiene las clases de envío desde la caché.
                 $clases_de_envio = get_transient( 'apg_shipping_clases_envio' );
 
                 if ( empty( $clases_de_envio ) || ! isset( $clases_de_envio[ 'clases' ], $clases_de_envio[ 'tarifas' ] ) ) {
@@ -195,28 +255,32 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             $this->clases_de_envio[ $slug ] = $name;
                             $this->clases_de_envio_tarifas  .= $slug . ' -> ' . $name . ', ';                            
                         }
-                        //Elimina la última coma y añade punto final
+                        // Elimina la última coma y añade punto final.
                         $this->clases_de_envio_tarifas  = rtrim( $this->clases_de_envio_tarifas, ', ' ) . '.';
                     } else {
                         $this->clases_de_envio[]        = __( 'Select a class&hellip;', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
                         $this->clases_de_envio_tarifas  = '';
                     }
 
-                    //Guarda en caché el array completo
+                    // Guarda en caché el array completo.
                     $clases_de_envio = [
                         'clases'    => $this->clases_de_envio,
                         'tarifas'   => $this->clases_de_envio_tarifas,
                     ];
-                    set_transient( 'apg_shipping_clases_envio', $clases_de_envio, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+                    set_transient( 'apg_shipping_clases_envio', $clases_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
                 } else {
                     $this->clases_de_envio          = $clases_de_envio[ 'clases' ];
                     $this->clases_de_envio_tarifas  = $clases_de_envio[ 'tarifas' ];
                 }
 			}
 
-			//Función que lee y devuelve los roles de usuario
+            /**
+             * Obtiene los roles de usuario de WordPress y los cachea durante 30 días.
+             *
+             * @return void
+             */
 			public function apg_shipping_dame_roles_de_usuario() {
-                //Obtiene los roles de usuario desde la caché
+                // Obtiene los roles de usuario desde la caché.
                 $this->roles_de_usuario = get_transient( 'apg_shipping_roles_usuario' );
 
                 if ( empty( $this->roles_de_usuario ) ) {
@@ -229,11 +293,15 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         }
                     }
 
-                    set_transient( 'apg_shipping_roles_usuario', $this->roles_de_usuario, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+                    set_transient( 'apg_shipping_roles_usuario', $this->roles_de_usuario, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
                 }
 			}
             
-			//Función que lee y devuelve los métodos de envío
+            /**
+             * Obtiene los métodos de envío definidos en WooCommerce para la zona actual  y los cachea durante 30 días.
+             *
+             * @return void
+             */
 			public function apg_shipping_dame_metodos_de_envio() {
                 global $zonas_de_envio, $wpdb;
                 
@@ -244,13 +312,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     return;
                 }
                 
-                //Obtiene los métodos de envío desde la caché
+                // Obtiene los métodos de envío desde la caché.
                 $cache_key              = 'apg_shipping_metodos_envio_' . $instancia;
                 $this->metodos_de_envio = get_transient( $cache_key );
 
                 if ( empty( $this->metodos_de_envio ) ) {
                     $this->metodos_de_envio = [];
-                    //Obtiene la zona de envío de esta instancia
+                    // Obtiene la zona de envío de esta instancia.
                     $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}" );
                     if ( false === $zona_de_envio ) {
                         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
@@ -258,7 +326,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         wp_cache_set( "apg_zone_{$instancia}", $zona_de_envio );
                     }
 
-                    //Recorre zonas cacheadas
+                    // Recorre zonas cacheadas.
                     if ( ! empty( $zona_de_envio ) && is_array( $zonas_de_envio ) ) {
                         foreach ( $zonas_de_envio as $zona ) {
                             if ( ( int ) $zona[ 'id' ] === ( int ) $zona_de_envio && !empty( $zona[ 'shipping_methods' ] ) ) {
@@ -271,17 +339,21 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         }
                     }
 
-                    set_transient( $cache_key, $this->metodos_de_envio, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+                    set_transient( $cache_key, $this->metodos_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
                 }
 			}
 			
-			//Función que lee y devuelve los métodos de pago
+            /**
+             * Obtiene los métodos de pago activos y los cachea durante 30 días.
+             *
+             * @return void
+             */
 			public function apg_shipping_dame_metodos_de_pago() {
-                //Obtiene los métodos de pago desde la caché
+                // Obtiene los métodos de pago desde la caché.
                 $this->metodos_de_pago  = get_transient( 'apg_shipping_metodos_de_pago' );
 
                 if ( empty( $this->metodos_de_pago ) ) {
-                    //Obtiene los métodos de pago
+                    // Obtiene los métodos de pago.
                     global $medios_de_pago;
                     $this->metodos_de_pago  = [];
                     if ( is_array( $medios_de_pago ) && ! empty( $medios_de_pago ) ) {
@@ -290,14 +362,18 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         }
                     }
 
-                    //Guarda la caché durante un mes
+                    // Guarda la caché durante un mes.
                     set_transient( 'apg_shipping_metodos_de_pago',  $this->metodos_de_pago, 30 * DAY_IN_SECONDS );
                 }
 			}
 
-			//Función que lee y devuelve los atributos
+            /**
+             * Obtiene todos los atributos de producto definidos y los cachea durante 30 días.
+             *
+             * @return void
+             */
 			public function apg_shipping_dame_atributos() {
-                //Obtiene los atributos desde la caché
+                // Obtiene los atributos desde la caché.
                 $atributos  = get_transient( 'apg_shipping_atributos' );
                 
                 if ( is_array( $atributos ) && ! empty( $atributos ) ) {
@@ -305,7 +381,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     return;
                 }
                 
-                //Obtiene los atributos
+                // Obtiene los atributos.
                 $atributos  = [];
                 $taxonomias = wc_get_attribute_taxonomies();
                 if ( !empty( $taxonomias ) && is_array( $taxonomias ) ) {
@@ -327,10 +403,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 $this->atributos = $atributos;
 
-                set_transient( 'apg_shipping_atributos', $atributos, 30 * DAY_IN_SECONDS ); //Guarda la caché durante un mes
+                set_transient( 'apg_shipping_atributos', $atributos, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
 			}
             
-            //Reduce valores en categorías, etiquetas y clases de envío excluídas
+            /**
+             * Reduce el valor de peso, productos y precio total según los elementos excluidos.
+             *
+             * @param float $peso_total Peso total del carrito (por referencia).
+             * @param float $peso Peso del producto.
+             * @param int $productos_totales Total de productos en el carrito (por referencia).
+             * @param array $valores Datos de la línea de carrito.
+             * @param float $precio_total Precio total del carrito (por referencia).
+             * @param WC_Product $producto Producto de WooCommerce.
+             * @return void
+             */
 			public function reduce_valores( &$peso_total, $peso, &$productos_totales, $valores, &$precio_total, $producto ) {
 				$peso_total			-= $peso;
 				$productos_totales	-= $valores[ 'quantity' ];
@@ -347,11 +433,16 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 $precio_total   -= $precio_unitario * $cantidad;
 			}
 
-			//Habilita el envío
+            /**
+             * Comprueba si el método de envío está disponible para el paquete actual.
+             *
+             * @param array $paquete Datos del paquete de WooCommerce.
+             * @return bool
+             */
 			public function is_available( $paquete ) {
                 $disponible = true;
 
-				//Comprueba si está activo el plugin
+				// Comprueba si está activo el plugin.
                 if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
                     if ( isset( $this->activo ) && $this->activo === 'no' ) {
                         $disponible = false;
@@ -365,18 +456,23 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', $disponible, $paquete, $this );
 			}
             
-			//Calcula el gasto de envío
+            /**
+             * Calcula y añade la tarifa de envío según las condiciones y reglas definidas.
+             *
+             * @param array $paquete Datos del paquete de WooCommerce.
+             * @return void
+             */
             public function calculate_shipping( $paquete = [] ) {
-                //Recoge los datos
+                // Recoge los datos.
 				$this->apg_shipping_obtiene_datos();
 
-                //Validación por roles
+                // Validación por roles.
                 $roles_usuario  = wp_get_current_user()->roles;
 
                 if ( ! empty( $this->roles_excluidos ) ) {
                     $es_invitado    = empty( $roles_usuario );
 
-                    if ( ( $es_invitado && $this->tipo_roles === 'no' && in_array( 'invitado', $this->roles_excluidos ) ) || ( $es_invitado && $this->tipo_roles === 'yes' && !in_array( 'invitado', $this->roles_excluidos ) ) ) { //Usuario invitado
+                    if ( ( $es_invitado && $this->tipo_roles === 'no' && in_array( 'invitado', $this->roles_excluidos ) ) || ( $es_invitado && $this->tipo_roles === 'yes' && !in_array( 'invitado', $this->roles_excluidos ) ) ) { // Usuario invitado.
                         return false;
                     }
 
@@ -389,7 +485,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     }
                 }
                 
-				//Variables
+				// Variables.
 				$volumen	= 0;
 				$largo		= 0;
 				$ancho		= 0;
@@ -397,25 +493,25 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$clases		= [];
 				$medidas	= [];
 				
-				$peso_total         = WC()->cart->get_cart_contents_weight(); //Peso total del pedido
-				$productos_totales  = WC()->cart->get_cart_contents_count(); //Productos totales del pedido
-				$precio_total       = WC()->cart->get_displayed_subtotal(); //Precio total del pedido
+				$peso_total         = WC()->cart->get_cart_contents_weight(); // Peso total del pedido.
+				$productos_totales  = WC()->cart->get_cart_contents_count(); // Productos totales del pedido.
+				$precio_total       = WC()->cart->get_displayed_subtotal(); // Precio total del pedido.
 
-				//Comprueba si está activo WPML para coger la traducción correcta de la clase de envío
+				// Comprueba si está activo WPML para coger la traducción correcta de la clase de envío.
 				if ( function_exists( 'icl_object_id' ) && ! function_exists( 'pll_the_languages' ) ) {
 					global $sitepress;
                     
 					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
 				}
 
-				//Toma distintos datos de los productos
+				// Toma distintos datos de los productos.
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
 					$producto  = $valores[ 'data' ];
 
-					//Toma el peso del producto
+					// Toma el peso del producto.
 					$peso      = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
 					
-					//Toma el precio del producto
+					// Toma el precio del producto.
                     $modo_impuestos = version_compare( WC_VERSION, '4.4', '<' ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
                     if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
                         $precio_unitario    = ( $modo_impuestos === 'excl' ) ? $producto->get_price_excluding_tax() : $producto->get_price_including_tax();
@@ -425,12 +521,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                     $precio = $precio_unitario * $valores[ 'quantity' ];
 
-                    //Compatibilidad con WooCommerce Product Bundles
+                    // Compatibilidad con WooCommerce Product Bundles.
 					if ( $producto->is_type( 'bundle' ) ) {
 						$precio = $producto->get_bundle_price( 'min' ) * $valores[ 'quantity' ];
 					}
 
-					//No atiende a las categorías de producto excluidas
+					// No atiende a las categorías de producto excluidas.
 					if ( ! empty( $this->categorias_excluidas ) ) {
 						if ( $producto->is_type( 'variation' ) ) {
 							$parent = wc_get_product( $producto->get_parent_id() );
@@ -446,7 +542,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 					}
 
-					//No atiende a las etiquetas de producto excluidas
+					// No atiende a las etiquetas de producto excluidas.
 					if ( ! empty( $this->etiquetas_excluidas ) ) {
 						if ( $producto->is_type( 'variation' ) ) {
 							$parent = wc_get_product( $producto->get_parent_id() );
@@ -462,7 +558,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 					}
 
-                    //No atiende a las atributos excluidos
+                    // No atiende a las atributos excluidos.
 					if ( ! empty( $this->atributos_excluidos ) ) {
                         $atributos_excluidos    = [];
                         foreach ( $this->atributos_excluidos as $atributos ) {
@@ -476,7 +572,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         }
 					}
 
-					//No atiende a las clases de envío excluidas
+					// No atiende a las clases de envío excluidas.
 					if ( ! empty( $this->clases_excluidas ) ) {
 						if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) ||
 							( ! in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && ! in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
@@ -486,19 +582,19 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 					}
 					
-					//Ajuste para los productos virtual y bundle
+					// Ajuste para los productos virtual y bundle.
 					if ( $producto->is_virtual() && ! isset( $valores[ 'bundled_by' ] ) ) {
 						$peso_total			-= $peso;
 						$productos_totales	-= $valores[ 'quantity' ];
 						$precio_total		-= $precio;
 					}
 
-					//Volumen
+					// Volumen.
 					if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
 						$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
 					}
 					
-					//Medidas
+					// Medidas.
 					$medidas[] = [
 						'largo'		=> $producto->get_length(),
 						'ancho'		=> $producto->get_width(),
@@ -506,7 +602,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						'cantidad'	=> $valores[ 'quantity' ],
 					];
 					
-					//Almacena el valor del lado más grande
+					// Almacena el valor del lado más grande.
 					if ( $producto->get_length() > $largo ) {
 						$largo = $producto->get_length();
 					}
@@ -517,21 +613,21 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$alto = $producto->get_height();
 					}
 
-					//Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración)
+					// Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
 					$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
 					if ( $this->tipo_tarifas == "total" ) {
 						$cantidad = $precio;
 					}
 
-					//Clase de envío
+					// Clase de envío.
 					if ( $producto->needs_shipping() ) {
 						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
-						//Inicializamos la clase general
+						// Inicializamos la clase general.
 						if ( ! isset ($clases[ 'todas' ] ) ) {
 							$clases[ 'todas' ] = 0;
 						}
 						$clases[ 'todas' ] += $cantidad;
-						//Creamos o inicializamos la clase correspondiente
+						// Creamos o inicializamos la clase correspondiente.
 						if ( ! isset( $clases[ $clase ] ) ) {
 							$clases[ $clase ] = $cantidad;
 						} else if ( $clase != 'todas' ) {
@@ -540,33 +636,33 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 				}
 
-				//Comprobamos si está activo WPML para devolverlo al idioma que estaba activo
+				// Comprobamos si está activo WPML para devolverlo al idioma que estaba activo.
 				if ( function_exists('icl_object_id') && ! function_exists( 'pll_the_languages' ) ) {
 					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
 				}
 				
-				//Reajusta el valor del peso total en caso de que se haya configurado cantidad de productos o total del pedido 
+				// Reajusta el valor del peso total en caso de que se haya configurado cantidad de productos o total del pedido. 
 				if ( $this->tipo_tarifas == "unidad" ) {
 					$peso_total = $productos_totales;
 				} else if ( $this->tipo_tarifas == "total" ) {
 					$peso_total = $precio_total;
 				}
 
-				//No hay productos a los que aplicar las tarifas
+				// No hay productos a los que aplicar las tarifas.
 				if ( empty( $medidas ) && empty( $clases ) ) {
 					return false;
 				}
 
-				//Obtenemos las tarifas
+				// Obtenemos las tarifas.
 				$tarifas = $this->dame_tarifas( $clases );
 
-				//Obtiene la tarifa
-				$tarifa_mas_barata = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas ); //Filtra las tarifas
+				// Obtiene la tarifa.
+				$tarifa_mas_barata = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas ); // Filtra las tarifas.
 				if ( empty( $tarifa_mas_barata ) ) {
-					return false; //No hay tarifa
+					return false; // No hay tarifa.
 				}
 				
-				//Calculamos el importe total
+				// Calculamos el importe total.
 				$importe = 0;
 				if ( ! empty( $this->suma ) &&  $this->suma == "yes" ) {
 					$importe = max( $tarifa_mas_barata );
@@ -576,42 +672,42 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}					
 				}
 
-				//Calculamos el precio
+				// Calculamos el precio.
 				$suma_cargos = 0;
 	
-				//Cargos adicionales
-				if ( $this->fee > 0 ) { //Cargo por manipulación
+				// Cargos adicionales.
+				if ( $this->fee > 0 ) { // Cargo por manipulación.
 					$suma_cargos += $this->fee;			
 				}
-				//¿Cargo adicional por producto?
+				// ¿Cargo adicional por producto?.
 				$cargo_por_producto = ( $this->tipo_cargo == "no" ) ? 1 : WC()->cart->get_cart_contents_count();
 				
-				if ( $this->cargo > 0 && ! strpos( $this->cargo, '%' ) ) { //Cargo adicional normal
+				if ( $this->cargo > 0 && ! strpos( $this->cargo, '%' ) ) { // Cargo adicional normal.
 					$suma_cargos += $this->cargo * $cargo_por_producto;
-				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && ! strpos( $this->cargo, '|' ) ) { //Cargo adicional porcentaje
+				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && ! strpos( $this->cargo, '|' ) ) { // Cargo adicional porcentaje.
 					$suma_cargos += ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
-				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { //Porcentaje con mínimo y máximo
-					//Recogemos los valores mínimo y máximo
+				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { // Porcentaje con mínimo y máximo.
+					// Recogemos los valores mínimo y máximo.
 					$porcentaje = explode( '|', $this->cargo );
 					preg_match( '/min=[ \"|\' ](.*)[ \"|\' ][ \s+|$ ]/', $porcentaje[ 1 ], $minimo );
 					preg_match( '/max=[ \"|\' ](.*)[ \"|\' ]$/', $porcentaje[ 1 ], $maximo );
 					
 					$calculo_de_porcentaje = ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
-					//Comprobamos el mínimo
+					// Comprobamos el mínimo.
 					if ( isset( $minimo[ 1 ] ) && $minimo[ 1 ] > $calculo_de_porcentaje ) {
 						$calculo_de_porcentaje = $minimo[ 1 ];
 					}
-					//Comprobamos el máximo
+					// Comprobamos el máximo.
 					if ( isset( $maximo[ 1 ] ) && $calculo_de_porcentaje > $maximo[ 1 ] ) {
 						$calculo_de_porcentaje = $maximo[ 1 ];
 					}
-					//Añade el cargo
+					// Añade el cargo.
 					$suma_cargos += $calculo_de_porcentaje;
 				}
 
-				//Actualizamos precio
+				// Actualizamos precio.
 				$importe	+= $suma_cargos;
-				//¿Impuestos?
+				// ¿Impuestos?.
 				$impuestos	= ( ! empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
 
 				$tarifa = [
@@ -624,52 +720,57 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				
 				$this->add_rate( $tarifa );
                 
-                //Limpieza del transient del icono para evitar datos obsoletos
+                // Limpieza del transient del icono para evitar datos obsoletos.
                 delete_transient( 'apg_shipping_icono_' . $this->instance_id );
                 
-                //Limpia la caché si cambia el total
+                // Limpia la caché si cambia el total.
                 if ( WC()->session ) {
                     WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
                 }
 				do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
 			}
 
-            //Recoge las tarifas programadas
+            /**
+             * Procesa y retorna las tarifas configuradas en el método, parseando cada línea de tarifa.
+             *
+             * @param array $clases Clases de envío del carrito.
+             * @return array Tarifas procesadas.
+             */
             public function dame_tarifas( $clases ) {
-                //Variables
+                // Variables.
                 $tarifas        = [];
 
                 if ( empty( $this->tarifas ) ) {
                     return $tarifas;
                 }
                 
-                //Procesa las tarifas programadas
+                // Procesa las tarifas programadas.
                 foreach ( $this->tarifas as $opcion ) {
-                    //Divide y limpia espacios
+                    // Divide y limpia espacios.
                     $partes = preg_split( '~\s*\|\s*~', preg_replace( '/\s+/', '', trim( $opcion ) ) );
 
-                    //Tarifa incorrecta o salto de línea
+                    // Tarifa incorrecta o salto de línea.
                     if ( count( $partes ) < 2 ) {
                         continue;
                     }
 
-                    //Reinicia variables
+                    // Reinicia variables.
                     $tarifa = [];
                     $clase  = 'sin-clase';
 
-                    //Detecta medidas en la tarifa
+                    // Detecta medidas en la tarifa.
                     foreach ( $partes as $i => $valor ) {
                         if ( $this->apg_medida_valida( $valor ) ) {
                             $tarifa[ 'medidas' ]    = strtolower( $valor );
-                            if ( $i === 0 || $i === 3 ) { //Comprueba si el primer o el cuarto valor es una dimensión
-                                unset( $partes[ $i ] ); //Elimina las medidas
+                            if ( $i === 0 || $i === 3 ) { // Comprueba si el primer o el cuarto valor es una dimensión.
+                                unset( $partes[ $i ] ); // Elimina las medidas.
                             }
                             
                             continue;
                         }
                     }
                     
-                    //Tarifas repetitivas del tipo PESO+INCREMENTO[-MAXIMO]|PRECIO+INCREMENTO[|CLASE][|MEDIDAS]
+                    // Tarifas repetitivas del tipo PESO+INCREMENTO[-MAXIMO]|PRECIO+INCREMENTO[|CLASE][|MEDIDAS].
                     if ( isset( $partes[ 0 ], $partes[ 1 ] ) && preg_match( '/^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)(?:-(\d+))?$/', $partes[ 0 ], $tarifa_peso ) && preg_match( '/^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)/', $partes[ 1 ], $tarifa_importe ) ) {
                         $peso_inicial       = ( float ) $tarifa_peso[ 1 ];
                         $incremento         = ( float ) $tarifa_peso[ 2 ];
@@ -678,17 +779,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $importe_inicial    = ( float ) $tarifa_importe[ 1 ];
                         $incremento_importe = ( float ) $tarifa_importe[ 2 ];
 
-                        //Clase
+                        // Clase.
                         $extra_clase        = isset( $partes[ 2 ] ) && ! $this->apg_medida_valida( $partes[ 2 ] ) ? $partes[ 2 ] : $clase;
                         
-                        //Detecta medidas en la tarifa
+                        // Detecta medidas en la tarifa.
                         foreach ( $partes as $i => $valor ) {
                             if ( $this->apg_medida_valida( $valor ) ) {
                                 $medidas    = strtolower( $valor );
                             }
                         }
 
-                        //Genera las tarifas
+                        // Genera las tarifas.
                         for ( $i = 0; $i <= $maximo; $i++ ) {
                             $tarifa = [
                                 'peso'      => $peso_inicial + $incremento * $i,
@@ -699,7 +800,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                                 $tarifa[ 'medidas' ]    = $medidas;
                             }
                             
-                            //Determina clase
+                            // Determina clase.
                             $clase  = isset( $clases[ $extra_clase ] ) ? $extra_clase : 'todas';
 
                             $tarifas[ $clase ][] = $tarifa;
@@ -708,7 +809,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         continue;
                     }
                     
-                    //Asigna pesos
+                    // Asigna pesos.
                     if ( isset( $partes[0] ) ) {
                         if ( preg_match( '/^(\d+)-(\d+)$/', $partes[ 0 ], $matches ) ) {
                             $tarifa[ 'peso_min' ]   = ( float ) $matches[ 1 ];
@@ -719,11 +820,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         unset( $partes[ 0 ] );
                     }
 
-                    //Asigna importes
+                    // Asigna importes.
                     $tarifa[ 'importe' ] = $partes[ 1 ];
-                    unset( $partes[ 1 ] ); //Eliminamos el importe
+                    unset( $partes[ 1 ] ); // Eliminamos el importe.
 
-                    //Clases de envío
+                    // Clases de envío.
                     if ( isset( $partes[ 2 ] ) && ! $this->apg_medida_valida( $partes[ 2 ] ) ) {
                         $valor  = $partes[ 2 ];
 
@@ -741,9 +842,21 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 return $tarifas;
             }
             
-            //Selecciona la tarifa más barata
+            /**
+             * Devuelve el importe de la tarifa más barata aplicable según peso, volumen y medidas.
+             *
+             * @param float $peso_total Peso total del carrito.
+             * @param float $volumen_total Volumen total del carrito.
+             * @param float $largo Longitud máxima.
+             * @param float $ancho Anchura máxima.
+             * @param float $alto Altura máxima.
+             * @param array $medidas Array de medidas de los productos.
+             * @param array $clases Clases de envío.
+             * @param array $tarifas Tarifas procesadas.
+             * @return array Tarifas más baratas encontradas.
+             */
             public function dame_tarifa_mas_barata( $peso_total, $volumen_total, $largo, $ancho, $alto, $medidas, $clases, $tarifas ) {
-                //Variables
+                // Variables.
                 static $debug_mostrado      = false;
                 $debugs_key                 = 'apg_debugs_' . $this->instance_id;
                 $session                    = WC()->session;
@@ -755,25 +868,25 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 $alto_anterior              = 0;
                 $clase_de_envio_anterior    = '';
 
-                //Previene errores y reajusta pesos
+                // Previene errores y reajusta pesos.
                 foreach ( $clases as $clase => $peso ) {
                     if ( $clase !== 'todas' && isset( $tarifas[ $clase ] ) ) {
                         $clases[ 'todas' ]  -= $peso;
                     }
                 }
-                if ( $clases[ 'todas' ] < 0.00001 ) { //Correct float values operations issues. Fix by lhall-amphibee: https://github.com/artprojectgroup/woocommerce-apg-weight-and-postcodestatecountry-shipping/pull/4
+                if ( $clases[ 'todas' ] < 0.00001 ) { // Correct float values operations issues. Fix by lhall-amphibee: https://github.com/artprojectgroup/woocommerce-apg-weight-and-postcodestatecountry-shipping/pull/4.
                     $clases[ 'todas' ]  = 0;
                 }
                 if ( isset( $clases[ 'sin-clase' ] ) && $clases[ 'todas' ] > 0 ) {
                     $clases[ 'sin-clase' ]  += $clases[ 'todas' ];
                 }
 
-                //Aplica tarifas
+                // Aplica tarifas.
                 foreach ( $tarifas as $tipo => $tarifas_por_tipo ) {
-                    //Variable
+                    // Variable.
                     $clase_de_envio = $tipo;
 
-                    //Previene errores
+                    // Previene errores.
                     if ( $clase_de_envio == 'sin-clase' && ! isset( $clases[ 'sin-clase' ] ) ) {
                         $clase_de_envio = 'todas';
                     }
@@ -785,43 +898,43 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $alto_anterior              = 0;
                     }
 
-                    //Obtiene la tarifa más barata
+                    // Obtiene la tarifa más barata.
                     foreach ( $tarifas_por_tipo as $tarifa ) {
-                        //Inicializa variables
+                        // Inicializa variables.
                         $calculo_volumetrico    = false;
                         $excede_dimensiones     = false;
-                        unset( $medida_tarifa ); //Fix by DJ Team Digital
+                        unset( $medida_tarifa ); // Fix by DJ Team Digital.
 
-                        //Comprueba si tiene medidas
+                        // Comprueba si tiene medidas.
                         if ( isset( $tarifa[ 'medidas' ] ) && $this->apg_medida_valida( $tarifa[ 'medidas' ] ) ) {
-                            if ( ! isset( $tarifa[ 'peso' ] ) ) { //Son medidas sin peso
+                            if ( ! isset( $tarifa[ 'peso' ] ) ) { // Son medidas sin peso.
                                 $calculo_volumetrico    = true;
                             }
 
-                            //Comprueba el volumen
+                            // Comprueba el volumen.
                             $medida_tarifa  = array_map( 'floatval', explode( 'x', $tarifa[ 'medidas' ] ) );
                             if ( count( $medida_tarifa ) !== 3 || in_array( 0, $medida_tarifa, true ) ) {
-                                continue;  //Medida malformada
+                                continue;  // Medida malformada.
                             }
                             list( $largo_tarifa, $ancho_tarifa, $alto_tarifa )  = $medida_tarifa;
                             
                             if ( $largo > $largo_tarifa || $ancho > $ancho_tarifa || $alto > $alto_tarifa || $volumen_total > ( $largo_tarifa * $ancho_tarifa * $alto_tarifa ) ) {
-                                $excede_dimensiones = true; //Excede el tamaño o volumen máximo
+                                $excede_dimensiones = true; // Excede el tamaño o volumen máximo.
                             }
                         }
                         
                         $valor_clase    = floatval( $clases[ $clase_de_envio ] ?? 0 );
                         $importe        = floatval( str_replace( ',', '.', $tarifa[ 'importe' ] ) );
 
-                        if ( ! $calculo_volumetrico && ! $excede_dimensiones ) { //Es un peso
-                            //Tramos definidos con peso mínimo y máximo (X-Y)
+                        if ( ! $calculo_volumetrico && ! $excede_dimensiones ) { // Es un peso.
+                            // Tramos definidos con peso mínimo y máximo (X-Y).
                             if ( isset( $tarifa[ 'peso_min' ], $tarifa[ 'peso' ] ) ) {
                                 if ( $valor_clase >= $tarifa[ 'peso_min' ] && $valor_clase <= $tarifa[ 'peso' ] ) {
                                     if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
                                         $tarifa_mas_barata[ $clase_de_envio ] = $importe;
                                     }
                                 }
-                            //Tarifa simple con peso máximo
+                            // Tarifa simple con peso máximo.
                             } elseif ( ! isset( $tarifa[ 'peso_min' ] ) && isset( $tarifa[ 'peso' ] ) ) {
                                 if ( ( ! $peso_anterior && $tarifa[ 'peso' ] >= $valor_clase ) || ( $tarifa[ 'peso' ] >= $valor_clase && $valor_clase > $peso_anterior ) ) {
                                     if ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $importe < $tarifa_mas_barata[ $clase_de_envio ] ) {
@@ -830,28 +943,28 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                                 }
                             }
                             
-                            //Guarda el peso actual
+                            // Guarda el peso actual.
                             $peso_anterior  = $tarifa[ 'peso' ];
                             
-                        } elseif ( $calculo_volumetrico && ! $excede_dimensiones ) { //Es una medida
+                        } elseif ( $calculo_volumetrico && ! $excede_dimensiones ) { // Es una medida.
                             $volumen    = $largo_tarifa * $ancho_tarifa * $alto_tarifa;
                             if ( ! $largo_anterior || ( $volumen > $volumen_total && $largo_tarifa >= $largo && $largo > $largo_anterior && $ancho_tarifa >= $ancho && $ancho > $ancho_anterior && $alto_tarifa >= $alto && $alto > $alto_anterior ) ) {
                                 $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
-                            } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { //Las medidas son mayores que la de la tarifa máxima
+                            } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { // Las medidas son mayores que la de la tarifa máxima.
                                 $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
                             }
-                            //Guarda las medidas actuales
+                            // Guarda las medidas actuales.
                             $largo_anterior = $largo_tarifa;
                             $ancho_anterior = $ancho_tarifa;
                             $alto_anterior  = $alto_tarifa;
 
-                        } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $importe ) ) { //Las medidas son mayores que la de la tarifa máxima
+                        } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $importe ) ) { // Las medidas son mayores que la de la tarifa máxima.
                             $tarifa_mas_barata[ $clase_de_envio ] = $importe;
                         }
                     }
                 }
 				
-				//Si no se ha encontrado ninguna tarifa válida pero está marcada la opción "Mostrar el precio máximo"
+				// Si no se ha encontrado ninguna tarifa válida pero está marcada la opción "Mostrar el precio máximo".
 				if ( $this->maximo === 'yes' && empty( $tarifa_mas_barata[ $clase_de_envio ] ) && ! empty( $tarifas[ $clase_de_envio ] ) ) {
 					$ultima_tarifa = end( $tarifas[ $clase_de_envio ] );
 					if ( isset( $ultima_tarifa[ 'importe' ] ) ) {
@@ -859,17 +972,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 				}
 
-                //Previene errores de duplicación de tarifas
+                // Previene errores de duplicación de tarifas.
                 if ( isset( $tarifa_mas_barata[ 'todas' ] ) && $clases[ 'todas' ] == 0 && count( $tarifa_mas_barata ) > 1 ) {
                     unset( $tarifa_mas_barata[ 'todas' ] );
                 }
 
-                //Se ha excedido la tarifa máxima
+                // Se ha excedido la tarifa máxima.
                 if ( $this->maximo == "no" && ( ( $peso_anterior && $valor_clase > $peso_anterior ) || ( $calculo_volumetrico && $excede_dimensiones ) ) ) {
                     unset( $tarifa_mas_barata[ $clase_de_envio ] );
                 }
                 
-                //Muestra información de depuración a los administradores
+                // Muestra información de depuración a los administradores.
 				if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && ! is_admin() && ! wp_doing_ajax() && ! wp_is_json_request() && $debug_mostrado === false && empty( $debugs_mostrados[ '__resumen__' ] ) ) {
                     echo '<div id="apg-shipping-debug-wrapper">';
                     echo '<h4>' . esc_html__( 'Calculated totals.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
@@ -910,7 +1023,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
             }
             
-            //Comprueba si una medida es válida
+            /**
+             * Comprueba si una cadena corresponde a una medida válida (largo x ancho x alto).
+             *
+             * @param string $medida Cadena de la medida.
+             * @return int 1 si es válida, 0 si no lo es.
+             */
             private function apg_medida_valida( $medida ) {
                 return preg_match( '/^\d+x\d+x\d+$/', $medida );
             }
@@ -921,18 +1039,22 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }
 
-//Añade soporte a Checkout y Cart Block
+/**
+ * Añade el soporte para scripts y datos en los bloques de WooCommerce (carrito y checkout).
+ *
+ * @return void
+ */
 function apg_shipping_script_bloques() {
-    //Evita ejecución en backend/editor REST
+    // Evita ejecución en backend/editor REST.
     if ( is_admin() || wp_doing_ajax() || defined( 'REST_REQUEST' ) ) {
         return; 
     }
     
-	//Detecta bloques de WooCommerce para carrito o checkout
+	// Detecta bloques de WooCommerce para carrito o checkout.
 	$bloques   = function_exists( 'has_block' ) && ( has_block( 'woocommerce/cart', wc_get_page_id( 'cart' ) ) || has_block( 'woocommerce/checkout', wc_get_page_id( 'checkout' ) ) );
 
 	if ( ! $bloques ) {
-        return; //No se están usando bloques de carrito o checkout
+        return; // No se están usando bloques de carrito o checkout.
 	}
 
     $script_handle  = 'apg-shipping-bloques';
@@ -943,7 +1065,11 @@ function apg_shipping_script_bloques() {
 }
 add_action( 'enqueue_block_assets', 'apg_shipping_script_bloques' );
 
-//Añade la etiqueta a los bloques
+/**
+ * Gestiona la respuesta AJAX para obtener datos del método de envío (icono, entrega, etc) en bloques.
+ *
+ * @return void
+ */
 function apg_shipping_ajax_datos() {
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
     $metodo = isset( $_POST[ 'metodo' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'metodo' ] ) ) : '';
@@ -957,7 +1083,7 @@ function apg_shipping_ajax_datos() {
         wp_send_json_error( __( 'No data available', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
     }
     
-	//Tiempo de entrega
+	// Tiempo de entrega.
     $entrega    = $opciones[ 'entrega' ] ?? '';
 	if ( ! empty( $entrega ) ) {
         // translators: %s is the estimated delivery time (e.g., "24-48 hours").
@@ -973,7 +1099,11 @@ function apg_shipping_ajax_datos() {
 add_action( 'wp_ajax_apg_shipping_ajax_datos', 'apg_shipping_ajax_datos' );
 add_action( 'wp_ajax_nopriv_apg_shipping_ajax_datos', 'apg_shipping_ajax_datos' );
 
-//Muestra el mensaje de activación de WooCommerce y desactiva el plugin
+/**
+ * Muestra un aviso en el admin si WooCommerce no está activo y desactiva el plugin.
+ *
+ * @return void
+ */
 function apg_shipping_requiere_wc() {
 	global $apg_shipping;
 		
@@ -984,14 +1114,18 @@ function apg_shipping_requiere_wc() {
 	deactivate_plugins( DIRECCION_apg_shipping );
 }
 
-//Eliminamos todo rastro del plugin al desinstalarlo
+/**
+ * Elimina todas las opciones y cachés relacionadas con el plugin al desinstalar.
+ *
+ * @return void
+ */
 function apg_shipping_desinstalar() {
     global $wpdb;
     
-    //Elimina opciones residuales del plugin en desinstalación. Cache no necesaria aquí.
+    // Elimina opciones residuales del plugin en desinstalación. Cache no necesaria aquí..
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '%woocommerce_apg_shipping_%'" );
-    //Borra los transientes antiguos.  Cache no necesaria aquí.
+    // Borra los transientes antiguos.  Cache no necesaria aquí..
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_apg_shipping_%'" );
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching

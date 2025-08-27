@@ -1,3 +1,6 @@
+/**
+ * Script para manejar los bloques de envío de APG en el carrito.
+ */
 jQuery(function($) {
     // Solo aplica en la página del carrito
     if ( $('body').hasClass('woocommerce-cart') ) {

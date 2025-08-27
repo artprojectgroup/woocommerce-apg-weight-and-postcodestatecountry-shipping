@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.5.0.2
+Stable tag: 3.6
 WC requires at least: 5.6
-WC tested up to: 10.1.0
+WC tested up to: 10.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can show a custom icon image.
 * You can show the estimated delivery time.
 * You can modify the shipping method title with the `apg_shipping_label` filter.
+* You can modify the shipping method label using the `apg_shipping_final_label` filter.
 * You can remove the previous text of the estimated delivery time with the `apg_shipping_delivery` filter.
 * Fully compatible with [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/) plugin.
 * Fully compatible with [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS) plugin.
@@ -49,10 +50,10 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 = Translations =
 * Español ([**Art Project Group**](https://artprojectgroup.es/)).
 * English ([**Art Project Group**](https://artprojectgroup.es/)).
-* Français ([**Guillaume**](http://guillaume-thibord.com/)).
-* Português ([**Alain Aubry**](http://www.casa-indigo.com/)).
-* Português (Brasil) ([**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/)).
-* Italiano ([**Angelo Lazzari**](http://www.redtulp.com/)).
+* Français ([**Guillaume**](https://guillaume-thibord.com/)).
+* Português ([**Alain Aubry**](https://www.casa-indigo.com/)).
+* Português (Brasil) ([**Danilo Lopes da Silva**](https://www.armarinhosdonaflor.com.br/)).
+* Italiano ([**Angelo Lazzari**](https://www.redtulp.com/)).
 
 = Technical support =
 **Art Project Group** offers [**Technical support**](https://artprojectgroup.es/tienda/ticket-de-soporte) to configure or install ***WC - APG Weight Shipping***.
@@ -100,6 +101,10 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.6 =
+* Added the `apg_shipping_final_label` filter.
+* Added phpDocs in the code.
+* Small fixes.
 = 3.5.0.2 =
 * Small fixes.
 = 3.5.0.1 =
@@ -526,7 +531,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.5.0.2 =
+= 3.6 =
+* Added the `apg_shipping_final_label` filter.
+* Added phpDocs in the code.
 * Small fixes.
 
 == Translations ==

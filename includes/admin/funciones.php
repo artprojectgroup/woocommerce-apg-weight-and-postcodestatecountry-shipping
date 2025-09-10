@@ -221,7 +221,7 @@ function apg_shipping_condicional_toma_de_datos() {
 
     // Ejecutar también en el backend SOLO cuando estás en configuración de envío
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    if ( is_admin() && isset( $_GET[ 'page' ], $_GET[ 'tab' ], $_GET[ 'instance_id' ] ) && $_GET[ 'page' ] === 'wc-settings' && $_GET[ 'tab' ] === 'shipping' && is_numeric( $_GET[ 'instance_id' ] ) ) {
+    if ( is_admin() && isset( $_GET[ 'page' ], $_GET[ 'tab' ], $_GET[ 'instance_id' ] ) && 'wc-settings' === sanitize_text_field( wp_unslash( $_GET[ 'page' ] ) ) && 'shipping' === sanitize_text_field( wp_unslash( $_GET[ 'tab' ] ) ) && absint( $_GET[ 'instance_id' ] ) ) {
         apg_shipping_toma_de_datos();
     }
 }

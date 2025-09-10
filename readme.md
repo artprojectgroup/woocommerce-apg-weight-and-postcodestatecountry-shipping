@@ -9,11 +9,11 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.6
+Stable tag: 3.6.0.1
 
 WC requires at least: 5.6
 
-WC tested up to: 10.1.2
+WC tested up to: 10.2.0
 
 License: GPLv2 or later
 
@@ -106,6 +106,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.6.0.1
+* Pequeños arreglos.
+
 ### 3.6
 * Añadido filtro `apg_shipping_final_label`.
 * Añadidos los phpDocs en el código.

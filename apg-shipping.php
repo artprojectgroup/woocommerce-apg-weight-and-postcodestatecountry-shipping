@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.6
+Version: 3.6.0.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.1.2
+WC tested up to: 10.2.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.6' );
+define( 'VERSION_apg_shipping', '3.6.0.1' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -868,6 +868,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 $ancho_anterior             = 0;
                 $alto_anterior              = 0;
                 $clase_de_envio_anterior    = '';
+                $clase_de_envio             = '';
+                $valor_clase                = 0;
+                $calculo_volumetrico        = false;
+                $excede_dimensiones         = false;
 
                 // Previene errores y reajusta pesos.
                 foreach ( $clases as $clase => $peso ) {
@@ -966,12 +970,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
 				
 				// Si no se ha encontrado ninguna tarifa válida pero está marcada la opción "Mostrar el precio máximo".
-				if ( $this->maximo === 'yes' && empty( $tarifa_mas_barata[ $clase_de_envio ] ) && ! empty( $tarifas[ $clase_de_envio ] ) ) {
-					$ultima_tarifa = end( $tarifas[ $clase_de_envio ] );
-					if ( isset( $ultima_tarifa[ 'importe' ] ) ) {
-						$tarifa_mas_barata[ $clase_de_envio ] = floatval( str_replace( ',', '.', $ultima_tarifa[ 'importe' ] ) );
-					}
-				}
+				if ( $this->maximo === 'yes' && $clase_de_envio !== '' && empty( $tarifa_mas_barata[ $clase_de_envio ] ) && ! empty( $tarifas[ $clase_de_envio ] ) ) {
+                    $ultima_tarifa = end( $tarifas[ $clase_de_envio ] );
+                    if ( isset( $ultima_tarifa[ 'importe' ] ) ) {
+                        $tarifa_mas_barata[ $clase_de_envio ] = floatval( str_replace( ',', '.', $ultima_tarifa[ 'importe' ] ) );
+                    }
+                }
 
                 // Previene errores de duplicación de tarifas.
                 if ( isset( $tarifa_mas_barata[ 'todas' ] ) && $clases[ 'todas' ] == 0 && count( $tarifa_mas_barata ) > 1 ) {

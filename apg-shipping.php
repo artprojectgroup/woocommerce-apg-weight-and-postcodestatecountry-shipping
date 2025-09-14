@@ -987,7 +987,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
                 
                 // Muestra información de depuración a los administradores.
-				if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && ! is_admin() && ! wp_doing_ajax() && ! wp_is_json_request() && $debug_mostrado === false && empty( $debugs_mostrados[ '__resumen__' ] ) ) {
+                if ( $this->debug === 'yes' && current_user_can( 'manage_options' ) && ! is_admin() && ( ( function_exists( 'is_cart' ) && is_cart() ) || ( function_exists( 'is_checkout' ) && is_checkout() ) || ( function_exists( 'wc_is_cart_and_checkout_block_page' ) && wc_is_cart_and_checkout_block_page() ) || ( function_exists( 'wc_is_cart_and_checkout_blocks_page' ) && wc_is_cart_and_checkout_blocks_page() ) ) && ! wp_doing_ajax() && ! wp_is_json_request() && $debug_mostrado === false && empty( $debugs_mostrados[ '__resumen__' ] ) ) {
                     echo '<div id="apg-shipping-debug-wrapper">';
                     echo '<h4>' . esc_html__( 'Calculated totals.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
                     echo '<p><strong>' . esc_html__( 'Shipping method:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . ' ' . esc_html( $this->method_title ) . ' - ID: ' . esc_html( $this->instance_id ) . '.</strong></p>';

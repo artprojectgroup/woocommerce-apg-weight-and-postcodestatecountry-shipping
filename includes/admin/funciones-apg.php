@@ -162,7 +162,7 @@ add_action( 'admin_enqueue_scripts', 'apg_shipping_estilo' );
  * @return void
  */
 function apg_shipping_debug_script() {
-	if ( ! ( is_cart() || is_checkout() ) ) {
+    if ( ! ( ( function_exists( 'is_cart' ) && is_cart() ) || ( function_exists( 'is_checkout' ) && is_checkout() ) || ( function_exists( 'wc_is_cart_and_checkout_block_page' ) && wc_is_cart_and_checkout_block_page() )|| ( function_exists( 'wc_is_cart_and_checkout_blocks_page' ) && wc_is_cart_and_checkout_blocks_page() ) || ( function_exists( 'wc_is_cart_and_checkout_blocks_page' ) && wc_is_cart_and_checkout_blocks_page() ) ) ){
         return;
     }
 

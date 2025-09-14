@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.6.0.1
+Version: 3.6.0.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.6.0.1' );
+define( 'VERSION_apg_shipping', '3.6.0.2' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -950,21 +950,20 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             
                             // Guarda el peso actual.
                             $peso_anterior  = $tarifa[ 'peso' ];
-                            
+
                         } elseif ( $calculo_volumetrico && ! $excede_dimensiones ) { // Es una medida.
                             $volumen    = $largo_tarifa * $ancho_tarifa * $alto_tarifa;
                             if ( ! $largo_anterior || ( $volumen > $volumen_total && $largo_tarifa >= $largo && $largo > $largo_anterior && $ancho_tarifa >= $ancho && $ancho > $ancho_anterior && $alto_tarifa >= $alto && $alto > $alto_anterior ) ) {
                                 $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
-                            } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { // Las medidas son mayores que la de la tarifa máxima.
+                            } elseif ( $this->maximo == "yes" && ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || ( $largo > $largo_anterior && $ancho > $ancho_anterior && $alto > $alto_anterior ) ) ) { // Las medidas son mayores que la de la tarifa máxima.
                                 $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
                             }
-                            // Guarda las medidas actuales.
                             $largo_anterior = $largo_tarifa;
                             $ancho_anterior = $ancho_tarifa;
                             $alto_anterior  = $alto_tarifa;
 
-                        } elseif ( $this->maximo == "yes" && ( empty( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $importe ) ) { // Las medidas son mayores que la de la tarifa máxima.
-                            $tarifa_mas_barata[ $clase_de_envio ] = $importe;
+                        } elseif ( $this->maximo == "yes" && ( ! isset( $tarifa_mas_barata[ $clase_de_envio ] ) || $tarifa_mas_barata[ $clase_de_envio ] < $importe ) ) { // Las medidas son mayores que la de la tarifa máxima.
+                            $tarifa_mas_barata[ $clase_de_envio ]   = $importe;
                         }
                     }
                 }

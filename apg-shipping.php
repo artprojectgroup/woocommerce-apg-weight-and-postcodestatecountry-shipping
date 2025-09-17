@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.6.0.2
+Version: 3.6.0.2b
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -969,7 +969,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
 				
 				// Si no se ha encontrado ninguna tarifa válida pero está marcada la opción "Mostrar el precio máximo".
-				if ( $this->maximo === 'yes' && $clase_de_envio !== '' && empty( $tarifa_mas_barata[ $clase_de_envio ] ) && ! empty( $tarifas[ $clase_de_envio ] ) ) {
+				if ( $this->maximo === 'yes' && $clase_de_envio !== '' && ! array_key_exists( $clase_de_envio, $tarifa_mas_barata ) && ! empty( $tarifas[ $clase_de_envio ] ) ) {
                     $ultima_tarifa = end( $tarifas[ $clase_de_envio ] );
                     if ( isset( $ultima_tarifa[ 'importe' ] ) ) {
                         $tarifa_mas_barata[ $clase_de_envio ] = floatval( str_replace( ',', '.', $ultima_tarifa[ 'importe' ] ) );

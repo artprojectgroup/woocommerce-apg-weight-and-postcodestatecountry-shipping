@@ -170,7 +170,7 @@ add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medio
 function apg_shipping_toma_de_datos() {
     // Obtiene los métodos de pago.
     $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
-    if ( false === $medios_de_pago ) {
+    if ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) {
         $medios_de_pago = [];
         $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
 

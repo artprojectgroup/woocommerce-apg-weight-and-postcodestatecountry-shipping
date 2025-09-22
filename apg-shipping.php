@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.6.0.2
+Version: 3.6.0.3
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.2.0
+WC tested up to: 10.2.1
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.6.0.2' );
+define( 'VERSION_apg_shipping', '3.6.0.3' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -349,24 +349,43 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              *
              * @return void
              */
-			public function apg_shipping_dame_metodos_de_pago() {
-                // Obtiene los métodos de pago desde la caché.
-                $this->metodos_de_pago  = get_transient( 'apg_shipping_metodos_de_pago' );
+            public function apg_shipping_dame_metodos_de_pago() {
+               $cache_key              = 'apg_shipping_metodos_de_pago';
+               // Obtiene los métodos de pago desde la caché.
+               $this->metodos_de_pago  = get_transient( $cache_key );
 
-                if ( empty( $this->metodos_de_pago ) ) {
-                    // Obtiene los métodos de pago.
-                    global $medios_de_pago;
-                    $this->metodos_de_pago  = [];
-                    if ( is_array( $medios_de_pago ) && ! empty( $medios_de_pago ) ) {
-                        foreach( $medios_de_pago as $id => $titulo ) {
-                            $this->metodos_de_pago[ $id ] = $titulo;
-                        }
-                    }
+               if ( false === $this->metodos_de_pago || ! is_array( $this->metodos_de_pago ) || empty( $this->metodos_de_pago ) ) {
+                   // Fuerza una nueva recopilación de datos en caso de caché vacía o corrupta.
+                   delete_transient( $cache_key );
 
-                    // Guarda la caché durante un mes.
-                    set_transient( 'apg_shipping_metodos_de_pago',  $this->metodos_de_pago, 30 * DAY_IN_SECONDS );
-                }
-			}
+                   if ( function_exists( 'apg_shipping_toma_de_datos' ) ) {
+                       apg_shipping_toma_de_datos();
+                       $this->metodos_de_pago = get_transient( $cache_key );
+                   }
+               }
+
+               if ( false === $this->metodos_de_pago || ! is_array( $this->metodos_de_pago ) || empty( $this->metodos_de_pago ) ) {
+                   $this->metodos_de_pago  = [];
+
+                   // Obtiene los métodos de pago directamente desde WooCommerce como último recurso.
+                   if ( function_exists( 'WC' ) ) {
+                       $payment_gateways = WC()->payment_gateways();
+                       if ( $payment_gateways && is_object( $payment_gateways ) && method_exists( $payment_gateways, 'get_available_payment_gateways' ) ) {
+                           $gateways = $payment_gateways->get_available_payment_gateways();
+                           if ( ! empty( $gateways ) && is_array( $gateways ) ) {
+                               foreach ( $gateways as $gateway ) {
+                                   $this->metodos_de_pago[ $gateway->id ] = $gateway->get_title();
+                               }
+                           }
+                       }
+                   }
+
+                   if ( ! empty( $this->metodos_de_pago ) ) {
+                       // Guarda la caché durante un mes.
+                       set_transient( $cache_key, $this->metodos_de_pago, 30 * DAY_IN_SECONDS );
+                   }
+               }
+            }
 
             /**
              * Obtiene todos los atributos de producto definidos y los cachea durante 30 días.

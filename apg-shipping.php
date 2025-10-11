@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.6.0.3
+Version: 3.7
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.2.1
+WC tested up to: 10.3.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.6.0.3' );
+define( 'VERSION_apg_shipping', '3.7' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -214,20 +214,24 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 if ( empty( $this->{$tipo} ) ) {
                     $argumentos = [
-                        'taxonomy'      => $taxonomy,
-                        'orderby'       => 'name',
-                        'show_count'    => 0,
-                        'pad_counts'    => 0,
-                        'hierarchical'  => 1,
-                        'title_li'      => '',
-                        'hide_empty'    => false,
+                        'taxonomy'               => $taxonomy,
+                        'orderby'                => 'name',
+                        'show_count'             => 0,
+                        'pad_counts'             => 0,
+                        'hierarchical'           => 1,
+                        'title_li'               => '',
+                        'hide_empty'             => false,
+                        'fields'                 => 'id=>name',
+                        'update_term_meta_cache' => false,
                     ];
 
                     $datos          = get_categories( $argumentos );
                     $this->{$tipo}  = [];
 
-                    foreach ( $datos as $dato ) {
-                        $this->{$tipo}[ $dato->term_id ] = $dato->name;
+                    if ( is_array( $datos ) ) {
+                        foreach ( $datos as $term_id => $term_name ) {
+                            $this->{$tipo}[ (int) $term_id ] = $term_name;
+                        }
                     }
 
                     set_transient( $transient, $this->{$tipo}, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
@@ -404,19 +408,34 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 // Obtiene los atributos.
                 $atributos  = [];
                 $taxonomias = wc_get_attribute_taxonomies();
-                if ( !empty( $taxonomias ) && is_array( $taxonomias ) ) {
+                if ( ! empty( $taxonomias ) && is_array( $taxonomias ) ) {
                     foreach ( $taxonomias as $atributo ) {
                         if ( empty( $atributo->attribute_name ) || empty( $atributo->attribute_label ) ) {
                             continue;
                         }
-                        
-                        $nombre_taxonomia = 'pa_' . $atributo->attribute_name;
-                        $terminos         = get_terms( [ 'taxonomy' => $nombre_taxonomia, 'hide_empty' => false ] );
 
-                        if ( ! is_wp_error( $terminos ) && ! empty( $terminos ) ) {
-                            foreach ( $terminos as $termino ) {
-                                $atributos[ esc_attr( $atributo->attribute_label ) ][ $nombre_taxonomia . '-' . $termino->slug ] = $termino->name;
+                        $nombre_taxonomia = 'pa_' . $atributo->attribute_name;
+                        $terminos_ids     = get_terms(
+                            [
+                                'taxonomy'               => $nombre_taxonomia,
+                                'hide_empty'             => false,
+                                'fields'                 => 'ids',
+                                'update_term_meta_cache' => false,
+                            ]
+                        );
+
+                        if ( is_wp_error( $terminos_ids ) || empty( $terminos_ids ) ) {
+                            continue;
+                        }
+
+                        foreach ( $terminos_ids as $termino_id ) {
+                            $slug = get_term_field( 'slug', $termino_id, $nombre_taxonomia );
+                            $name = get_term_field( 'name', $termino_id, $nombre_taxonomia );
+                            if ( is_wp_error( $slug ) || is_wp_error( $name ) || '' === $slug ) {
+                                continue;
                             }
+
+                            $atributos[ esc_attr( $atributo->attribute_label ) ][ $nombre_taxonomia . '-' . sanitize_title( $slug ) ] = sanitize_text_field( $name );
                         }
                     }
                 }

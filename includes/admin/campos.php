@@ -26,7 +26,9 @@
  */
 
 // Igual no deberías poder abrirme.
+
 defined( 'ABSPATH' ) || exit;
+
 
 $this->apg_shipping_obtiene_datos(); // Recoge los datos.
 
@@ -131,16 +133,26 @@ $campos[ 'maximo' ] = [
     'label'				=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     'default'			=> 'yes',
 ];
-$campos[ 'categorias_excluidas' ]   = [ 
+// Product categories AJAX logic
+$apg_ajax_nonce = wp_create_nonce( 'apg_ajax_terms' );
+$categorias_ajax = ( isset( $categorias_cnt ) ? $categorias_cnt : ( is_array( $this->categorias_de_producto ) ? count( $this->categorias_de_producto ) : 0 ) ) > 500;
+$categorias_opts = $this->categorias_de_producto;
+$campos[ 'categorias_excluidas' ]   = [
     // translators: %s is the name of the product category.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )  ),
     // translators: %1$s is the name of the product category, %2$s is the shipping method title.
     'desc_tip' 		=> sprintf( $texto, __( 'product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
-	'type'			=> 'multiselect',
-	'class'			=> 'wc-enhanced-select',
-	'options' 		=> $this->categorias_de_producto,
+	'type'   => 'select',
+	'class'  => 'wc-enhanced-select apg-ajax-select',
+	'custom_attributes' => $categorias_ajax ? [
+		'data-apg-ajax' => '1',
+		'data-source'   => 'categories',
+		'data-nonce'    => $apg_ajax_nonce,
+	] : [],
+	'options' => $categorias_ajax ? [] : $categorias_opts,
+	'description' => ( isset( $categorias_cnt ) && $categorias_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
 ];
 $campos[ 'tipo_categorias' ] = [
     // translators: %s is the name of the product category.
@@ -152,16 +164,24 @@ $campos[ 'tipo_categorias' ] = [
 	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'product categories', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'default'		=> 'no',
 ];
-$campos[ 'etiquetas_excluidas' ]    = [ 
+// Product tags AJAX logic
+$etiquetas_ajax = ( isset( $etiquetas_cnt ) ? $etiquetas_cnt : ( is_array( $this->etiquetas_de_producto ) ? count( $this->etiquetas_de_producto ) : 0 ) ) > 500;
+$etiquetas_opts = $this->etiquetas_de_producto;
+$campos[ 'etiquetas_excluidas' ]    = [
     // translators: %s is the name of the product tag.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
     // translators: %1$s is the product tag name, %2$s is the shipping method title.
 	'desc_tip' 		=> sprintf( $texto, __( 'product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
-	'type'			=> 'multiselect',
-	'class'			=> 'wc-enhanced-select',
-	'options' 		=> $this->etiquetas_de_producto,
+	'type'   => 'select',
+	'class'  => 'wc-enhanced-select apg-ajax-select',
+	'custom_attributes' => $etiquetas_ajax ? [
+		'data-apg-ajax' => '1',
+		'data-source'   => 'tags',
+		'data-nonce'    => $apg_ajax_nonce,
+	] : [],
+	'options' => $etiquetas_ajax ? [] : $etiquetas_opts,
 ];
 $campos[ 'tipo_etiquetas' ] = [
     // translators: %s is the name of the product tag.
@@ -174,16 +194,23 @@ $campos[ 'tipo_etiquetas' ] = [
 	'default'		=> 'no',
 ];
 if ( wc_get_attribute_taxonomies() ) {
-    $campos[ 'atributos_excluidos' ]    = [ 
+	$atributos_ajax = ( isset( $atributos_cnt ) ? $atributos_cnt : ( is_array( $this->atributos ) ? count( $this->atributos ) : 0 ) ) > 500;
+	$atributos_opts = $this->atributos;
+    $campos[ 'atributos_excluidos' ]    = [
         // translators: %s is the name of the attribute.
         'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
         // translators: %1$s is the attribute name, %2$s is the shipping method title.
         'desc_tip' 		=> sprintf( $texto, __( 'attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
         'css'			=> 'width: 450px;',
         'default'		=> '',
-        'type'			=> 'multiselect',
-        'class'			=> 'wc-enhanced-select',
-        'options' 		=> $this->atributos,
+        'type'   => 'select',
+        'class'  => 'wc-enhanced-select apg-ajax-select',
+        'custom_attributes' => $atributos_ajax ? [
+            'data-apg-ajax' => '1',
+            'data-source'   => 'attributes',
+            'data-nonce'    => $apg_ajax_nonce,
+        ] : [],
+        'options' => $atributos_ajax ? [] : $atributos_opts,
     ];
     $campos[ 'tipo_atributos' ] = [
         // translators: %s is the name of the attribute.
@@ -197,18 +224,23 @@ if ( wc_get_attribute_taxonomies() ) {
     ];
 }
 if ( WC()->shipping->get_shipping_classes() ) {
-    $campos[ 'clases_excluidas' ]   = [ 
+	$clases_ajax = ( isset( $clases_cnt ) ? $clases_cnt : ( is_array( $this->clases_de_envio ) ? count( $this->clases_de_envio ) : 0 ) ) > 500;
+	$clases_opts = $this->clases_de_envio;
+    $campos[ 'clases_excluidas' ]   = [
         // translators: %s is the name of the shipping class.
 		'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
         // translators: %1$s is the shipping class name, %2$s is the shipping method title.
 		'desc_tip' 		=> sprintf( $texto, __( 'shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 		'css'			=> 'width: 450px;',
 		'default'		=> '',
-		'type'			=> 'multiselect',
-		'class'			=> 'wc-enhanced-select',
-		'options' 		=> [ 
-			'todas' 		=> __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
-		] + $this->clases_de_envio,
+		'type'   => 'select',
+		'class'  => 'wc-enhanced-select apg-ajax-select',
+		'custom_attributes' => $clases_ajax ? [
+			'data-apg-ajax' => '1',
+			'data-source'   => 'classes',
+			'data-nonce'    => $apg_ajax_nonce,
+		] : [],
+		'options' => [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $clases_ajax ? [] : $clases_opts ),
 	];
 	$campos[ 'tipo_clases' ] = [
         // translators: %s is the name of the shipping class.

@@ -133,10 +133,19 @@ $campos[ 'maximo' ] = [
     'label'				=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     'default'			=> 'yes',
 ];
-// Product categories AJAX logic
-$apg_ajax_nonce = wp_create_nonce( 'apg_ajax_terms' );
-$categorias_ajax = ( isset( $categorias_cnt ) ? $categorias_cnt : ( is_array( $this->categorias_de_producto ) ? count( $this->categorias_de_producto ) : 0 ) ) > 500;
-$categorias_opts = $this->categorias_de_producto;
+$apg_ajax_nonce   = wp_create_nonce( 'apg_ajax_terms' );
+$categorias_opts  = is_array( $this->categorias_de_producto ) ? $this->categorias_de_producto : [];
+$categorias_cnt   = count( $categorias_opts );
+$categorias_ajax  = $categorias_cnt > 500;
+$categorias_saved = (array) $this->get_option( 'categorias_excluidas', [] );
+$categorias_seed  = [];
+if ( $categorias_ajax && ! empty( $categorias_saved ) ) {
+	foreach ( $categorias_saved as $cid ) {
+		if ( isset( $categorias_opts[ $cid ] ) ) {
+			$categorias_seed[ $cid ] = $categorias_opts[ $cid ];
+		}
+	}
+}
 $campos[ 'categorias_excluidas' ]   = [
     // translators: %s is the name of the product category.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )  ),
@@ -144,15 +153,15 @@ $campos[ 'categorias_excluidas' ]   = [
     'desc_tip' 		=> sprintf( $texto, __( 'product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
-	'type'   => 'select',
+	'type'   => 'multiselect',
 	'class'  => 'wc-enhanced-select apg-ajax-select',
 	'custom_attributes' => $categorias_ajax ? [
 		'data-apg-ajax' => '1',
 		'data-source'   => 'categories',
 		'data-nonce'    => $apg_ajax_nonce,
 	] : [],
-	'options' => $categorias_ajax ? [] : $categorias_opts,
-	'description' => ( isset( $categorias_cnt ) && $categorias_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
+	'options' => $categorias_ajax ? $categorias_seed : $categorias_opts,
+	'description' => ( $categorias_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
 ];
 $campos[ 'tipo_categorias' ] = [
     // translators: %s is the name of the product category.
@@ -164,9 +173,18 @@ $campos[ 'tipo_categorias' ] = [
 	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'product categories', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'default'		=> 'no',
 ];
-// Product tags AJAX logic
-$etiquetas_ajax = ( isset( $etiquetas_cnt ) ? $etiquetas_cnt : ( is_array( $this->etiquetas_de_producto ) ? count( $this->etiquetas_de_producto ) : 0 ) ) > 500;
-$etiquetas_opts = $this->etiquetas_de_producto;
+$etiquetas_opts  = is_array( $this->etiquetas_de_producto ) ? $this->etiquetas_de_producto : [];
+$etiquetas_cnt   = count( $etiquetas_opts );
+$etiquetas_ajax  = $etiquetas_cnt > 500;
+$etiquetas_saved = (array) $this->get_option( 'etiquetas_excluidas', [] );
+$etiquetas_seed  = [];
+if ( $etiquetas_ajax && ! empty( $etiquetas_saved ) ) {
+	foreach ( $etiquetas_saved as $tid ) {
+		if ( isset( $etiquetas_opts[ $tid ] ) ) {
+			$etiquetas_seed[ $tid ] = $etiquetas_opts[ $tid ];
+		}
+	}
+}
 $campos[ 'etiquetas_excluidas' ]    = [
     // translators: %s is the name of the product tag.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
@@ -174,14 +192,15 @@ $campos[ 'etiquetas_excluidas' ]    = [
 	'desc_tip' 		=> sprintf( $texto, __( 'product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
-	'type'   => 'select',
+	'type'   => 'multiselect',
 	'class'  => 'wc-enhanced-select apg-ajax-select',
 	'custom_attributes' => $etiquetas_ajax ? [
 		'data-apg-ajax' => '1',
 		'data-source'   => 'tags',
 		'data-nonce'    => $apg_ajax_nonce,
 	] : [],
-	'options' => $etiquetas_ajax ? [] : $etiquetas_opts,
+	'options' => $etiquetas_ajax ? $etiquetas_seed : $etiquetas_opts,
+	'description' => ( $etiquetas_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
 ];
 $campos[ 'tipo_etiquetas' ] = [
     // translators: %s is the name of the product tag.
@@ -194,8 +213,18 @@ $campos[ 'tipo_etiquetas' ] = [
 	'default'		=> 'no',
 ];
 if ( wc_get_attribute_taxonomies() ) {
-	$atributos_ajax = ( isset( $atributos_cnt ) ? $atributos_cnt : ( is_array( $this->atributos ) ? count( $this->atributos ) : 0 ) ) > 500;
-	$atributos_opts = $this->atributos;
+	$atributos_opts  = is_array( $this->atributos ) ? $this->atributos : [];
+	$atributos_cnt   = count( $atributos_opts );
+	$atributos_ajax  = $atributos_cnt > 500;
+	$atributos_saved = (array) $this->get_option( 'atributos_excluidos', [] );
+	$atributos_seed  = [];
+	if ( $atributos_ajax && ! empty( $atributos_saved ) ) {
+		foreach ( $atributos_saved as $aid ) {
+			if ( isset( $atributos_opts[ $aid ] ) ) {
+				$atributos_seed[ $aid ] = $atributos_opts[ $aid ];
+			}
+		}
+	}
     $campos[ 'atributos_excluidos' ]    = [
         // translators: %s is the name of the attribute.
         'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
@@ -203,14 +232,15 @@ if ( wc_get_attribute_taxonomies() ) {
         'desc_tip' 		=> sprintf( $texto, __( 'attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
         'css'			=> 'width: 450px;',
         'default'		=> '',
-        'type'   => 'select',
+        'type'   => 'multiselect',
         'class'  => 'wc-enhanced-select apg-ajax-select',
         'custom_attributes' => $atributos_ajax ? [
             'data-apg-ajax' => '1',
             'data-source'   => 'attributes',
             'data-nonce'    => $apg_ajax_nonce,
         ] : [],
-        'options' => $atributos_ajax ? [] : $atributos_opts,
+        'options' => $atributos_ajax ? $atributos_seed : $atributos_opts,
+        'description' => ( $atributos_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
     ];
     $campos[ 'tipo_atributos' ] = [
         // translators: %s is the name of the attribute.
@@ -224,8 +254,18 @@ if ( wc_get_attribute_taxonomies() ) {
     ];
 }
 if ( WC()->shipping->get_shipping_classes() ) {
-	$clases_ajax = ( isset( $clases_cnt ) ? $clases_cnt : ( is_array( $this->clases_de_envio ) ? count( $this->clases_de_envio ) : 0 ) ) > 500;
-	$clases_opts = $this->clases_de_envio;
+	$clases_opts  = is_array( $this->clases_de_envio ) ? $this->clases_de_envio : [];
+	$clases_cnt   = count( $clases_opts );
+	$clases_ajax  = $clases_cnt > 500;
+	$clases_saved = (array) $this->get_option( 'clases_excluidas', [] );
+	$clases_seed  = [];
+	if ( $clases_ajax && ! empty( $clases_saved ) ) {
+		foreach ( $clases_saved as $sid ) {
+			if ( isset( $clases_opts[ $sid ] ) ) {
+				$clases_seed[ $sid ] = $clases_opts[ $sid ];
+			}
+		}
+	}
     $campos[ 'clases_excluidas' ]   = [
         // translators: %s is the name of the shipping class.
 		'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
@@ -233,14 +273,15 @@ if ( WC()->shipping->get_shipping_classes() ) {
 		'desc_tip' 		=> sprintf( $texto, __( 'shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 		'css'			=> 'width: 450px;',
 		'default'		=> '',
-		'type'   => 'select',
+		'type'   => 'multiselect',
 		'class'  => 'wc-enhanced-select apg-ajax-select',
 		'custom_attributes' => $clases_ajax ? [
 			'data-apg-ajax' => '1',
 			'data-source'   => 'classes',
 			'data-nonce'    => $apg_ajax_nonce,
 		] : [],
-		'options' => [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $clases_ajax ? [] : $clases_opts ),
+		'options' => [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $clases_ajax ? $clases_seed : $clases_opts ),
+		'description' => ( $clases_cnt > 500 ? sprintf( __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ) : '' ),
 	];
 	$campos[ 'tipo_clases' ] = [
         // translators: %s is the name of the shipping class.

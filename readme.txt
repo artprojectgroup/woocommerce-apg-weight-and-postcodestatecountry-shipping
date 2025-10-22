@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.7
+Stable tag: 3.7.0b
 WC requires at least: 5.6
 WC tested up to: 10.3.0
 License: GPLv2 or later
@@ -102,7 +102,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 
 == Changelog ==
 = 3.7 =
-* New AJAX search system with SelectWoo for long admin term lists, preventing thousands of options from being rendered at once.
+* Fixed memory overflow.
+* Improved the debug option.
 * Small fixes.
 = 3.6.0.3 =
 * Small fixes.
@@ -540,8 +541,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.7 =
-* New AJAX search system with SelectWoo for long admin term lists, preventing thousands of options from being rendered at once.
+= 3.7.0 =
+* Fixed memory overflow.
+* Improved the debug option.
 * Small fixes.
 
 == Translations ==

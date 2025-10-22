@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7b
+Version: 3.7.0b
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.7' );
+define( 'VERSION_apg_shipping', '3.7.0b' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -415,14 +415,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         }
 
                         $nombre_taxonomia = 'pa_' . $atributo->attribute_name;
-                        $terminos_ids     = get_terms(
-                            [
-                                'taxonomy'               => $nombre_taxonomia,
-                                'hide_empty'             => false,
-                                'fields'                 => 'ids',
-                                'update_term_meta_cache' => false,
-                            ]
-                        );
+                        $terminos_ids     = get_terms( [
+                            'taxonomy'               => $nombre_taxonomia,
+                            'hide_empty'             => false,
+                            'fields'                 => 'ids',
+                            'update_term_meta_cache' => false,
+                        ] );
 
                         if ( is_wp_error( $terminos_ids ) || empty( $terminos_ids ) ) {
                             continue;
@@ -1058,6 +1056,44 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         $session->set( 'apg_shipping_debug_' . $this->instance_id, null );
                     }
                 }
+                // Depuración en consola para todos los usuarios.
+                if ( $this->debug === 'yes' && ! current_user_can( 'manage_options' ) && ! is_admin() && ( ( function_exists( 'is_cart' ) && is_cart() ) || ( function_exists( 'is_checkout' ) && is_checkout() ) || ( function_exists( 'wc_is_cart_and_checkout_block_page' ) && wc_is_cart_and_checkout_block_page() ) || ( function_exists( 'wc_is_cart_and_checkout_blocks_page' ) && wc_is_cart_and_checkout_blocks_page() ) ) && ! wp_doing_ajax() && ! wp_is_json_request()) {
+                    $payload = [
+                        'instance_id'   => $this->instance_id,
+                        'method'        => $this->method_title,
+                        'labels'        => [
+                            'method'  => esc_html__( 'Shipping method:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'weight'  => esc_html__( 'Cart total weight:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'volume'  => esc_html__( 'Cart total volume:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'length'  => esc_html__( 'Cart total length:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'width'   => esc_html__( 'Cart total width:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'height'  => esc_html__( 'Cart total height:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'measures'=> esc_html__( 'Processed measures:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'classes' => esc_html__( 'Processed classes:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'rates'   => esc_html__( 'Processed rates:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                            'selected'=> esc_html__( 'Selected rate:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                        ],
+                        'totals'        => [
+                            'weight' => $peso_total,
+                            'volume' => $volumen_total,
+                            'length' => $largo,
+                            'width'  => $ancho,
+                            'height' => $alto,
+                        ],
+                        'processed'     => [
+                            'measures'  => $medidas,
+                            'classes'   => $clases,
+                            'rates'     => $tarifas,
+                        ],
+                        'selected_rate' => $tarifa_mas_barata,
+                    ];
+
+                    if ( $session ) {
+                        $payloads = (array) $session->get( 'apg_shipping_console_debug_payload', [] );
+                        $payloads[] = $payload;
+                        $session->set( 'apg_shipping_console_debug_payload', $payloads );
+                    }
+                }
                 if ( ! empty( $tarifa_mas_barata ) ) {
                     return $tarifa_mas_barata;
                 } else {
@@ -1080,6 +1116,54 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 } else {
 	add_action( 'admin_notices', 'apg_shipping_requiere_wc' );
 }
+
+/**
+ * Renderiza los datos de depuración de APG Shipping en la consola del navegador.
+ * 
+ * @since 3.7.0
+ * 
+ * @global WC_Session_Handler $woocommerce->session
+ *
+ * @return void No devuelve valor alguno. Solo imprime en la consola del navegador
+ *              los datos almacenados si las condiciones se cumplen.
+*/
+function apg_shipping_render_console_debug() {
+    if ( is_admin() || wp_doing_ajax() || wp_is_json_request() ) {
+        return;
+    }
+    if ( ! function_exists( 'WC' ) || ! WC()->session ) {
+        return;
+    }
+
+    $payloads = WC()->session->get( 'apg_shipping_console_debug_payload', [] );
+    if ( empty( $payloads ) || ! is_array( $payloads ) ) {
+        return;
+    }
+
+    $json = wp_json_encode( $payloads );
+    $code = 'var list = ' . $json . ';
+        list.forEach(function(d, idx){
+            console.group("WC - APG Weight Shipping - Debug #" + (idx + 1));
+            console.log(d.labels.method, d.method + " - ID: " + d.instance_id);
+            console.log(d.labels.weight, d.totals.weight);
+            console.log(d.labels.volume, d.totals.volume);
+            console.log(d.labels.length, d.totals.length);
+            console.log(d.labels.width, d.totals.width);
+            console.log(d.labels.height, d.totals.height);
+            console.log(d.labels.measures, d.processed.measures);
+            console.log(d.labels.classes, d.processed.classes);
+            console.log(d.labels.rates, d.processed.rates);
+            console.log(d.labels.selected, d.selected_rate);
+            console.groupEnd();
+        });';
+
+    wp_register_script( 'apg-shipping-debug-inline', false, [], VERSION_apg_shipping, true );
+    wp_enqueue_script( 'apg-shipping-debug-inline' );
+    wp_add_inline_script( 'apg-shipping-debug-inline', $code );
+
+    WC()->session->set( 'apg_shipping_console_debug_payload', [] );
+}
+add_action( 'wp_enqueue_scripts', 'apg_shipping_render_console_debug', 100 );
 
 /**
  * Añade el soporte para scripts y datos en los bloques de WooCommerce (carrito y checkout).

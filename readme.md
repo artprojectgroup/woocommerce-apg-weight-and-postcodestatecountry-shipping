@@ -9,7 +9,7 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.7
+Stable tag: 3.7.0b
 
 WC requires at least: 5.6
 
@@ -106,8 +106,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
-### 3.7
-* Nuevo sistema de búsqueda AJAX con SelectWoo para listas largas de términos en el admin, evitando renderizar miles de opciones a la vez.
+### 3.7.0
+* Arreglo de desbordamiento de memoria.
+* Mejorada la opción de depuración.
 * Pequeños arreglos.
 
 ### 3.6.0.3

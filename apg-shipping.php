@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7.0b
+Version: 3.7.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Tested up to: 6.9
 WC requires at least: 5.6
-WC tested up to: 10.3.0
+WC tested up to: 10.5.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.7.0b' );
+define( 'VERSION_apg_shipping', '3.7.0' );
 
 // Funciones generales de APG.
 include_once( 'includes/admin/funciones-apg.php' );
@@ -308,7 +308,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @return void
              */
 			public function apg_shipping_dame_metodos_de_envio() {
-                global $zonas_de_envio, $wpdb;
+                global $wpdb;
                 
                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- No se puede usar nonce en este contexto (lectura segura con absint)
                 $instancia  = isset( $_REQUEST[ 'instance_id' ] ) ? absint( wp_unslash( $_REQUEST[ 'instance_id' ] ) ) : absint( $this->instance_id );
@@ -323,6 +323,11 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                 if ( empty( $this->metodos_de_envio ) ) {
                     $this->metodos_de_envio = [];
+                    $zonas_de_envio         = get_transient( 'apg_shipping_zonas_de_envio' );
+                    if ( empty( $zonas_de_envio ) && function_exists( 'apg_shipping_toma_de_datos' ) ) {
+                        apg_shipping_toma_de_datos();
+                        $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
+                    }
                     // Obtiene la zona de envío de esta instancia.
                     $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}" );
                     if ( false === $zona_de_envio ) {
@@ -490,6 +495,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     }
                 }
 
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
                 return apply_filters( 'woocommerce_shipping_' . $this->id . '_is_available', $disponible, $paquete, $this );
 			}
             
@@ -538,6 +544,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				if ( function_exists( 'icl_object_id' ) && ! function_exists( 'pll_the_languages' ) ) {
 					global $sitepress;
                     
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
 					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
 				}
 
@@ -595,16 +602,62 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 					}
 
-                    // No atiende a las atributos excluidos.
+                    // No atiende a los atributos excluidos.
 					if ( ! empty( $this->atributos_excluidos ) ) {
                         $atributos_excluidos    = [];
-                        foreach ( $this->atributos_excluidos as $atributos ) {
-                            $atributos                              = explode( "-", $atributos );
-                            $atributos_excluidos[ $atributos[ 0 ] ] = $atributos[ 1 ]; 
+                        $taxonomias             = function_exists( 'wc_get_attribute_taxonomy_names' ) ? wc_get_attribute_taxonomy_names() : [];
+                        if ( is_array( $taxonomias ) ) {
+                            usort( $taxonomias, function( $a, $b ) {
+                                return strlen( $b ) <=> strlen( $a );
+                            } );
+                        } else {
+                            $taxonomias = [];
                         }
-                        
-                        if ( ( ! empty( array_intersect_assoc( $producto->get_attributes(), $atributos_excluidos ) ) && $this->tipo_atributos == 'no' ) || 
-                            ( empty( array_intersect_assoc( $producto->get_attributes(), $atributos_excluidos ) ) && $this->tipo_atributos == 'yes' ) ) {
+
+                        foreach ( $this->atributos_excluidos as $atributo_excluido ) {
+                            $atributo_excluido = trim( sanitize_text_field( $atributo_excluido ) );
+                            $encontrado        = false;
+
+                            foreach ( $taxonomias as $taxonomia ) {
+                                $prefijo = $taxonomia . '-';
+                                if ( strpos( $atributo_excluido, $prefijo ) === 0 ) {
+                                    $slug = substr( $atributo_excluido, strlen( $prefijo ) );
+                                    if ( '' !== $slug ) {
+                                        $atributos_excluidos[ $taxonomia ][] = $slug;
+                                    }
+                                    $encontrado = true;
+                                    break;
+                                }
+                            }
+
+                            if ( ! $encontrado ) {
+                                $partes = explode( '-', $atributo_excluido, 2 );
+                                if ( count( $partes ) === 2 && '' !== $partes[ 0 ] && '' !== $partes[ 1 ] ) {
+                                    $atributos_excluidos[ $partes[ 0 ] ][] = $partes[ 1 ];
+                                }
+                            }
+                        }
+
+                        $tiene_atributo_excluido = false;
+                        if ( ! empty( $atributos_excluidos ) ) {
+                            $product_id = $producto->is_type( 'variation' ) ? $producto->get_parent_id() : $producto->get_id();
+                            foreach ( $atributos_excluidos as $taxonomia => $terminos ) {
+                                if ( empty( $terminos ) ) {
+                                    continue;
+                                }
+                                $terminos_producto = wc_get_product_terms( $product_id, $taxonomia, [ 'fields' => 'slugs' ] );
+                                if ( is_wp_error( $terminos_producto ) || empty( $terminos_producto ) ) {
+                                    continue;
+                                }
+                                if ( array_intersect( $terminos_producto, $terminos ) ) {
+                                    $tiene_atributo_excluido = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ( ( $tiene_atributo_excluido && $this->tipo_atributos == 'no' ) ||
+                            ( ! $tiene_atributo_excluido && $this->tipo_atributos == 'yes' ) ) {
                             return false;
                         }
 					}
@@ -626,38 +679,38 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						$precio_total		-= $precio;
 					}
 
-					// Volumen.
-					if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
-						$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
-					}
-					
-					// Medidas.
-					$medidas[] = [
-						'largo'		=> $producto->get_length(),
-						'ancho'		=> $producto->get_width(),
-						'alto'		=> $producto->get_height(),
-						'cantidad'	=> $valores[ 'quantity' ],
-					];
-					
-					// Almacena el valor del lado más grande.
-					if ( $producto->get_length() > $largo ) {
-						$largo = $producto->get_length();
-					}
-					if ( $producto->get_width() > $ancho ) {
-						$ancho = $producto->get_width();
-					}
-					if ( $producto->get_height() > $alto ) {
-						$alto = $producto->get_height();
-					}
-
-					// Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
-					$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
-					if ( $this->tipo_tarifas == "total" ) {
-						$cantidad = $precio;
-					}
-
-					// Clase de envío.
 					if ( $producto->needs_shipping() ) {
+						// Volumen.
+						if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
+							$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
+						}
+						
+						// Medidas.
+						$medidas[] = [
+							'largo'		=> $producto->get_length(),
+							'ancho'		=> $producto->get_width(),
+							'alto'		=> $producto->get_height(),
+							'cantidad'	=> $valores[ 'quantity' ],
+						];
+						
+						// Almacena el valor del lado más grande.
+						if ( $producto->get_length() > $largo ) {
+							$largo = $producto->get_length();
+						}
+						if ( $producto->get_width() > $ancho ) {
+							$ancho = $producto->get_width();
+						}
+						if ( $producto->get_height() > $alto ) {
+							$alto = $producto->get_height();
+						}
+
+						// Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
+						$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
+						if ( $this->tipo_tarifas == "total" ) {
+							$cantidad = $precio;
+						}
+
+						// Clase de envío.
 						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
 						// Inicializamos la clase general.
 						if ( ! isset ($clases[ 'todas' ] ) ) {
@@ -675,6 +728,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				// Comprobamos si está activo WPML para devolverlo al idioma que estaba activo.
 				if ( function_exists('icl_object_id') && ! function_exists( 'pll_the_languages' ) ) {
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
 					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
 				}
 				
@@ -744,7 +798,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 				// Actualizamos precio.
 				$importe	+= $suma_cargos;
-				// ¿Impuestos?.
+				// ¿Impuestos?
 				$impuestos	= ( ! empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
 
 				$tarifa = [
@@ -764,6 +818,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 if ( WC()->session ) {
                     WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
                 }
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
 				do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
 			}
 
@@ -909,6 +964,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 $calculo_volumetrico        = false;
                 $excede_dimensiones         = false;
 
+                if ( ! isset( $clases[ 'todas' ] ) ) {
+                    $clases[ 'todas' ] = 0;
+                }
+
                 // Previene errores y reajusta pesos.
                 foreach ( $clases as $clase => $peso ) {
                     if ( $clase !== 'todas' && isset( $tarifas[ $clase ] ) ) {
@@ -1036,11 +1095,15 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     echo '</ul>';
                     echo '<h4>' . esc_html__( 'Processed data.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
                     echo '<ul>';
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Debug output for admins.
                     echo '<li>' . esc_html__( 'Processed measures:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '<pre>' . esc_html( print_r( $medidas, true ) ) . '</pre></li>';
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Debug output for admins.
                     echo '<li>' . esc_html__( 'Processed classes:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '<pre>' . esc_html( print_r( $clases, true ) ) . '</pre></li>';
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Debug output for admins.
                     echo '<li>' . esc_html__( 'Processed rates:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '<pre>' . esc_html( print_r( $tarifas, true ) ) . '</pre></li>';
                     echo '</ul>';
                     echo '<h4>' . esc_html__( 'Selected rate:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Debug output for admins.
                     echo '<pre>' . esc_html( print_r( $tarifa_mas_barata, true ) ) . '</pre>';
                     echo '</div>';
                     echo '<p><button type="button" id="apg-copy-debug-button" style="margin-top:10px;">📋 ' . esc_html__( 'Copy full debug info', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</button></p>';

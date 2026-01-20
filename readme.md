@@ -9,11 +9,11 @@ Requires at least: 5.0
 
 Tested up to: 6.9
 
-Stable tag: 3.7.0b
+Stable tag: 3.7.0
 
 WC requires at least: 5.6
 
-WC tested up to: 10.3.0
+WC tested up to: 10.5.0
 
 License: GPLv2 or later
 
@@ -48,6 +48,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 * Puedes excluir roles de usuario.
 * Puedes ocultar medios de pago.
 * Puedes ocultar métodos de envío de la misma zona de envío.
+* Búsqueda AJAX con SelectWoo para listas largas en el admin.
 * Puedes mostrar una imagen personalizada.
 * Puedes mostrar el tiempo estimado de entrega.
 * Puedes modificar el título del método de envío con el filtro `apg_shipping_label`.
@@ -109,6 +110,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 ### 3.7.0
 * Arreglo de desbordamiento de memoria.
 * Mejorada la opción de depuración.
+* Búsqueda AJAX con SelectWoo para listas largas en el admin.
 * Pequeños arreglos.
 
 ### 3.6.0.3

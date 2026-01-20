@@ -28,30 +28,32 @@
 // Igual no deberías poder abrirme.
 defined( 'ABSPATH' ) || exit;
 
-$this->apg_shipping_obtiene_datos(); // Recoge los datos.
+return ( function() {
+	$this->apg_shipping_obtiene_datos(); // Recoge los datos.
+	$apg_shipping_ajax_nonce = wp_create_nonce( 'apg_ajax_terms' );
 
 // Campos del formulario.
 // translators: %1$s is a context-dependent item name (e.g., product category, tag, attribute, role, or shipping class); %2$s is the shipping method title.
-$texto  = __( "Select the %1\$s where %2\$s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
-$campos = [];
+$apg_texto  = __( "Select the %1\$s where %2\$s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
+$apg_campos = [];
 
 // Campo: Activar/desactivar (solo WC < 2.7)
 if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-	$campos[ 'activo' ] = [ 
+	$apg_campos[ 'activo' ] = [ 
 		'title'			=> __( 'Enable/Disable', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'checkbox',
 		'label'			=> __( 'Enable this shipping method', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> 'yes'
 	];
 }
-$campos[ 'title' ] = [
+$apg_campos[ 'title' ] = [
 		'title'			=> __( 'Method Title', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
 		'desc_tip'		=> __( 'This controls the title which the user sees during checkout.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> __( 'APG Shipping', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 ];
 if ( wc_tax_enabled() ) {
-	$campos[ 'tax_status' ] = [ 
+	$apg_campos[ 'tax_status' ] = [ 
 			'title'			=> __( 'Tax Status', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 			'type'			=> 'select',
 			'class'			=> 'wc-enhanced-select',
@@ -62,7 +64,7 @@ if ( wc_tax_enabled() ) {
 			]
 	];
 }
-$campos[ 'fee' ] = [ 
+$apg_campos[ 'fee' ] = [ 
 	'title'			=> __( 'Handling Fee', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'price',
 	'desc_tip'		=> __( 'Fee excluding tax. Enter an amount, e.g. 2.50. Leave blank to disable.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -70,7 +72,7 @@ $campos[ 'fee' ] = [
 	'default'		=> '',
 	'placeholder'	=> 0,
 ];
-$campos[ 'cargo' ] = [ 
+$apg_campos[ 'cargo' ] = [ 
 	'title'			=> __( 'Additional Fee', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'text',
 	'desc_tip'		=> __( 'Additional fee excluding tax. Enter an amount, e.g. 2.50, or percentage, e.g. 6%. Leave blank to disable.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -78,7 +80,7 @@ $campos[ 'cargo' ] = [
 	'default'		=> '',
 	'placeholder'	=> 0,
 ];
-$campos[ 'tipo_cargo' ] = [ 
+$apg_campos[ 'tipo_cargo' ] = [ 
 	'title'			=> __( 'Apply per product?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
 	'label'			=> __( 'Apply additional fee per product.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -86,26 +88,26 @@ $campos[ 'tipo_cargo' ] = [
 	'default'		=> 'no',
 ];
 // Descripción.
-$unidad_peso    = get_option( 'woocommerce_weight_unit' );
-$unidad_medidas = get_option( 'woocommerce_dimension_unit' );
-$clases_envio   = WC()->shipping->get_shipping_classes();
+$apg_unidad_peso    = get_option( 'woocommerce_weight_unit' );
+$apg_unidad_medidas = get_option( 'woocommerce_dimension_unit' );
+$apg_clases_envio   = WC()->shipping->get_shipping_classes();
 
-$descripcion    = '<code>1000|6.95|10x10x10</code><br /><code>10x10x10|6.95</code><br />';
-$descripcion   .= '<code>500-1000|4.95</code><br /><code>500+100|2.00+0.25</code><br /><code>500+100-50|2.00+0.25</code><br />';
-if ( $clases_envio ) {
-    $descripcion    .= __( 'Remember your shipping class name: ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . esc_attr( $this->clases_de_envio_tarifas ) . '<br />';
+$apg_descripcion    = '<code>1000|6.95|10x10x10</code><br /><code>10x10x10|6.95</code><br />';
+$apg_descripcion   .= '<code>500-1000|4.95</code><br /><code>500+100|2.00+0.25</code><br /><code>500+100-50|2.00+0.25</code><br />';
+if ( $apg_clases_envio ) {
+    $apg_descripcion    .= __( 'Remember your shipping class name: ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . esc_attr( $this->clases_de_envio_tarifas ) . '<br />';
 }
 // translators: %1$s is the weight unit (e.g., kg), %2$s is the dimension unit (e.g., cm).
-$descripcion            .= sprintf( __( 'Remember your weight unit: %1$s, and dimensions unit: %2$s.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), esc_attr( $unidad_peso ), esc_attr( $unidad_medidas ) );
-$campos[ 'tarifas' ]    = [ 
+$apg_descripcion            .= sprintf( __( 'Remember your weight unit: %1$s, and dimensions unit: %2$s.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), esc_attr( $apg_unidad_peso ), esc_attr( $apg_unidad_medidas ) );
+$apg_campos[ 'tarifas' ]    = [ 
 	'title'			=> __( 'Shipping Rates', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'textarea',
     'desc_tip'      => __( 'Set your weight based rates for postcode/state/country groups (one per line). You may optionally add the maximum dimensions, e.g. "Max weight|Cost|Shipping class name (optional)|LxWxH (optional)". Also you can set your dimensions based rates, e.g. "LxWxH|Cost|Shipping class name (optional)". New: use "Min-Max|Cost" for ranges, or "Start+Step|Cost+Step" for repetitive rates with optional maximum as "Start+Step-Max|Cost+Step".', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'css'			=> 'width:300px;',
 	'default'		=> '',
-	'description'	=> $descripcion,
+	'description'	=> $apg_descripcion,
 ];
-$campos[ 'tipo_tarifas' ] = [ 
+$apg_campos[ 'tipo_tarifas' ] = [ 
 	'title'			=> __( 'Apply shipping rate per...', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'select',
 	'desc_tip'		=> __( 'Select how to apply the shipping rate: per weight, items or cart total.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -118,31 +120,49 @@ $campos[ 'tipo_tarifas' ] = [
 	'description'		=> __( 'Total weight: Apply shipping rate per cart weight (default).<br />Total items: Apply shipping rate per number of items.<br />Cart total: Apply shipping rate per cart total.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 ];
 if ( WC()->shipping->get_shipping_classes() ) {
-	$campos[ 'suma' ] = [ 
+	$apg_campos[ 'suma' ] = [ 
 		'title'			=> __( 'Highest shipping class rate', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'checkbox',
 		'label'			=> __( 'Select if you need just the highest shipping class rate not the sum of shipping classes rates.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> 'no',
 	];
 }
-$campos[ 'maximo' ] = [ 
+$apg_campos[ 'maximo' ] = [ 
     'title'				=> __( 'Overweight/over dimensions', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     'type'				=> 'checkbox',
     'label'				=> __( 'Return the maximum price.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     'default'			=> 'yes',
 ];
-$campos[ 'categorias_excluidas' ]   = [ 
-    // translators: %s is the name of the product category.
+$apg_categorias_opts  = is_array( $this->categorias_de_producto ) ? $this->categorias_de_producto : [];
+$apg_categorias_cnt   = count( $apg_categorias_opts );
+$apg_categorias_ajax  = $apg_categorias_cnt > 500;
+$apg_categorias_saved = (array) $this->get_option( 'categorias_excluidas', [] );
+$apg_categorias_seed  = [];
+if ( $apg_categorias_ajax && ! empty( $apg_categorias_saved ) ) {
+	foreach ( $apg_categorias_saved as $apg_cid ) {
+		if ( isset( $apg_categorias_opts[ $apg_cid ] ) ) {
+			$apg_categorias_seed[ $apg_cid ] = $apg_categorias_opts[ $apg_cid ];
+		}
+	}
+}
+$apg_campos[ 'categorias_excluidas' ]   = [
+	// translators: %s is the name of the product category.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )  ),
-    // translators: %1$s is the name of the product category, %2$s is the shipping method title.
-    'desc_tip' 		=> sprintf( $texto, __( 'product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+	// translators: %1$s is the name of the product category, %2$s is the shipping method title.
+	'desc_tip' 		=> sprintf( $apg_texto, __( 'product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
 	'type'			=> 'multiselect',
-	'class'			=> 'wc-enhanced-select',
-	'options' 		=> $this->categorias_de_producto,
+	'class'			=> 'wc-enhanced-select apg-ajax-select',
+	'custom_attributes'	=> $apg_categorias_ajax ? [
+		'data-apg-ajax' => '1',
+		'data-source'   => 'categories',
+		'data-nonce'    => $apg_shipping_ajax_nonce,
+	] : [],
+	'options' 		=> $apg_categorias_ajax ? $apg_categorias_seed : $apg_categorias_opts,
+	'description'	=> ( $apg_categorias_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 ];
-$campos[ 'tipo_categorias' ] = [
+$apg_campos[ 'tipo_categorias' ] = [
     // translators: %s is the name of the product category.
 	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product category', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'type'			=> 'checkbox',
@@ -152,18 +172,36 @@ $campos[ 'tipo_categorias' ] = [
 	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'product categories', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'default'		=> 'no',
 ];
-$campos[ 'etiquetas_excluidas' ]    = [ 
-    // translators: %s is the name of the product tag.
+$apg_etiquetas_opts  = is_array( $this->etiquetas_de_producto ) ? $this->etiquetas_de_producto : [];
+$apg_etiquetas_cnt   = count( $apg_etiquetas_opts );
+$apg_etiquetas_ajax  = $apg_etiquetas_cnt > 500;
+$apg_etiquetas_saved = (array) $this->get_option( 'etiquetas_excluidas', [] );
+$apg_etiquetas_seed  = [];
+if ( $apg_etiquetas_ajax && ! empty( $apg_etiquetas_saved ) ) {
+	foreach ( $apg_etiquetas_saved as $apg_tid ) {
+		if ( isset( $apg_etiquetas_opts[ $apg_tid ] ) ) {
+			$apg_etiquetas_seed[ $apg_tid ] = $apg_etiquetas_opts[ $apg_tid ];
+		}
+	}
+}
+$apg_campos[ 'etiquetas_excluidas' ]    = [
+	// translators: %s is the name of the product tag.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
-    // translators: %1$s is the product tag name, %2$s is the shipping method title.
-	'desc_tip' 		=> sprintf( $texto, __( 'product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+	// translators: %1$s is the product tag name, %2$s is the shipping method title.
+	'desc_tip' 		=> sprintf( $apg_texto, __( 'product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
 	'type'			=> 'multiselect',
-	'class'			=> 'wc-enhanced-select',
-	'options' 		=> $this->etiquetas_de_producto,
+	'class'			=> 'wc-enhanced-select apg-ajax-select',
+	'custom_attributes' => $apg_etiquetas_ajax ? [
+		'data-apg-ajax' => '1',
+		'data-source'   => 'tags',
+		'data-nonce'    => $apg_shipping_ajax_nonce,
+	] : [],
+	'options' 		=> $apg_etiquetas_ajax ? $apg_etiquetas_seed : $apg_etiquetas_opts,
+	'description'	=> ( $apg_etiquetas_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 ];
-$campos[ 'tipo_etiquetas' ] = [
+$apg_campos[ 'tipo_etiquetas' ] = [
     // translators: %s is the name of the product tag.
 	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Product tag', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'type'			=> 'checkbox',
@@ -174,18 +212,36 @@ $campos[ 'tipo_etiquetas' ] = [
 	'default'		=> 'no',
 ];
 if ( wc_get_attribute_taxonomies() ) {
-    $campos[ 'atributos_excluidos' ]    = [ 
+	$apg_atributos_opts  = is_array( $this->atributos ) ? $this->atributos : [];
+	$apg_atributos_cnt   = count( $apg_atributos_opts );
+	$apg_atributos_ajax  = $apg_atributos_cnt > 500;
+	$apg_atributos_saved = (array) $this->get_option( 'atributos_excluidos', [] );
+	$apg_atributos_seed  = [];
+	if ( $apg_atributos_ajax && ! empty( $apg_atributos_saved ) ) {
+		foreach ( $apg_atributos_saved as $apg_aid ) {
+			if ( isset( $apg_atributos_opts[ $apg_aid ] ) ) {
+				$apg_atributos_seed[ $apg_aid ] = $apg_atributos_opts[ $apg_aid ];
+			}
+		}
+	}
+    $apg_campos[ 'atributos_excluidos' ]    = [
         // translators: %s is the name of the attribute.
         'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
         // translators: %1$s is the attribute name, %2$s is the shipping method title.
-        'desc_tip' 		=> sprintf( $texto, __( 'attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+        'desc_tip' 		=> sprintf( $apg_texto, __( 'attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
         'css'			=> 'width: 450px;',
         'default'		=> '',
         'type'			=> 'multiselect',
-        'class'			=> 'wc-enhanced-select',
-        'options' 		=> $this->atributos,
+        'class'			=> 'wc-enhanced-select apg-ajax-select',
+        'custom_attributes' => $apg_atributos_ajax ? [
+			'data-apg-ajax' => '1',
+			'data-source'   => 'attributes',
+			'data-nonce'    => $apg_shipping_ajax_nonce,
+		] : [],
+        'options' 		=> $apg_atributos_ajax ? $apg_atributos_seed : $apg_atributos_opts,
+        'description'	=> ( $apg_atributos_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
     ];
-    $campos[ 'tipo_atributos' ] = [
+    $apg_campos[ 'tipo_atributos' ] = [
         // translators: %s is the name of the attribute.
         'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Attribute', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
         'type'			=> 'checkbox',
@@ -197,20 +253,36 @@ if ( wc_get_attribute_taxonomies() ) {
     ];
 }
 if ( WC()->shipping->get_shipping_classes() ) {
-    $campos[ 'clases_excluidas' ]   = [ 
+	$apg_clases_opts  = is_array( $this->clases_de_envio ) ? $this->clases_de_envio : [];
+	$apg_clases_cnt   = count( $apg_clases_opts );
+	$apg_clases_ajax  = $apg_clases_cnt > 500;
+	$apg_clases_saved = (array) $this->get_option( 'clases_excluidas', [] );
+	$apg_clases_seed  = [];
+	if ( $apg_clases_ajax && ! empty( $apg_clases_saved ) ) {
+		foreach ( $apg_clases_saved as $apg_sid ) {
+			if ( isset( $apg_clases_opts[ $apg_sid ] ) ) {
+				$apg_clases_seed[ $apg_sid ] = $apg_clases_opts[ $apg_sid ];
+			}
+		}
+	}
+    $apg_campos[ 'clases_excluidas' ]   = [
         // translators: %s is the name of the shipping class.
 		'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
         // translators: %1$s is the shipping class name, %2$s is the shipping method title.
-		'desc_tip' 		=> sprintf( $texto, __( 'shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+		'desc_tip' 		=> sprintf( $apg_texto, __( 'shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 		'css'			=> 'width: 450px;',
 		'default'		=> '',
 		'type'			=> 'multiselect',
-		'class'			=> 'wc-enhanced-select',
-		'options' 		=> [ 
-			'todas' 		=> __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
-		] + $this->clases_de_envio,
+		'class'			=> 'wc-enhanced-select apg-ajax-select',
+		'custom_attributes' => $apg_clases_ajax ? [
+			'data-apg-ajax' => '1',
+			'data-source'   => 'classes',
+			'data-nonce'    => $apg_shipping_ajax_nonce,
+		] : [],
+		'options' 		=> [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $apg_clases_ajax ? $apg_clases_seed : $apg_clases_opts ),
+		'description'	=> ( $apg_clases_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 	];
-	$campos[ 'tipo_clases' ] = [
+	$apg_campos[ 'tipo_clases' ] = [
         // translators: %s is the name of the shipping class.
 		'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'Shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 		'type'			=> 'checkbox',
@@ -221,11 +293,11 @@ if ( WC()->shipping->get_shipping_classes() ) {
 		'default'		=> 'no',
 	];
 }
-$campos[ 'roles_excluidos' ]    = [ 
+$apg_campos[ 'roles_excluidos' ]    = [ 
     // translators: %s is the name of the user role.
 	'title'			=> sprintf( __( 'No shipping (%s)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'User role', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
     // translators: %1$s is the user role name, %2$s is the shipping method title.
-	'desc_tip' 		=> sprintf( $texto, __( 'user role', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+	'desc_tip' 		=> sprintf( $apg_texto, __( 'user role', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
 	'css'			=> 'width: 450px;',
 	'default'		=> '',
 	'type'			=> 'multiselect',
@@ -234,7 +306,7 @@ $campos[ 'roles_excluidos' ]    = [
 		'invitado'		=> __( 'Guest', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) 
 	] + $this->roles_de_usuario,
 ];
-$campos[ 'tipo_roles' ] = [
+$apg_campos[ 'tipo_roles' ] = [
     // translators: %s is the name of the user role.
 	'title'			=> sprintf( __( 'Shipping (%s)?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'User role', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'type'			=> 'checkbox',
@@ -244,7 +316,7 @@ $campos[ 'tipo_roles' ] = [
 	'desc_tip' 		=> sprintf( __( "Check this field to accept shippings in the %s selected in the previous field.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), __( 'user roles', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ),
 	'default'		=> 'no',
 ];
-$campos[ 'pago' ] = [
+$apg_campos[ 'pago' ] = [
 	'title'			=> __( 'Payment gateway', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
     // translators: %s is the shipping method title.
 	'desc_tip'		=> sprintf( __( "Payment gateway available for %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
@@ -259,7 +331,7 @@ $campos[ 'pago' ] = [
 	] + $this->metodos_de_pago,
 ];
 if ( ! empty( $this->metodos_de_envio ) ) {
-    $campos[ 'envio' ] = [
+    $apg_campos[ 'envio' ] = [
         'title'			=> __( 'Shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
         // translators: %s is the shipping method title.
         'desc_tip'		=> sprintf( __( "Shipping methods available in the same shipping zone of %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
@@ -275,14 +347,14 @@ if ( ! empty( $this->metodos_de_envio ) ) {
         ] + $this->metodos_de_envio,
     ];
 }
-$campos[ 'icono' ] = [ 
+$apg_campos[ 'icono' ] = [ 
 		'title'			=> __( 'Icon image', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
 		'description'	=> __( 'Icon image URL. APG recommends a 60x21px image.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> plugins_url( 'assets/images/apg.jpg', DIRECCION_apg_shipping ),
 		'desc_tip'		=> true,
 ];
-$campos[ 'muestra_icono' ] = [ 
+$apg_campos[ 'muestra_icono' ] = [ 
 		'title'			=> __( 'How show icon image?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'desc_tip' 		=> __( "Select how you want to show the icon image.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'select',
@@ -294,14 +366,14 @@ $campos[ 'muestra_icono' ] = [
 			'solo'			=> __( 'No title, just icon', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		 ],
 ];
-$campos[ 'entrega' ] = [ 
+$apg_campos[ 'entrega' ] = [ 
 		'title'			=> __( 'Estimated delivery time', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',
 		'description'	=> __( 'Define estimation for delivery time for this shipping method.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'default'		=> '',
 		'desc_tip'		=> true,
 ];
-$campos[ 'debug' ] = [
+$apg_campos[ 'debug' ] = [
 	'title'			=> __( 'Show debug information?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 	'type'			=> 'checkbox',
 	'label'			=> __( 'Check if you want to show debug information on the cart page.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
@@ -309,4 +381,5 @@ $campos[ 'debug' ] = [
 	'default'		=> 'no',
 ];
 
-return $campos;
+	return $apg_campos;
+} )();

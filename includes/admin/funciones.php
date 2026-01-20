@@ -402,3 +402,86 @@ function apg_shipping_borra_cache_atributos() {
 add_action( 'woocommerce_attribute_added', 'apg_shipping_borra_cache_atributos', 10 );
 add_action( 'woocommerce_attribute_updated', 'apg_shipping_borra_cache_atributos', 10 );
 add_action( 'woocommerce_attribute_deleted', 'apg_shipping_borra_cache_atributos', 10 );
+
+/**
+ * Envía una respuesta JSON y termina la ejecución.
+ *
+ * @param mixed $data        Datos a serializar como JSON.
+ * @param int   $status_code Código HTTP a devolver. Por defecto 200.
+ *
+ * @return void
+ */
+function apg_shipping_ajax_json( $data, $status_code = 200 ) {
+	if ( ! headers_sent() ) {
+		status_header( $status_code );
+		header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
+	}
+
+	echo wp_json_encode( $data );
+	wp_die();
+}
+
+/**
+ * Endpoint AJAX para búsquedas paginadas de términos en selects grandes.
+ *
+ * Fuentes soportadas vía `$_GET['source']`:
+ * - 'categories'  → taxonomy: product_cat
+ * - 'tags'        → taxonomy: product_tag
+ * - 'classes'     → taxonomy: product_shipping_class
+ * - 'attributes'  → todas las taxonomías de atributos (wc_get_attribute_taxonomy_names)
+ *
+ * @return void
+ */
+function apg_shipping_ajax_search_terms() {
+	check_ajax_referer( 'apg_ajax_terms', 'nonce' );
+	if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		apg_shipping_ajax_json( [ 'results' => [] ], 403 );
+	}
+
+	$source = isset( $_GET['source'] ) ? sanitize_key( wp_unslash( $_GET['source'] ) ) : '';
+	$q      = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';
+	$page   = isset( $_GET['page'] ) ? max( 1, absint( $_GET['page'] ) ) : 1;
+	$per    = 50;
+	$args   = [
+		'hide_empty' => false,
+		'search'     => $q,
+		'number'     => $per,
+		'offset'     => ( $page - 1 ) * $per,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	];
+
+	$taxonomies = [];
+	switch ( $source ) {
+		case 'categories':
+			$taxonomies = [ 'product_cat' ];
+			break;
+		case 'tags':
+			$taxonomies = [ 'product_tag' ];
+			break;
+		case 'classes':
+			$taxonomies = [ 'product_shipping_class' ];
+			break;
+		case 'attributes':
+			$taxonomies = function_exists( 'wc_get_attribute_taxonomy_names' ) ? wc_get_attribute_taxonomy_names() : [];
+			break;
+		default:
+			apg_shipping_ajax_json( [ 'results' => [] ] );
+	}
+
+	$terms = get_terms( [ 'taxonomy' => $taxonomies ] + $args );
+	if ( is_wp_error( $terms ) ) {
+		apg_shipping_ajax_json( [ 'results' => [] ] );
+	}
+
+	$results = [];
+	foreach ( $terms as $t ) {
+		$results[] = [
+			'id'   => (string) $t->term_id,
+			'text' => $t->name . ( $t->taxonomy ? ' (' . $t->taxonomy . ')' : '' ),
+		];
+	}
+
+	apg_shipping_ajax_json( [ 'results' => $results, 'pagination' => [ 'more' => count( $terms ) === $per ] ] );
+}
+add_action( 'wp_ajax_apg_shipping_search_terms', 'apg_shipping_ajax_search_terms' );

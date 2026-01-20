@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.7.0b
+Stable tag: 3.7.0
 WC requires at least: 5.6
-WC tested up to: 10.3.0
+WC tested up to: 10.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,7 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * You can exclude user roles.
 * You can hide payment gateways.
 * You can hide shipping methods from the same shipping zone.
+* AJAX search with SelectWoo for large admin lists.
 * You can show a custom icon image.
 * You can show the estimated delivery time.
 * You can modify the shipping method title with the `apg_shipping_label` filter.
@@ -101,9 +102,10 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
-= 3.7 =
+= 3.7.0 =
 * Fixed memory overflow.
 * Improved the debug option.
+* AJAX search with SelectWoo for large admin lists.
 * Small fixes.
 = 3.6.0.3 =
 * Small fixes.

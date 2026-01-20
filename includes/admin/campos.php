@@ -160,7 +160,7 @@ $apg_campos[ 'categorias_excluidas' ]   = [
 		'data-nonce'    => $apg_shipping_ajax_nonce,
 	] : [],
 	'options' 		=> $apg_categorias_ajax ? $apg_categorias_seed : $apg_categorias_opts,
-	'description'	=> ( $apg_categorias_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
+	'description'	=> ( $apg_categorias_cnt > 500 ? __( 'Large list. Type to search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 ];
 $apg_campos[ 'tipo_categorias' ] = [
     // translators: %s is the name of the product category.
@@ -199,7 +199,7 @@ $apg_campos[ 'etiquetas_excluidas' ]    = [
 		'data-nonce'    => $apg_shipping_ajax_nonce,
 	] : [],
 	'options' 		=> $apg_etiquetas_ajax ? $apg_etiquetas_seed : $apg_etiquetas_opts,
-	'description'	=> ( $apg_etiquetas_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
+	'description'	=> ( $apg_etiquetas_cnt > 500 ? __( 'Large list. Type to search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 ];
 $apg_campos[ 'tipo_etiquetas' ] = [
     // translators: %s is the name of the product tag.
@@ -239,7 +239,7 @@ if ( wc_get_attribute_taxonomies() ) {
 			'data-nonce'    => $apg_shipping_ajax_nonce,
 		] : [],
         'options' 		=> $apg_atributos_ajax ? $apg_atributos_seed : $apg_atributos_opts,
-        'description'	=> ( $apg_atributos_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
+        'description'	=> ( $apg_atributos_cnt > 500 ? __( 'Large list. Type to search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
     ];
     $apg_campos[ 'tipo_atributos' ] = [
         // translators: %s is the name of the attribute.
@@ -280,7 +280,7 @@ if ( WC()->shipping->get_shipping_classes() ) {
 			'data-nonce'    => $apg_shipping_ajax_nonce,
 		] : [],
 		'options' 		=> [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $apg_clases_ajax ? $apg_clases_seed : $apg_clases_opts ),
-		'description'	=> ( $apg_clases_cnt > 500 ? __( 'Large list. Type to search… (AJAX)', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
+		'description'	=> ( $apg_clases_cnt > 500 ? __( 'Large list. Type to search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 	];
 	$apg_campos[ 'tipo_clases' ] = [
         // translators: %s is the name of the shipping class.

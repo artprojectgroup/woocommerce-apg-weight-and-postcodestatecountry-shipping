@@ -168,42 +168,53 @@ add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medio
  * @return void
  */
 function apg_shipping_toma_de_datos() {
-    // Obtiene los métodos de pago.
-    $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
-    if ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) {
-        $medios_de_pago = [];
-        $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
+    global $apg_shipping_collecting_data;
 
-        foreach ( $gateways as $gateway ) {
-            $medios_de_pago[ $gateway->id ] = $gateway->get_title();
+    if ( ! empty( $apg_shipping_collecting_data ) ) {
+        return;
+    }
+    $apg_shipping_collecting_data = true;
+
+    // Obtiene los métodos de pago.
+    try {
+        $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
+        if ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) {
+            $medios_de_pago = [];
+            $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
+
+            foreach ( $gateways as $gateway ) {
+                $medios_de_pago[ $gateway->id ] = $gateway->get_title();
+            }
+
+            set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
         }
 
-        set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
-    }
+        // Obtiene las zonas de envío.
+        $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
+        if ( false === $zonas_de_envio ) {
+            $zonas_de_envio = [];
+            foreach ( WC_Shipping_Zones::get_zones() as $zona ) {
+                $metodos    = [];
+                foreach ( $zona[ 'shipping_methods' ] as $metodo ) {
+                    $metodos[]      = [
+                        'id'           => $metodo->id,
+                        'instance_id'  => $metodo->instance_id,
+                        'method_id'    => is_object( $metodo ) && method_exists( $metodo, 'get_method_id' ) && $metodo->get_method_id() ? $metodo->get_method_id() : ( isset( $metodo->id ) ? $metodo->id : '' ),
+                        'title'        => isset( $metodo->instance_settings[ 'title' ] ) ? $metodo->instance_settings[ 'title' ] : $metodo->get_method_title(),
+                    ];
+                }
 
-    // Obtiene las zonas de envío.
-    $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
-    if ( false === $zonas_de_envio ) {
-        $zonas_de_envio = [];
-        foreach ( WC_Shipping_Zones::get_zones() as $zona ) {
-            $metodos    = [];
-            foreach ( $zona[ 'shipping_methods' ] as $metodo ) {
-                $metodos[]      = [
-                    'id'           => $metodo->id,
-                    'instance_id'  => $metodo->instance_id,
-                    'method_id'    => is_object( $metodo ) && method_exists( $metodo, 'get_method_id' ) && $metodo->get_method_id() ? $metodo->get_method_id() : ( isset( $metodo->id ) ? $metodo->id : '' ),
-                    'title'        => isset( $metodo->instance_settings[ 'title' ] ) ? $metodo->instance_settings[ 'title' ] : $metodo->get_method_title(),
+                $zonas_de_envio[]   = [
+                    'id'               => $zona[ 'id' ],
+                    'zone_name'        => $zona[ 'zone_name' ],
+                    'shipping_methods' => $metodos,
                 ];
             }
 
-            $zonas_de_envio[]   = [
-                'id'               => $zona[ 'id' ],
-                'zone_name'        => $zona[ 'zone_name' ],
-                'shipping_methods' => $metodos,
-            ];
+            set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
         }
-
-        set_transient( 'apg_shipping_zonas_de_envio', $zonas_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
+    } finally {
+        $apg_shipping_collecting_data = false;
     }
 }
 

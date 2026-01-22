@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7.0
+Version: 3.7.0b
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -41,7 +41,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
 define( 'VERSION_apg_shipping', '3.7.0' );
 
 // Funciones generales de APG.
-include_once( 'includes/admin/funciones-apg.php' );
+include_once __DIR__ . '/includes/admin/funciones-apg.php';
 
 // ¿Está activo WooCommerce?.
 if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin( 'woocommerce/woocommerce.php' ) ) {
@@ -71,7 +71,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		}
 		
 		// Cargamos funciones necesarias.
-        include_once( 'includes/admin/funciones.php' );
+        include_once __DIR__ . '/includes/admin/funciones.php';
 
         /**
          * Clase principal para el método de envío APG Shipping.
@@ -167,7 +167,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @return void
              */
 			public function init_form_fields() {
-				$this->instance_form_fields = include( 'includes/admin/campos.php' );
+				$this->instance_form_fields = include __DIR__ . '/includes/admin/campos.php';
 			}
 	
 			/**
@@ -176,7 +176,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			 * @return void
 			 */
 			public function admin_options() {
-				include_once( 'includes/formulario.php' );
+				include_once __DIR__ . '/includes/formulario.php';
 			}
 			
 			/**
@@ -309,6 +309,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              */
 			public function apg_shipping_dame_metodos_de_envio() {
                 global $wpdb;
+                global $apg_shipping_collecting_data;
                 
                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- No se puede usar nonce en este contexto (lectura segura con absint)
                 $instancia  = isset( $_REQUEST[ 'instance_id' ] ) ? absint( wp_unslash( $_REQUEST[ 'instance_id' ] ) ) : absint( $this->instance_id );
@@ -324,7 +325,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 if ( empty( $this->metodos_de_envio ) ) {
                     $this->metodos_de_envio = [];
                     $zonas_de_envio         = get_transient( 'apg_shipping_zonas_de_envio' );
-                    if ( empty( $zonas_de_envio ) && function_exists( 'apg_shipping_toma_de_datos' ) ) {
+                    if ( empty( $zonas_de_envio ) && function_exists( 'apg_shipping_toma_de_datos' ) && empty( $apg_shipping_collecting_data ) ) {
                         apg_shipping_toma_de_datos();
                         $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
                     }
@@ -359,6 +360,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @return void
              */
             public function apg_shipping_dame_metodos_de_pago() {
+               global $apg_shipping_collecting_data;
                $cache_key              = 'apg_shipping_metodos_de_pago';
                // Obtiene los métodos de pago desde la caché.
                $this->metodos_de_pago  = get_transient( $cache_key );
@@ -367,7 +369,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                    // Fuerza una nueva recopilación de datos en caso de caché vacía o corrupta.
                    delete_transient( $cache_key );
 
-                   if ( function_exists( 'apg_shipping_toma_de_datos' ) ) {
+                   if ( function_exists( 'apg_shipping_toma_de_datos' ) && empty( $apg_shipping_collecting_data ) ) {
                        apg_shipping_toma_de_datos();
                        $this->metodos_de_pago = get_transient( $cache_key );
                    }

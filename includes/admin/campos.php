@@ -370,23 +370,21 @@ if ( empty( $apg_envio_opts ) && ! empty( $apg_envio_saved ) ) {
 		$apg_envio_seed[ $apg_eid ] = sprintf( __( 'Shipping method %s', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_eid );
 	}
 }
-if ( ! empty( $apg_envio_opts ) || ! empty( $apg_envio_seed ) ) {
-    $apg_campos[ 'envio' ] = [
-	        'title'			=> __( 'Shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	        // translators: %s is the shipping method title.
-	        'desc_tip'		=> sprintf( __( "Shipping methods available in the same shipping zone of %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
-	        'css'			=> 'width: 450px;',
-	        'default'		=> [ 
-	            'todos' 
-	        ],
-	        'type'			=> 'multiselect',
-	        'class'			=> 'chosen_select',
-	        'options' 		=> [ 
-	            'todos'			=> __( 'All enabled shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-	            'ninguno'       => __( 'No other shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
-	        ] + ( ! empty( $apg_envio_opts ) ? $apg_envio_opts : $apg_envio_seed ),
-	    ];
-	}
+$apg_campos[ 'envio' ] = [
+        'title'			=> __( 'Shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+        // translators: %s is the shipping method title.
+        'desc_tip'		=> sprintf( __( "Shipping methods available in the same shipping zone of %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $this->method_title ),
+        'css'			=> 'width: 450px;',
+        'default'		=> [
+            'todos'
+        ],
+        'type'			=> 'multiselect',
+        'class'			=> 'chosen_select',
+        'options' 		=> [
+            'todos'			=> __( 'All enabled shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+            'ninguno'       => __( 'No other shipping methods', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' )
+        ] + ( ! empty( $apg_envio_opts ) ? $apg_envio_opts : $apg_envio_seed ),
+    ];
 $apg_campos[ 'icono' ] = [ 
 		'title'			=> __( 'Icon image', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',

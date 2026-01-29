@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7.0
+Version: 3.7.1
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.7.0' );
+define( 'VERSION_apg_shipping', '3.7.1' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -243,6 +243,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$this->apg_shipping_prepara_taxonomias_para_campos();
 					$this->apg_shipping_dame_clases_de_envio(); // Obtiene todas las clases de envío.
 					$this->apg_shipping_dame_roles_de_usuario(); // Obtiene todos los roles de usuario.
+					$this->apg_shipping_dame_metodos_de_envio(); // Obtiene todos los métodos de envío.
 					$this->apg_shipping_dame_metodos_de_pago(); // Obtiene todos los métodos de pago.
 					return;
 				}
@@ -533,16 +534,26 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 if ( empty( $this->metodos_de_envio ) ) {
                     $this->metodos_de_envio = [];
                     $zonas_de_envio         = get_transient( 'apg_shipping_zonas_de_envio' );
-                    if ( empty( $zonas_de_envio ) && function_exists( 'apg_shipping_toma_de_datos' ) && empty( $apg_shipping_collecting_data ) ) {
-                        apg_shipping_toma_de_datos();
-                        $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
-                    }
                     // Obtiene la zona de envío de esta instancia.
                     $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}" );
                     if ( false === $zona_de_envio ) {
                         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
                         $zona_de_envio  = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE instance_id = %d LIMIT 1;", $instancia ) );
                         wp_cache_set( "apg_zone_{$instancia}", $zona_de_envio );
+                    }
+
+                    if ( empty( $zonas_de_envio ) ) {
+                        // En ajustes de envío, evita cargas pesadas y usa consulta ligera por zona.
+                        if ( $this->apg_shipping_en_ajustes_envio_instancia() ) {
+                            $this->metodos_de_envio = $this->apg_shipping_dame_metodos_de_envio_ligero( $zona_de_envio, $instancia );
+                            set_transient( $cache_key, $this->metodos_de_envio, 30 * DAY_IN_SECONDS );
+                            return;
+                        }
+
+                        if ( function_exists( 'apg_shipping_toma_de_datos' ) && empty( $apg_shipping_collecting_data ) ) {
+                            apg_shipping_toma_de_datos();
+                            $zonas_de_envio = get_transient( 'apg_shipping_zonas_de_envio' );
+                        }
                     }
 
                     // Recorre zonas cacheadas.
@@ -561,6 +572,59 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     set_transient( $cache_key, $this->metodos_de_envio, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
                 }
 			}
+
+            /**
+             * Obtiene métodos de envío de una zona con una consulta ligera (sin inicializar clases).
+             *
+             * @param int $zona_id ID de la zona.
+             * @param int $instancia ID de la instancia actual.
+             * @return array
+             */
+            private function apg_shipping_dame_metodos_de_envio_ligero( $zona_id, $instancia ) {
+                global $wpdb;
+
+                $resultado = [];
+                $zona_id   = absint( $zona_id );
+                $instancia = absint( $instancia );
+
+                if ( ! $zona_id ) {
+                    return $resultado;
+                }
+
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
+                $metodos = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT instance_id, method_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE zone_id = %d AND is_enabled = 1;",
+                        $zona_id
+                    ),
+                    ARRAY_A
+                );
+
+                if ( empty( $metodos ) ) {
+                    return $resultado;
+                }
+
+                foreach ( $metodos as $metodo ) {
+                    $instance_id = isset( $metodo['instance_id'] ) ? absint( $metodo['instance_id'] ) : 0;
+                    if ( ! $instance_id || $instance_id === $instancia ) {
+                        continue;
+                    }
+                    $method_id = isset( $metodo['method_id'] ) ? sanitize_key( $metodo['method_id'] ) : '';
+                    $title     = '';
+                    if ( $method_id ) {
+                        $settings = get_option( "woocommerce_{$method_id}_{$instance_id}_settings", [] );
+                        if ( is_array( $settings ) && ! empty( $settings['title'] ) ) {
+                            $title = $settings['title'];
+                        }
+                    }
+                    if ( '' === $title ) {
+                        $title = $method_id ? $method_id : (string) $instance_id;
+                    }
+                    $resultado[ $instance_id ] = $title;
+                }
+
+                return $resultado;
+            }
 			
             /**
              * Obtiene los métodos de pago activos y los cachea durante 30 días.

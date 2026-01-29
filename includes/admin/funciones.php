@@ -24,6 +24,7 @@ defined( 'ABSPATH' ) || exit;
  * @param WC_Shipping_Rate $metodo Objeto del método de envío.
  * @return string Etiqueta final personalizada con icono, precio y datos extra.
  */
+if ( ! function_exists( 'apg_shipping_icono' ) ) {
 function apg_shipping_icono( $etiqueta, $metodo ) {
     // Previene errores.
     if ( ! isset( $metodo->instance_id ) || ! isset( $metodo->cost ) ) {
@@ -113,7 +114,10 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
 
     return $nueva_etiqueta;
 }
-add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', PHP_INT_MAX, 2 );
+}
+if ( function_exists( 'apg_shipping_icono' ) ) {
+    add_filter( 'woocommerce_cart_shipping_method_full_label', 'apg_shipping_icono', PHP_INT_MAX, 2 );
+}
 	
 /**
  * Añade la clase principal del método de envío APG Shipping a los métodos disponibles de WooCommerce.
@@ -246,16 +250,33 @@ add_action( 'init', 'apg_shipping_condicional_toma_de_datos', 5 );
  * @return array Paquetes de envío filtrados.
  */
 function apg_shipping_gestiona_envios( $envios ) {
-    $apg_shipping_settings  = apg_shipping_dame_configuracion();
+    $id = [];
 
-    if ( isset( $apg_shipping_settings[ 'envio' ] ) && is_array( $apg_shipping_settings[ 'envio' ] ) && !empty( $apg_shipping_settings[ 'envio' ] ) ) {
+    if ( function_exists( 'WC' ) && WC()->session ) {
+        $chosen = WC()->session->get( 'chosen_shipping_methods' );
+        if ( ! empty( $chosen ) && isset( $chosen[ 0 ] ) ) {
+            $id = explode( ':', $chosen[ 0 ] );
+        }
+    }
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    if ( empty( $id ) && isset( $_POST[ 'shipping_method' ][ 0 ] ) ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $id = explode( ':', sanitize_text_field( wp_unslash( $_POST[ 'shipping_method' ][ 0 ] ) ) );
+    }
+
+    if ( ! isset( $id[ 1 ] ) ) {
+        return $envios;
+    }
+
+    $opcion = get_option( 'woocommerce_apg_shipping_' . absint( $id[ 1 ] ) . '_settings' );
+    $apg_shipping_settings = is_array( $opcion ) ? $opcion : maybe_unserialize( $opcion );
+    
+    if ( isset( $apg_shipping_settings[ 'envio' ] ) && is_array( $apg_shipping_settings[ 'envio' ] ) && ! empty( $apg_shipping_settings[ 'envio' ] ) ) {
         if ( isset( $envios[ 0 ][ 'rates' ] ) ) {
             foreach ( $envios[ 0 ][ 'rates' ] as $clave => $envio ) {
-                $instance_id = $envio->instance_id;
-
-                foreach ( $apg_shipping_settings[ 'envio' ] as $metodo ) {
+                foreach( $apg_shipping_settings[ 'envio' ] as $metodo ) {
                     if ( $metodo !== 'todos' ) {
-                        if ( $metodo === 'ninguno' || ! in_array( $instance_id, $apg_shipping_settings[ 'envio' ], true ) ) {
+                        if ( ( $metodo === 'ninguno' && $id[ 1 ] != $envio->instance_id ) || ( ! in_array( $envio->instance_id, $apg_shipping_settings[ 'envio' ] ) && $id[ 1 ] != $envio->instance_id ) ) {
                             unset( $envios[ 0 ][ 'rates' ][ $clave ] );
                         }
                     }

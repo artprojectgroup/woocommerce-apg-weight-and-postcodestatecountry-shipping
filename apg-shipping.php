@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7.1
+Version: 3.7.2
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.7.1' );
+define( 'VERSION_apg_shipping', '3.7.2' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -127,7 +127,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 if ( $this->apg_shipping_debe_cargar_campos() ) {
 				    $this->init_form_fields(); // Crea los campos de opciones.
                 } else {
-                    $this->instance_form_fields = $this->apg_shipping_campos_minimos();
+                    // Campos ligeros con todas las claves para cargar ajustes de instancia sin listas pesadas.
+                    $this->instance_form_fields = $this->apg_shipping_campos_configuracion();
                 }
 
                 // Inicializamos variables.
@@ -222,6 +223,47 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         'default' => __( 'APG Shipping', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
                     ],
                 ];
+            }
+
+            /**
+             * Devuelve una definición ligera de campos para cargar ajustes de instancia.
+             *
+             * @return array
+             */
+            private function apg_shipping_campos_configuracion() {
+                $campos = [
+                    'title'               => [ 'type' => 'text', 'default' => '' ],
+                    'tax_status'          => [ 'type' => 'select', 'default' => '' ],
+                    'fee'                 => [ 'type' => 'text', 'default' => '' ],
+                    'cargo'               => [ 'type' => 'text', 'default' => '' ],
+                    'tipo_cargo'          => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'tarifas'             => [ 'type' => 'textarea', 'default' => '' ],
+                    'tipo_tarifas'        => [ 'type' => 'select', 'default' => '' ],
+                    'suma'                => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'maximo'              => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'categorias_excluidas'=> [ 'type' => 'multiselect', 'default' => [] ],
+                    'tipo_categorias'     => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'etiquetas_excluidas' => [ 'type' => 'multiselect', 'default' => [] ],
+                    'tipo_etiquetas'      => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'atributos_excluidos' => [ 'type' => 'multiselect', 'default' => [] ],
+                    'tipo_atributos'      => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'clases_excluidas'    => [ 'type' => 'multiselect', 'default' => [] ],
+                    'tipo_clases'         => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'roles_excluidos'     => [ 'type' => 'multiselect', 'default' => [] ],
+                    'tipo_roles'          => [ 'type' => 'checkbox', 'default' => 'no' ],
+                    'pago'                => [ 'type' => 'multiselect', 'default' => [] ],
+                    'envio'               => [ 'type' => 'multiselect', 'default' => [] ],
+                    'icono'               => [ 'type' => 'text', 'default' => '' ],
+                    'muestra_icono'       => [ 'type' => 'select', 'default' => '' ],
+                    'entrega'             => [ 'type' => 'text', 'default' => '' ],
+                    'debug'               => [ 'type' => 'checkbox', 'default' => 'no' ],
+                ];
+
+                if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+                    $campos['activo'] = [ 'type' => 'checkbox', 'default' => 'yes' ];
+                }
+
+                return $campos;
             }
 	
 			/**
@@ -1158,7 +1200,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     // Detecta medidas en la tarifa.
                     foreach ( $partes as $i => $valor ) {
                         if ( $this->apg_medida_valida( $valor ) ) {
-                            $tarifa[ 'medidas' ]    = strtolower( $valor );
+                            $tarifa[ 'medidas' ]    = strtolower( str_replace( ',', '.', $valor ) );
                             if ( $i === 0 || $i === 3 ) { // Comprueba si el primer o el cuarto valor es una dimensión.
                                 unset( $partes[ $i ] ); // Elimina las medidas.
                             }
@@ -1182,7 +1224,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                         // Detecta medidas en la tarifa.
                         foreach ( $partes as $i => $valor ) {
                             if ( $this->apg_medida_valida( $valor ) ) {
-                                $medidas    = strtolower( $valor );
+                                $medidas    = strtolower( str_replace( ',', '.', $valor ) );
                             }
                         }
 
@@ -1317,7 +1359,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                             }
 
                             // Comprueba el volumen.
-                            $medida_tarifa  = array_map( 'floatval', explode( 'x', $tarifa[ 'medidas' ] ) );
+                            $medida_tarifa  = array_map( 'floatval', explode( 'x', str_replace( ',', '.', $tarifa[ 'medidas' ] ) ) );
                             if ( count( $medida_tarifa ) !== 3 || in_array( 0, $medida_tarifa, true ) ) {
                                 continue;  // Medida malformada.
                             }
@@ -1476,7 +1518,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @return int 1 si es válida, 0 si no lo es.
              */
             private function apg_medida_valida( $medida ) {
-                return preg_match( '/^\d+x\d+x\d+$/', $medida );
+                $medida = str_replace( ',', '.', strtolower( trim( (string) $medida ) ) );
+                return preg_match( '/^\d+(?:\.\d+)?x\d+(?:\.\d+)?x\d+(?:\.\d+)?$/', $medida );
             }
         }
 	}

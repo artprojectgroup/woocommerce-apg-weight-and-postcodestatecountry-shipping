@@ -106,6 +106,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Fixed memory overflow.
 * Improved the debug option.
 * AJAX search with SelectWoo for large admin lists.
+* General performance enhancement.
 * Small fixes.
 = 3.6.0.3 =
 * Small fixes.

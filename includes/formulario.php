@@ -58,7 +58,20 @@ jQuery(function($){
             },
             minimumInputLength: 1,
             allowClear: true,
-            placeholder: "<?php echo esc_js( __( 'Search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>"
+            placeholder: "<?php echo esc_js( __( 'Search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>",
+            language: {
+                inputTooShort: function(args){
+                    var tmpl = "<?php
+                        // translators: %d is the number of characters required.
+                        echo esc_js( __( 'Please enter %d or more characters.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
+                    ?>";
+                    return tmpl.replace('%d', (args.minimum - args.input.length));
+                },
+                noResults: function(){ return "<?php echo esc_js( __( 'No results found.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>"; },
+                searching: function(){ return "<?php echo esc_js( __( 'Searching…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>"; },
+                loadingMore: function(){ return "<?php echo esc_js( __( 'Loading more results…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>"; },
+                errorLoading: function(){ return "<?php echo esc_js( __( 'The results could not be loaded.', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ); ?>"; }
+            }
         });
     }
     $("select.apg-ajax-select").each(function(){ initAjaxSelect($(this)); });

@@ -169,16 +169,17 @@ add_filter( 'woocommerce_available_payment_gateways', 'apg_shipping_filtra_medio
  */
 function apg_shipping_toma_de_datos() {
     global $apg_shipping_collecting_data;
+    global $apg_shipping_loading_shipping_methods;
 
     if ( ! empty( $apg_shipping_collecting_data ) ) {
         return;
     }
     $apg_shipping_collecting_data = true;
 
-    // Obtiene los métodos de pago.
-    try {
+        // Obtiene los métodos de pago.
+        try {
         $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
-        if ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) {
+        if ( empty( $apg_shipping_loading_shipping_methods ) && ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) ) {
             $medios_de_pago = [];
             $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
 

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.7.0b
+Version: 3.7.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -99,6 +99,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @param int $instance_id Identificador de la instancia.
              */
 			public function __construct( $instance_id = 0 ) {
+                global $apg_shipping_loading_shipping_methods;
+
 				$this->id					= 'apg_shipping';
 				$this->instance_id			= absint( $instance_id );
 				$this->method_title			= __( 'APG Shipping', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
@@ -109,7 +111,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'instance-settings-modal',
                     'shipping-calculation',
 				];
+                // Marca la carga del método para evitar bucles al inicializar pasarelas de pago.
+                $apg_shipping_loading_shipping_methods = true;
 				$this->init();
+                $apg_shipping_loading_shipping_methods = false;
 			}
 
 			/**
@@ -117,9 +122,13 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              *
              * @return void
              */
-			public function init() {	
+            public function init() {	
 				$this->init_settings(); // Recogemos todos los valores.
-				$this->init_form_fields(); // Crea los campos de opciones.
+                if ( $this->apg_shipping_debe_cargar_campos() ) {
+				    $this->init_form_fields(); // Crea los campos de opciones.
+                } else {
+                    $this->instance_form_fields = $this->apg_shipping_campos_minimos();
+                }
 
                 // Inicializamos variables.
 				$campos = [
@@ -169,6 +178,51 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			public function init_form_fields() {
 				$this->instance_form_fields = include __DIR__ . '/includes/admin/campos.php';
 			}
+
+            /**
+             * Determina si debe cargar los campos completos del método de envío.
+             *
+             * @return bool
+             */
+            private function apg_shipping_debe_cargar_campos() {
+                if ( ! is_admin() ) {
+                    return false;
+                }
+
+                if ( function_exists( 'is_wc_admin_settings_page' ) && ! is_wc_admin_settings_page() ) {
+                    return false;
+                }
+
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
+                $tab = isset( $_REQUEST['tab'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['tab'] ) ) : '';
+                if ( '' !== $tab && 'shipping' !== $tab ) {
+                    return false;
+                }
+
+                // Solo cargar campos completos cuando se edita una instancia concreta.
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
+                $instance_id = isset( $_REQUEST['instance_id'] ) ? absint( wp_unslash( $_REQUEST['instance_id'] ) ) : 0;
+                if ( ! $instance_id ) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            /**
+             * Define los campos mínimos necesarios fuera de la pantalla de ajustes.
+             *
+             * @return array
+             */
+            private function apg_shipping_campos_minimos() {
+                return [
+                    'title' => [
+                        'title'   => __( 'Method Title', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                        'type'    => 'text',
+                        'default' => __( 'APG Shipping', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+                    ],
+                ];
+            }
 	
 			/**
 			 * Renderiza las opciones del método de envío en el admin de WooCommerce.
@@ -184,7 +238,15 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              *
              * @return void
              */
-			public function apg_shipping_obtiene_datos() {
+			public function apg_shipping_obtiene_datos( $modo_campos = false ) {
+				if ( $modo_campos ) {
+					$this->apg_shipping_prepara_taxonomias_para_campos();
+					$this->apg_shipping_dame_clases_de_envio(); // Obtiene todas las clases de envío.
+					$this->apg_shipping_dame_roles_de_usuario(); // Obtiene todos los roles de usuario.
+					$this->apg_shipping_dame_metodos_de_pago(); // Obtiene todos los métodos de pago.
+					return;
+				}
+
 				$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' ); // Obtiene todas las categorías de producto.
 				$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' ); // Obtiene todas las etiquetas de producto.
 				$this->apg_shipping_dame_clases_de_envio(); // Obtiene todas las clases de envío.
@@ -193,6 +255,152 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$this->apg_shipping_dame_metodos_de_pago(); // Obtiene todos los métodos de pago.
 				$this->apg_shipping_dame_atributos(); // Obtiene todos los atributos.
 			}
+
+            /**
+             * Prepara las taxonomías para los campos del admin sin cargar listados masivos.
+             *
+             * @return void
+             */
+            private function apg_shipping_prepara_taxonomias_para_campos() {
+                $limite = 500;
+
+				$categorias_cnt = wp_count_terms( 'product_cat' );
+				if ( is_wp_error( $categorias_cnt ) ) {
+					$categorias_cnt = $limite + 1;
+				}
+				if ( $categorias_cnt > $limite ) {
+					$categorias_saved = (array) $this->get_option( 'categorias_excluidas', [] );
+					$this->categorias_de_producto = $this->apg_shipping_dame_terminos_por_ids( 'product_cat', $categorias_saved );
+				} else {
+					$this->apg_shipping_dame_datos_de_producto( 'categorias_de_producto' );
+				}
+
+				$etiquetas_cnt = wp_count_terms( 'product_tag' );
+				if ( is_wp_error( $etiquetas_cnt ) ) {
+					$etiquetas_cnt = $limite + 1;
+				}
+				if ( $etiquetas_cnt > $limite ) {
+					$etiquetas_saved = (array) $this->get_option( 'etiquetas_excluidas', [] );
+					$this->etiquetas_de_producto = $this->apg_shipping_dame_terminos_por_ids( 'product_tag', $etiquetas_saved );
+				} else {
+					$this->apg_shipping_dame_datos_de_producto( 'etiquetas_de_producto' );
+				}
+
+				$atributos_cnt = 0;
+				$taxonomias = function_exists( 'wc_get_attribute_taxonomy_names' ) ? wc_get_attribute_taxonomy_names() : [];
+				if ( is_array( $taxonomias ) ) {
+					foreach ( $taxonomias as $taxonomia ) {
+						$cnt = wp_count_terms( $taxonomia );
+						if ( is_wp_error( $cnt ) ) {
+							$atributos_cnt = $limite + 1;
+							break;
+						}
+						$atributos_cnt += (int) $cnt;
+					}
+				}
+
+				if ( $atributos_cnt > $limite || empty( $taxonomias ) ) {
+					$atributos_saved = (array) $this->get_option( 'atributos_excluidos', [] );
+					$this->atributos = $this->apg_shipping_dame_atributos_seleccionados( $atributos_saved );
+                    $this->apg_atributos_forced_ajax = true;
+				} else {
+					$this->apg_shipping_dame_atributos();
+				}
+            }
+
+            /**
+             * Obtiene un listado de términos por IDs sin cargar toda la taxonomía.
+             *
+             * @param string $taxonomy Taxonomía.
+             * @param array $ids IDs de términos.
+             * @return array
+             */
+            private function apg_shipping_dame_terminos_por_ids( $taxonomy, $ids ) {
+                $ids = array_filter( array_map( 'absint', (array) $ids ) );
+                if ( empty( $ids ) ) {
+                    return [];
+                }
+
+                $terms = get_terms( [
+                    'taxonomy'               => $taxonomy,
+                    'include'                => $ids,
+                    'hide_empty'             => false,
+                    'update_term_meta_cache' => false,
+                ] );
+
+                if ( is_wp_error( $terms ) || empty( $terms ) ) {
+                    return [];
+                }
+
+                $resultado = [];
+                foreach ( $terms as $term ) {
+                    if ( isset( $term->term_id, $term->name ) ) {
+                        $resultado[ (int) $term->term_id ] = $term->name;
+                    }
+                }
+
+                return $resultado;
+            }
+
+            /**
+             * Obtiene solo los atributos seleccionados para evitar cargas masivas.
+             *
+             * @param array $atributos_guardados Lista de atributos guardados.
+             * @return array
+             */
+            private function apg_shipping_dame_atributos_seleccionados( $atributos_guardados ) {
+                $atributos_guardados = array_filter( array_map( 'sanitize_text_field', (array) $atributos_guardados ) );
+                if ( empty( $atributos_guardados ) ) {
+                    return [];
+                }
+
+                $mapa_etiquetas = [];
+                $taxonomias = wc_get_attribute_taxonomies();
+                if ( is_array( $taxonomias ) ) {
+                    foreach ( $taxonomias as $atributo ) {
+                        if ( empty( $atributo->attribute_name ) ) {
+                            continue;
+                        }
+                        $nombre_taxonomia = 'pa_' . $atributo->attribute_name;
+                        $mapa_etiquetas[ $nombre_taxonomia ] = $atributo->attribute_label;
+                    }
+                }
+
+                $por_taxonomia = [];
+                foreach ( $atributos_guardados as $atributo ) {
+                    $partes = explode( '-', $atributo, 2 );
+                    if ( count( $partes ) !== 2 ) {
+                        continue;
+                    }
+                    $taxonomia = $partes[ 0 ];
+                    $slug      = $partes[ 1 ];
+                    if ( '' === $taxonomia || '' === $slug ) {
+                        continue;
+                    }
+                    $por_taxonomia[ $taxonomia ][] = $slug;
+                }
+
+                $resultado = [];
+                foreach ( $por_taxonomia as $taxonomia => $slugs ) {
+                    $terms = get_terms( [
+                        'taxonomy'               => $taxonomia,
+                        'slug'                   => array_unique( $slugs ),
+                        'hide_empty'             => false,
+                        'update_term_meta_cache' => false,
+                    ] );
+                    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+                        continue;
+                    }
+                    $label = $mapa_etiquetas[ $taxonomia ] ?? $taxonomia;
+                    foreach ( $terms as $term ) {
+                        if ( isset( $term->slug, $term->name ) ) {
+                            $resultado[ $label ][ $taxonomia . '-' . $term->slug ] = $term->name;
+                        }
+                    }
+                }
+
+                return $resultado;
+            }
 			
             /**
              * Obtiene categorías o etiquetas de producto y las cachea durante 30 días.
@@ -361,11 +569,17 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              */
             public function apg_shipping_dame_metodos_de_pago() {
                global $apg_shipping_collecting_data;
+               global $apg_shipping_loading_shipping_methods;
                $cache_key              = 'apg_shipping_metodos_de_pago';
                // Obtiene los métodos de pago desde la caché.
                $this->metodos_de_pago  = get_transient( $cache_key );
 
-               if ( false === $this->metodos_de_pago || ! is_array( $this->metodos_de_pago ) || empty( $this->metodos_de_pago ) ) {
+               if ( $this->apg_shipping_en_ajustes_envio_instancia() && ( false === $this->metodos_de_pago || ! is_array( $this->metodos_de_pago ) || empty( $this->metodos_de_pago ) ) ) {
+                   $this->metodos_de_pago = [];
+                   return;
+               }
+
+               if ( ( false === $this->metodos_de_pago || ! is_array( $this->metodos_de_pago ) || empty( $this->metodos_de_pago ) ) && empty( $apg_shipping_loading_shipping_methods ) ) {
                    // Fuerza una nueva recopilación de datos en caso de caché vacía o corrupta.
                    delete_transient( $cache_key );
 
@@ -381,7 +595,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                    // Obtiene los métodos de pago directamente desde WooCommerce como último recurso.
                    if ( function_exists( 'WC' ) ) {
                        $payment_gateways = WC()->payment_gateways();
-                       if ( $payment_gateways && is_object( $payment_gateways ) && method_exists( $payment_gateways, 'get_available_payment_gateways' ) ) {
+                       if ( $payment_gateways && is_object( $payment_gateways ) && method_exists( $payment_gateways, 'get_available_payment_gateways' ) && empty( $apg_shipping_loading_shipping_methods ) ) {
                            $gateways = $payment_gateways->get_available_payment_gateways();
                            if ( ! empty( $gateways ) && is_array( $gateways ) ) {
                                foreach ( $gateways as $gateway ) {
@@ -396,6 +610,31 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                        set_transient( $cache_key, $this->metodos_de_pago, 30 * DAY_IN_SECONDS );
                    }
                }
+            }
+
+            /**
+             * Comprueba si estamos editando una instancia en ajustes de envío.
+             *
+             * @return bool
+             */
+            private function apg_shipping_en_ajustes_envio_instancia() {
+                if ( ! is_admin() ) {
+                    return false;
+                }
+
+                if ( function_exists( 'is_wc_admin_settings_page' ) && ! is_wc_admin_settings_page() ) {
+                    return false;
+                }
+
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
+                $tab = isset( $_REQUEST['tab'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['tab'] ) ) : '';
+                if ( '' !== $tab && 'shipping' !== $tab ) {
+                    return false;
+                }
+
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
+                $instance_id = isset( $_REQUEST['instance_id'] ) ? absint( wp_unslash( $_REQUEST['instance_id'] ) ) : 0;
+                return (bool) $instance_id;
             }
 
             /**

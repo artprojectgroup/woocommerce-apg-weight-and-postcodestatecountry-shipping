@@ -111,6 +111,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 * Arreglo de desbordamiento de memoria.
 * Mejorada la opción de depuración.
 * Búsqueda AJAX con SelectWoo para listas largas en el admin.
+* Mejora de rendimiento general.
 * Pequeños arreglos.
 
 ### 3.6.0.3

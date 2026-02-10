@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 3.7.2
+Stable tag: 3.7.3
 WC requires at least: 5.6
 WC tested up to: 10.5.0
 License: GPLv2 or later
@@ -70,7 +70,7 @@ Don’t forget to leave us your comment on:
 
 * [WC - APG Weight Shipping](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping) on Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) on Facebook.
-* [@artprojectgroup](https://twitter.com/artprojectgroup) on Twitter.
+* [@artprojectgroup](https://x.com/artprojectgroup) on X.
 
 = More plugins =
 Remember that you can find more [plugins for WordPress](https://artprojectgroup.es/plugins-para-wordpress) and more [plugins for WooCommerce](https://artprojectgroup.es/plugins-para-woocommerce) on [Art Project Group](https://artprojectgroup.es) and our profile on [WordPress](https://profiles.wordpress.org/artprojectgroup/).
@@ -102,6 +102,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.7.3 =
+* Small fixes.
 = 3.7.2 =
 * Added support for decimal dimensions in rate rules.
 * Small fixes.
@@ -549,8 +551,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.7.2 =
-* Added support for decimal dimensions in rate rules.
+= 3.7.3 =
 * Small fixes.
 
 == Translations ==

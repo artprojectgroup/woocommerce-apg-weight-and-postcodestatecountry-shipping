@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit; ?>
 			<p>
 				<?php esc_html_e( 'Follow us:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>
 			</p>
-			<p> <a href="https://www.facebook.com/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>Facebook" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://twitter.com/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>Twitter" target="_blank"><span class="genericon genericon-twitter"></span></a> <a href="https://es.linkedin.com/in/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>LinkedIn" target="_blank"><span class="genericon genericon-linkedin"></span></a> </p>
+			<p> <a href="https://www.facebook.com/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>Facebook" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://x.com/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>X" target="_blank"><span class="genericon genericon-x-alt"></span></a> <a href="https://es.linkedin.com/in/artprojectgroup" title="<?php echo esc_attr__( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ); ?>LinkedIn" target="_blank"><span class="genericon genericon-linkedin"></span></a> </p>
 		</div>
 		<div class="columna">
 			<p>

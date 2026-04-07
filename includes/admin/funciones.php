@@ -16,6 +16,44 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Obtiene las pasarelas de pago activas sin depender de su disponibilidad en checkout.
+ *
+ * @return array<string, string>
+ */
+if ( ! function_exists( 'apg_shipping_dame_pasarelas_activas' ) ) {
+function apg_shipping_dame_pasarelas_activas() {
+    if ( ! function_exists( 'WC' ) ) {
+        return [];
+    }
+
+    $payment_gateways = WC()->payment_gateways();
+    if ( empty( $payment_gateways ) || ! is_object( $payment_gateways ) || ! method_exists( $payment_gateways, 'payment_gateways' ) ) {
+        return [];
+    }
+
+    $gateways = $payment_gateways->payment_gateways();
+    if ( empty( $gateways ) || ! is_array( $gateways ) ) {
+        return [];
+    }
+
+    $medios_de_pago = [];
+    foreach ( $gateways as $gateway ) {
+        if ( ! is_object( $gateway ) || empty( $gateway->id ) ) {
+            continue;
+        }
+
+        if ( isset( $gateway->enabled ) && 'yes' !== $gateway->enabled ) {
+            continue;
+        }
+
+        $medios_de_pago[ $gateway->id ] = method_exists( $gateway, 'get_title' ) ? $gateway->get_title() : $gateway->id;
+    }
+
+    return $medios_de_pago;
+}
+}
+
+/**
  * Genera la etiqueta personalizada para el método de envío, incluyendo icono, precio y tiempo de entrega.
  *
  * Utiliza la configuración del método (icono, posición, entrega) y cachea la etiqueta generada por instancia.
@@ -55,7 +93,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
     if ( $impuestos === 'excl' ) {
         $precio = ( $metodo->get_shipping_tax() > 0 && WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost );
     } else {
-        $precio = ( $metodo->get_shipping_tax() > 0 && ! WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost + $metodo->get_shipping_tax() ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost + $metodo->get_shipping_tax() );
+        $precio = ( $metodo->get_shipping_tax() > 0 && ! WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost + $metodo->get_shipping_tax() ) . ' <small class="tax_label">' . WC()->countries->inc_tax_or_vat() . '</small>' : wc_price( $metodo->cost + $metodo->get_shipping_tax() );
     }
     $titulo     = apply_filters( 'apg_shipping_label', $metodo->label, $metodo );
 
@@ -141,7 +179,7 @@ add_filter( 'woocommerce_shipping_methods', 'apg_shipping_clases', 0 );
 function apg_shipping_filtra_medios_de_pago( $medios ) {
     $apg_shipping_settings  = apg_shipping_dame_configuracion();
 
-    if ( ! empty( $apg_shipping_settings[ 'pago' ] ) && $apg_shipping_settings[ 'pago' ][ 0 ] != 'todos' ) {
+    if ( ! empty( $apg_shipping_settings[ 'pago' ] ) && 'todos' !== $apg_shipping_settings[ 'pago' ][ 0 ] ) {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         if ( isset( $_POST[ 'payment_method' ] ) && empty( $medios ) ) {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -149,11 +187,11 @@ function apg_shipping_filtra_medios_de_pago( $medios ) {
         }
         foreach ( $medios as $nombre => $medio ) {
             if ( is_array( $apg_shipping_settings[ 'pago' ] ) ) {
-                if ( ! in_array( $nombre, $apg_shipping_settings[ 'pago' ] ) ) {
+                if ( ! in_array( $nombre, $apg_shipping_settings[ 'pago' ], true ) ) {
                     unset( $medios[ $nombre ] );
                 }
-            } else { 
-                if ( $nombre != $apg_shipping_settings[ 'pago' ] ) {
+            } else {
+                if ( $nombre !== $apg_shipping_settings[ 'pago' ] ) {
                     unset( $medios[ $nombre ] );
                 }
             }
@@ -184,12 +222,7 @@ function apg_shipping_toma_de_datos() {
         try {
         $medios_de_pago = get_transient( 'apg_shipping_metodos_de_pago' );
         if ( empty( $apg_shipping_loading_shipping_methods ) && ( false === $medios_de_pago || ! is_array( $medios_de_pago ) || empty( $medios_de_pago ) ) ) {
-            $medios_de_pago = [];
-            $gateways       = WC()->payment_gateways()->get_available_payment_gateways();
-
-            foreach ( $gateways as $gateway ) {
-                $medios_de_pago[ $gateway->id ] = $gateway->get_title();
-            }
+            $medios_de_pago = apg_shipping_dame_pasarelas_activas();
 
             set_transient( 'apg_shipping_metodos_de_pago', $medios_de_pago, 30 * DAY_IN_SECONDS ); // Guarda la caché durante un mes.
         }

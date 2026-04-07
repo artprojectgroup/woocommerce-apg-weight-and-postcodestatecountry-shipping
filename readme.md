@@ -7,13 +7,13 @@ Tags: WooCommerce, Shipping, Weight, Dimensions
 
 Requires at least: 5.0
 
-Tested up to: 6.9
+Tested up to: 7.0
 
-Stable tag: 3.7.3
+Stable tag: 3.8.0
 
 WC requires at least: 5.6
 
-WC tested up to: 10.5.0
+WC tested up to: 10.7.0
 
 License: GPLv2 or later
 
@@ -107,6 +107,10 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+### 3.8.0
+* Corregida la etiqueta de impuestos del envío cuando los precios se muestran con impuestos incluidos.
+* Mejorada la obtención de pasarelas de pago para que puedan seleccionarse todas las pasarelas activas en los ajustes del método de envío.
+
 ### 3.7.3
 * Pequeños arreglos.
 

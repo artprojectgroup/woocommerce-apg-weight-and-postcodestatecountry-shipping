@@ -4,7 +4,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 3.8.0
+Stable tag: 3.9.0
 WC requires at least: 5.6
 WC tested up to: 10.7.0
 License: GPLv2 or later
@@ -102,6 +102,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.9.0 =
+* Fixed shipping method settings fields when creating a new instance from WooCommerce shipping zones.
 = 3.8.0 =
 * Fixed shipping tax label when prices are displayed including tax.
 * Improved payment gateway collection so all active gateways can be selected in shipping settings.
@@ -554,9 +556,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.8.0 =
-* Fixed shipping tax label when prices are displayed including tax.
-* Improved payment gateway collection so all active gateways can be selected in shipping settings.
+= 3.9.0 =
+* Fixed shipping method settings fields when creating a new instance from WooCommerce shipping zones.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

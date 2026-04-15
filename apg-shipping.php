@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.8.0
+Version: 3.9.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.8.0' );
+define( 'VERSION_apg_shipping', '3.9.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -190,6 +190,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     return false;
                 }
 
+                // Permite cargar campos completos cuando WooCommerce crea el método
+                // desde el modal de zonas de envío vía admin-ajax.php.
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
+                $ajax_action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
+                if ( wp_doing_ajax() && 'woocommerce_shipping_zone_add_method' === $ajax_action ) {
+                    return (bool) $this->instance_id;
+                }
+
                 if ( function_exists( 'is_wc_admin_settings_page' ) && ! is_wc_admin_settings_page() ) {
                     return false;
                 }
@@ -201,8 +209,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 }
 
                 // Solo cargar campos completos cuando se edita una instancia concreta.
+                // En el modal nuevo WooCommerce ya ha creado la instancia, aunque no siempre
+                // reenvía instance_id por request en todos los puntos del flujo.
                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Solo lectura.
-                $instance_id = isset( $_REQUEST['instance_id'] ) ? absint( wp_unslash( $_REQUEST['instance_id'] ) ) : 0;
+                $instance_id = isset( $_REQUEST['instance_id'] ) ? absint( wp_unslash( $_REQUEST['instance_id'] ) ) : absint( $this->instance_id );
                 if ( ! $instance_id ) {
                     return false;
                 }

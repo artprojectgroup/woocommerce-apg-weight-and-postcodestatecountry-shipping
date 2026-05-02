@@ -84,16 +84,22 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		#[AllowDynamicProperties]
 		class WC_apg_shipping extends WC_Shipping_Method {				
 			// Variables.
-            public $categorias_de_producto      = [];
-            public $etiquetas_de_producto       = [];
-            public $clases_de_envio             = [];
-            public $roles_de_usuario            = [];
-            public $metodos_de_envio            = [];
-            public $metodos_de_pago             = [];
-            public $atributos                   = [];
-            public $clases_de_envio_tarifas     = "";
-            
-            /**
+			public $categorias_de_producto      = [];
+			public $etiquetas_de_producto       = [];
+			public $clases_de_envio             = [];
+			public $roles_de_usuario            = [];
+			public $metodos_de_envio            = [];
+			public $metodos_de_pago             = [];
+			public $atributos                   = [];
+			public $clases_de_envio_tarifas     = "";
+			
+			/**
+			 * Field name for supplier identification
+			 * @var string
+			 */
+			private $supplier_field_name = 'proveedor';
+			
+			/**
              * Inicializa la clase, define los valores principales y soportes de la pasarela de envío.
              *
              * @param int $instance_id Identificador de la instancia.
@@ -130,6 +136,10 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     // Campos ligeros con todas las claves para cargar ajustes de instancia sin listas pesadas.
                     $this->instance_form_fields = $this->apg_shipping_campos_configuracion();
                 }
+
+                // Initialize supplier field name from constant if defined
+                $field_name = defined('APG_SHIPPING_PROVEEDOR_FIELD') ? APG_SHIPPING_PROVEEDOR_FIELD : 'proveedor';
+                $this->supplier_field_name = $field_name;
 
                 // Inicializamos variables.
 				$campos = [
@@ -854,9 +864,32 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @param array $paquete Datos del paquete de WooCommerce.
              * @return void
              */
+            /**
+             * Calculates and adds the shipping rate based on conditions and rules.
+             *
+             * @param array $paquete WooCommerce package data.
+             * @return void
+             */
             public function calculate_shipping( $paquete = [] ) {
+                // Check if supplier-based calculation is enabled
+                $is_supplier_split_enabled = defined('APG_SHIPPING_SPLIT_BY_PROVEEDOR') && APG_SHIPPING_SPLIT_BY_PROVEEDOR;
+                
+                if ($is_supplier_split_enabled) {
+                    $this->calculate_shipping_by_supplier($paquete);
+                } else {
+                    $this->calculate_shipping_original($paquete);
+                }
+            }
+
+            /**
+             * Original shipping calculation logic (for backward compatibility when supplier split is disabled)
+             *
+             * @param array $paquete WooCommerce package data.
+             * @return void
+             */
+            private function calculate_shipping_original( $paquete = [] ) {
                 // Recoge los datos.
-				$this->apg_shipping_obtiene_datos();
+   $this->apg_shipping_obtiene_datos();
 
                 // Validación por roles.
                 $roles_usuario  = wp_get_current_user()->roles;
@@ -877,34 +910,34 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     }
                 }
                 
-				// Variables.
-				$volumen	= 0;
-				$largo		= 0;
-				$ancho		= 0;
-				$alto		= 0;
-				$clases		= [];
-				$medidas	= [];
-				
-				$peso_total         = WC()->cart->get_cart_contents_weight(); // Peso total del pedido.
-				$productos_totales  = WC()->cart->get_cart_contents_count(); // Productos totales del pedido.
-				$precio_total       = WC()->cart->get_displayed_subtotal(); // Precio total del pedido.
+   // Variables.
+   $volumen	= 0;
+   $largo		= 0;
+   $ancho		= 0;
+   $alto		= 0;
+   $clases		= [];
+   $medidas	= [];
+   
+   $peso_total         = WC()->cart->get_cart_contents_weight(); // Peso total del pedido.
+   $productos_totales  = WC()->cart->get_cart_contents_count(); // Productos totales del pedido.
+   $precio_total       = WC()->cart->get_displayed_subtotal(); // Precio total del pedido.
 
-				// Comprueba si está activo WPML para coger la traducción correcta de la clase de envío.
-				if ( function_exists( 'icl_object_id' ) && ! function_exists( 'pll_the_languages' ) ) {
-					global $sitepress;
+   // Comprueba si está activo WPML para coger la traducción correcta de la clase de envío.
+   if ( function_exists( 'icl_object_id' ) && ! function_exists( 'pll_the_languages' ) ) {
+    global $sitepress;
                     
-					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
-					do_action( 'wpml_switch_language', $sitepress->get_default_language() );
-				}
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
+    do_action( 'wpml_switch_language', $sitepress->get_default_language() );
+   }
 
-				// Toma distintos datos de los productos.
-				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
-					$producto  = $valores[ 'data' ];
+   // Toma distintos datos de los productos.
+   foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
+    $producto  = $valores[ 'data' ];
 
-					// Toma el peso del producto.
-					$peso      = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
-					
-					// Toma el precio del producto.
+    // Toma el peso del producto.
+    $peso      = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
+    
+    // Toma el precio del producto.
                     $modo_impuestos = version_compare( WC_VERSION, '4.4', '<' ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
                     if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
                         $precio_unitario    = ( $modo_impuestos === 'excl' ) ? $producto->get_price_excluding_tax() : $producto->get_price_including_tax();
@@ -915,44 +948,472 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     $precio = $precio_unitario * $valores[ 'quantity' ];
 
                     // Compatibilidad con WooCommerce Product Bundles.
-					if ( $producto->is_type( 'bundle' ) ) {
-						$precio = $producto->get_bundle_price( 'min' ) * $valores[ 'quantity' ];
-					}
+    if ( $producto->is_type( 'bundle' ) ) {
+     $precio = $producto->get_bundle_price( 'min' ) * $valores[ 'quantity' ];
+    }
 
-					// No atiende a las categorías de producto excluidas.
-					if ( ! empty( $this->categorias_excluidas ) ) {
-						if ( $producto->is_type( 'variation' ) ) {
-							$parent = wc_get_product( $producto->get_parent_id() );
-							if ( ( ! empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) || 
-								( empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
-								return false;
-							}
-						} else {
-							if ( ( ! empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) || 
-								( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
-								return false;
-							}
-						}
-					}
+    // No atiende a las categorías de producto excluidas.
+    if ( ! empty( $this->categorias_excluidas ) ) {
+     if ( $producto->is_type( 'variation' ) ) {
+      $parent = wc_get_product( $producto->get_parent_id() );
+      if ( ( ! empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) ||
+       ( empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+       return false;
+      }
+     } else {
+      if ( ( ! empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) ||
+       ( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+       return false;
+      }
+     }
+    }
 
-					// No atiende a las etiquetas de producto excluidas.
-					if ( ! empty( $this->etiquetas_excluidas ) ) {
-						if ( $producto->is_type( 'variation' ) ) {
-							$parent = wc_get_product( $producto->get_parent_id() );
-							if ( ( ! empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) || 
-								( empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
-								return false;
-							}
-						} else {
-							if ( ( ! empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) || 
-								( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
-								return false;
-							}
-						}
-					}
+    // No atiende a las etiquetas de producto excluidas.
+    if ( ! empty( $this->etiquetas_excluidas ) ) {
+     if ( $producto->is_type( 'variation' ) ) {
+      $parent = wc_get_product( $producto->get_parent_id() );
+      if ( ( ! empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) ||
+       ( empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+       return false;
+      }
+     } else {
+      if ( ( ! empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) ||
+       ( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+       return false;
+      }
+     }
+    }
 
                     // No atiende a los atributos excluidos.
-					if ( ! empty( $this->atributos_excluidos ) ) {
+    if ( ! empty( $this->atributos_excluidos ) ) {
+                       $atributos_excluidos    = [];
+                       $taxonomias             = function_exists( 'wc_get_attribute_taxonomy_names' ) ? wc_get_attribute_taxonomy_names() : [];
+                       if ( is_array( $taxonomias ) ) {
+                           usort( $taxonomias, function( $a, $b ) {
+                               return strlen( $b ) <=> strlen( $a );
+                           } );
+                       } else {
+                           $taxonomias = [];
+                       }
+
+                       foreach ( $this->atributos_excluidos as $atributo_excluido ) {
+                           $atributo_excluido = trim( sanitize_text_field( $atributo_excluido ) );
+                           $encontrado        = false;
+
+                           foreach ( $taxonomias as $taxonomia ) {
+                               $prefijo = $taxonomia . '-';
+                               if ( strpos( $atributo_excluido, $prefijo ) === 0 ) {
+                                   $slug = substr( $atributo_excluido, strlen( $prefijo ) );
+                                   if ( '' !== $slug ) {
+                                       $atributos_excluidos[ $taxonomia ][] = $slug;
+                                   }
+                                   $encontrado = true;
+                                   break;
+                               }
+                           }
+
+                           if ( ! $encontrado ) {
+                               $partes = explode( '-', $atributo_excluido, 2 );
+                               if ( count( $partes ) === 2 && '' !== $partes[ 0 ] && '' !== $partes[ 1 ] ) {
+                                   $atributos_excluidos[ $partes[ 0 ] ][] = $partes[ 1 ];
+                               }
+                           }
+                       }
+
+                       $tiene_atributo_excluido = false;
+                       if ( ! empty( $atributos_excluidos ) ) {
+                           $product_id = $producto->is_type( 'variation' ) ? $producto->get_parent_id() : $producto->get_id();
+                           foreach ( $atributos_excluidos as $taxonomia => $terminos ) {
+                               if ( empty( $terminos ) ) {
+                                   continue;
+                               }
+                               $terminos_producto = wc_get_product_terms( $product_id, $taxonomia, [ 'fields' => 'slugs' ] );
+                               if ( is_wp_error( $terminos_producto ) || empty( $terminos_producto ) ) {
+                                   continue;
+                               }
+                               if ( array_intersect( $terminos_producto, $terminos ) ) {
+                                   $tiene_atributo_excluido = true;
+                                   break;
+                               }
+                           }
+                       }
+
+                       if ( ( $tiene_atributo_excluido && $this->tipo_atributos == 'no' ) ||
+                           ( ! $tiene_atributo_excluido && $this->tipo_atributos == 'yes' ) ) {
+                           return false;
+                       }
+    }
+
+    // No atiende a las clases de envío excluidas.
+    if ( ! empty( $this->clases_excluidas ) ) {
+     if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) ||
+      ( ! in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && ! in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
+      $this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
+      
+      continue;
+     }
+    }
+    
+    // Ajuste para los productos virtual y bundle.
+    if ( $producto->is_virtual() && ! isset( $valores[ 'bundled_by' ] ) ) {
+     $peso_total			-= $peso;
+     $productos_totales	-= $valores[ 'quantity' ];
+     $precio_total		-= $precio;
+    }
+
+    if ( $producto->needs_shipping() ) {
+     // Volumen.
+     if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
+      $volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
+     }
+     
+     // Medidas.
+     $medidas[] = [
+      'largo'		=> $producto->get_length(),
+      'ancho'		=> $producto->get_width(),
+      'alto'		=> $producto->get_height(),
+      'cantidad'	=> $valores[ 'quantity' ],
+     ];
+     
+     // Almacena el valor del lado más grande.
+     if ( $producto->get_length() > $largo ) {
+      $largo = $producto->get_length();
+     }
+     if ( $producto->get_width() > $ancho ) {
+      $ancho = $producto->get_width();
+     }
+     if ( $producto->get_height() > $alto ) {
+      $alto = $producto->get_height();
+     }
+
+     // Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
+     $cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
+     if ( $this->tipo_tarifas == "total" ) {
+      $cantidad = $precio;
+     }
+
+     // Clase de envío.
+     $clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
+     // Inicializamos la clase general.
+     if ( ! isset ($clases[ 'todas' ] ) ) {
+      $clases[ 'todas' ] = 0;
+     }
+     $clases[ 'todas' ] += $cantidad;
+     // Creamos o inicializamos la clase correspondiente.
+     if ( ! isset( $clases[ $clase ] ) ) {
+      $clases[ $clase ] = $cantidad;
+     } else if ( $clase != 'todas' ) {
+      $clases[ $clase ] += $cantidad;
+     }
+    }
+   }
+
+   // Comprobamos si está activo WPML para devolverlo al idioma que estaba activo.
+   if ( function_exists('icl_object_id') && ! function_exists( 'pll_the_languages' ) ) {
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
+    do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
+   }
+   
+   // Reajusta el valor del peso total en caso de que se haya configurado cantidad de productos o total del pedido.
+   if ( $this->tipo_tarifas == "unidad" ) {
+    $peso_total = $productos_totales;
+   } else if ( $this->tipo_tarifas == "total" ) {
+    $peso_total = $precio_total;
+   }
+
+   // No hay productos a los que aplicar las tarifas.
+   if ( empty( $medidas ) && empty( $clases ) ) {
+    return false;
+   }
+
+   // Obtenemos las tarifas.
+   $tarifas = $this->dame_tarifas( $clases );
+
+   // Obtiene la tarifa.
+   $tarifa_mas_barata = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas ); // Filtra las tarifas.
+   if ( empty( $tarifa_mas_barata ) ) {
+    return false; // No hay tarifa.
+   }
+   
+   // Calculamos el importe total.
+   $importe = 0;
+   if ( ! empty( $this->suma ) &&  $this->suma == "yes" ) {
+    $importe = max( $tarifa_mas_barata );
+   } else {
+    foreach( $tarifa_mas_barata as $tarifa ) {
+     $importe += $tarifa;
+    }
+   }
+
+   // Calculamos el precio.
+   $suma_cargos = 0;
+
+   // Cargos adicionales.
+   if ( $this->fee > 0 ) { // Cargo por manipulación.
+    $suma_cargos += $this->fee;
+   }
+   // ¿Cargo adicional por producto?.
+   $cargo_por_producto = ( $this->tipo_cargo == "no" ) ? 1 : WC()->cart->get_cart_contents_count();
+   
+   if ( $this->cargo > 0 && ! strpos( $this->cargo, '%' ) ) { // Cargo adicional normal.
+    $suma_cargos += $this->cargo * $cargo_por_producto;
+   } else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && ! strpos( $this->cargo, '|' ) ) { // Cargo adicional porcentaje.
+    $suma_cargos += ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+   } else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { // Porcentaje con mínimo y máximo.
+    // Recogemos los valores mínimo y máximo.
+    $porcentaje = explode( '|', $this->cargo );
+    preg_match( '/min=[ \"|\' ](.*)[ \"|\' ][ \s+|$ ]/', $porcentaje[ 1 ], $minimo );
+    preg_match( '/max=[ \"|\' ](.*)[ \"|\' ]$/', $porcentaje[ 1 ], $maximo );
+    
+    $calculo_de_porcentaje = ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+    // Comprobamos el mínimo.
+    if ( isset( $minimo[ 1 ] ) && $minimo[ 1 ] > $calculo_de_porcentaje ) {
+     $calculo_de_porcentaje = $minimo[ 1 ];
+    }
+    // Comprobamos el máximo.
+    if ( isset( $maximo[ 1 ] ) && $calculo_de_porcentaje > $maximo[ 1 ] ) {
+     $calculo_de_porcentaje = $maximo[ 1 ];
+    }
+    // Añade el cargo.
+    $suma_cargos += $calculo_de_porcentaje;
+   }
+
+   // Actualizamos precio.
+   $importe	+= $suma_cargos;
+   // ¿Impuestos?
+   $impuestos	= ( ! empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
+
+   $tarifa = [
+    'id'		=> $this->get_rate_id(),
+    'label'		=> $this->title,
+    'cost'		=> $importe,
+    'taxes'		=> $impuestos,
+    'calc_tax'	=> 'per_order'
+   ];
+   
+   $this->add_rate( $tarifa );
+                
+               // Limpieza del transient del icono para evitar datos obsoletos.
+               delete_transient( 'apg_shipping_icono_' . $this->instance_id );
+               
+               // Limpia la caché si cambia el total.
+               if ( WC()->session ) {
+                   WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
+               }
+   // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
+   do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
+  }
+
+            /**
+             * Calculate shipping by grouping products by supplier
+             *
+             * @param array $paquete WooCommerce package data.
+             * @return void
+             */
+            private function calculate_shipping_by_supplier( $paquete = [] ) {
+                // Recoge los datos.
+                $this->apg_shipping_obtiene_datos();
+
+                // Validación por roles.
+                $roles_usuario  = wp_get_current_user()->roles;
+
+                if ( ! empty( $this->roles_excluidos ) ) {
+                    $es_invitado    = empty( $roles_usuario );
+
+                    if ( ( $es_invitado && $this->tipo_roles === 'no' && in_array( 'invitado', $this->roles_excluidos ) ) || ( $es_invitado && $this->tipo_roles === 'yes' && !in_array( 'invitado', $this->roles_excluidos ) ) ) { // Usuario invitado.
+                        return;
+                    }
+
+                    if ( ! $es_invitado ) {
+                        foreach ( $roles_usuario as $rol ) {
+                            if ( ( in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles === 'no' ) || ( !in_array( $rol, $this->roles_excluidos ) && $this->tipo_roles === 'yes' ) ) {
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Group products by supplier
+                $products_by_supplier = [];
+                foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
+                    $producto  = $valores[ 'data' ];
+                    
+                    // Get supplier value
+                    $supplier = $this->get_supplier_from_product($producto);
+                    
+                    // Add product to supplier group
+                    if (!isset($products_by_supplier[$supplier])) {
+                        $products_by_supplier[$supplier] = [];
+                    }
+                    $products_by_supplier[$supplier][$identificador] = $valores;
+                }
+
+                // Calculate shipping for each supplier group and sum the costs
+                $total_shipping_cost = 0;
+                $supplier_rates = [];
+
+                foreach ($products_by_supplier as $supplier => $supplier_products) {
+                    // Calculate shipping for this supplier's products
+                    $supplier_shipping_cost = $this->calculate_shipping_for_supplier_group($supplier_products);
+                    $total_shipping_cost += $supplier_shipping_cost;
+                    
+                    if ($supplier_shipping_cost > 0) {
+                        $supplier_rates[$supplier] = $supplier_shipping_cost;
+                    }
+                }
+
+                if ($total_shipping_cost > 0) {
+                    // Apply any additional fees
+                    $suma_cargos = 0;
+                    
+                    // Cargos adicionales.
+                    if ( $this->fee > 0 ) { // Cargo por manipulación.
+                        $suma_cargos += $this->fee;
+                    }
+                    // ¿Cargo adicional por producto?.
+                    $cargo_por_producto = ( $this->tipo_cargo == "no" ) ? 1 : WC()->cart->get_cart_contents_count();
+                    
+                    if ( $this->cargo > 0 && ! strpos( $this->cargo, '%' ) ) { // Cargo adicional normal.
+                        $suma_cargos += $this->cargo * $cargo_por_producto;
+                    } else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && ! strpos( $this->cargo, '|' ) ) { // Cargo adicional porcentaje.
+                        $suma_cargos += ( $total_shipping_cost * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+                    } else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { // Porcentaje con mínimo y máximo.
+                        // Recogemos los valores mínimo y máximo.
+                        $porcentaje = explode( '|', $this->cargo );
+                        preg_match( '/min=[ \"|\' ](.*)[ \"|\' ][ \s+|$ ]/', $porcentaje[ 1 ], $minimo );
+                        preg_match( '/max=[ \"|\' ](.*)[ \"|\' ]$/', $porcentaje[ 1 ], $maximo );
+                        
+                        $calculo_de_porcentaje = ( $total_shipping_cost * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
+                        // Comprobamos el mínimo.
+                        if ( isset( $minimo[ 1 ] ) && $minimo[ 1 ] > $calculo_de_porcentaje ) {
+                            $calculo_de_porcentaje = $minimo[ 1 ];
+                        }
+                        // Comprobamos el máximo.
+                        if ( isset( $maximo[ 1 ] ) && $calculo_de_porcentaje > $maximo[ 1 ] ) {
+                            $calculo_de_porcentaje = $maximo[ 1 ];
+                        }
+                        // Añade el cargo.
+                        $suma_cargos += $calculo_de_porcentaje;
+                    }
+
+                    // Update total cost with additional fees
+                    $total_shipping_cost += $suma_cargos;
+
+                    // Add the aggregated rate
+                    $tarifa = [
+                        'id'		=> $this->get_rate_id(),
+                        'label'		=> $this->title,
+                        'cost'		=> $total_shipping_cost,
+                        'taxes'		=> ( ! empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false,
+                        'calc_tax'	=> 'per_order'
+                    ];
+                    
+                    $this->add_rate( $tarifa );
+                    
+                    // Limpieza del transient del icono para evitar datos obsoletos.
+                    delete_transient( 'apg_shipping_icono_' . $this->instance_id );
+                    
+                    // Limpia la caché si cambia el total.
+                    if ( WC()->session ) {
+                        WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
+                    }
+                    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
+                    do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
+                }
+            }
+
+            /**
+             * Get supplier value from product with caching
+             * @param WC_Product $product
+             * @return string
+             */
+            private function get_supplier_from_product($product) {
+                static $supplier_cache = [];
+                
+                $product_id = $product->get_id();
+                if (isset($supplier_cache[$product_id])) {
+                    return $supplier_cache[$product_id];
+                }
+                
+                // Try to get supplier field value using various methods
+                $supplier = get_post_meta($product_id, $this->supplier_field_name, true);
+                
+                // Method 2: For variable products, check parent
+                if (empty($supplier) && $product->is_type('variation')) {
+                    $supplier = get_post_meta($product->get_parent_id(), $this->supplier_field_name, true);
+                }
+                
+                // Method 3: Using WooCommerce getter if available
+                if (empty($supplier) && method_exists($product, 'get_meta')) {
+                    $supplier = $product->get_meta($this->supplier_field_name, true);
+                }
+                
+                // Handle empty supplier - group under 'no_proveedor'
+                $result = !empty($supplier) ? $supplier : 'no_proveedor';
+                
+                $supplier_cache[$product_id] = $result;
+                return $result;
+            }
+
+            /**
+             * Calculate shipping for a group of products from the same supplier
+             * @param array $supplier_products Cart items belonging to the same supplier
+             * @return float
+             */
+            private function calculate_shipping_for_supplier_group($supplier_products) {
+                // Variables for this supplier group
+                $volumen = 0;
+                $largo = 0;
+                $ancho = 0;
+                $alto = 0;
+                $clases = [];
+                $medidas = [];
+                
+                // Calculate total weight, volume, etc. for this supplier's products only
+                $peso_total = 0;
+                $productos_totales = 0;
+                $precio_total = 0;
+                
+                foreach ($supplier_products as $identificador => $valores) {
+                    $producto = $valores['data'];
+                    
+                    // Only proceed with products that need shipping
+                    // First run through standard exclusion checks for this subset of products
+                    // No atiende a las categorías de producto excluidas.
+                    if ( ! empty( $this->categorias_excluidas ) ) {
+                        if ( $producto->is_type( 'variation' ) ) {
+                            $parent = wc_get_product( $producto->get_parent_id() );
+                            if ( ( ! empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) ||
+                                ( empty( array_intersect( $parent->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+                                continue; // Skip this product, not return false like in original
+                            }
+                        } else {
+                            if ( ( ! empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'no' ) ||
+                                ( empty( array_intersect( $producto->get_category_ids(), $this->categorias_excluidas ) ) && $this->tipo_categorias == 'yes' ) ) {
+                                continue; // Skip this product, not return false like in original
+                            }
+                        }
+                    }
+
+                    // No atiende a las etiquetas de producto excluidas.
+                    if ( ! empty( $this->etiquetas_excluidas ) ) {
+                        if ( $producto->is_type( 'variation' ) ) {
+                            $parent = wc_get_product( $producto->get_parent_id() );
+                            if ( ( ! empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) ||
+                                ( empty( array_intersect( $parent->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+                                continue; // Skip this product, not return false like in original
+                            }
+                        } else {
+                            if ( ( ! empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'no' ) ||
+                                ( empty( array_intersect( $producto->get_tag_ids(), $this->etiquetas_excluidas ) ) && $this->tipo_etiquetas == 'yes' ) ) {
+                                continue; // Skip this product, not return false like in original
+                            }
+                        }
+                    }
+
+                    // No atiende a los atributos excluidos.
+                    $tiene_atributo_excluido = false;
+                    if ( ! empty( $this->atributos_excluidos ) ) {
                         $atributos_excluidos    = [];
                         $taxonomias             = function_exists( 'wc_get_attribute_taxonomy_names' ) ? wc_get_attribute_taxonomy_names() : [];
                         if ( is_array( $taxonomias ) ) {
@@ -1007,170 +1468,122 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
                         if ( ( $tiene_atributo_excluido && $this->tipo_atributos == 'no' ) ||
                             ( ! $tiene_atributo_excluido && $this->tipo_atributos == 'yes' ) ) {
-                            return false;
+                            continue; // Skip this product, not return false like in original
                         }
-					}
+                    }
 
-					// No atiende a las clases de envío excluidas.
-					if ( ! empty( $this->clases_excluidas ) ) {
-						if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) ||
-							( ! in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && ! in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
-							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
-							
-							continue; 
-						}
-					}
-					
-					// Ajuste para los productos virtual y bundle.
-					if ( $producto->is_virtual() && ! isset( $valores[ 'bundled_by' ] ) ) {
-						$peso_total			-= $peso;
-						$productos_totales	-= $valores[ 'quantity' ];
-						$precio_total		-= $precio;
-					}
+                    // Take the weight of the product
+                    $peso = ($producto->get_weight() > 0) ? $producto->get_weight() * $valores['quantity'] : 0;
+                    
+                    // Take the price of the product
+                    $modo_impuestos = version_compare( WC_VERSION, '4.4', '<' ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
+                    if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
+                        $precio_unitario = ( $modo_impuestos === 'excl' ) ? $producto->get_price_excluding_tax() : $producto->get_price_including_tax();
+                    } else {
+                        $precio_unitario = ( $modo_impuestos === 'excl' ) ? wc_get_price_excluding_tax( $producto ) : wc_get_price_including_tax( $producto );
+                    }
+                    $precio = $precio_unitario * $valores['quantity'];
 
-					if ( $producto->needs_shipping() ) {
-						// Volumen.
-						if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
-							$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
-						}
-						
-						// Medidas.
-						$medidas[] = [
-							'largo'		=> $producto->get_length(),
-							'ancho'		=> $producto->get_width(),
-							'alto'		=> $producto->get_height(),
-							'cantidad'	=> $valores[ 'quantity' ],
-						];
-						
-						// Almacena el valor del lado más grande.
-						if ( $producto->get_length() > $largo ) {
-							$largo = $producto->get_length();
-						}
-						if ( $producto->get_width() > $ancho ) {
-							$ancho = $producto->get_width();
-						}
-						if ( $producto->get_height() > $alto ) {
-							$alto = $producto->get_height();
-						}
+                    // Compatibility with WooCommerce Product Bundles.
+                    if ( $producto->is_type( 'bundle' ) ) {
+                        $precio = $producto->get_bundle_price( 'min' ) * $valores['quantity'];
+                    }
 
-						// Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
-						$cantidad = ( $this->tipo_tarifas == "unidad" ) ? $valores[ 'quantity' ] : $peso;
-						if ( $this->tipo_tarifas == "total" ) {
-							$cantidad = $precio;
-						}
-
-						// Clase de envío.
-						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
-						// Inicializamos la clase general.
-						if ( ! isset ($clases[ 'todas' ] ) ) {
-							$clases[ 'todas' ] = 0;
-						}
-						$clases[ 'todas' ] += $cantidad;
-						// Creamos o inicializamos la clase correspondiente.
-						if ( ! isset( $clases[ $clase ] ) ) {
-							$clases[ $clase ] = $cantidad;
-						} else if ( $clase != 'todas' ) {
-							$clases[ $clase ] += $cantidad;
-						}
-					}
-				}
-
-				// Comprobamos si está activo WPML para devolverlo al idioma que estaba activo.
-				if ( function_exists('icl_object_id') && ! function_exists( 'pll_the_languages' ) ) {
-					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML hook.
-					do_action( 'wpml_switch_language', ICL_LANGUAGE_CODE );
-				}
-				
-				// Reajusta el valor del peso total en caso de que se haya configurado cantidad de productos o total del pedido. 
-				if ( $this->tipo_tarifas == "unidad" ) {
-					$peso_total = $productos_totales;
-				} else if ( $this->tipo_tarifas == "total" ) {
-					$peso_total = $precio_total;
-				}
-
-				// No hay productos a los que aplicar las tarifas.
-				if ( empty( $medidas ) && empty( $clases ) ) {
-					return false;
-				}
-
-				// Obtenemos las tarifas.
-				$tarifas = $this->dame_tarifas( $clases );
-
-				// Obtiene la tarifa.
-				$tarifa_mas_barata = $this->dame_tarifa_mas_barata( $peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas ); // Filtra las tarifas.
-				if ( empty( $tarifa_mas_barata ) ) {
-					return false; // No hay tarifa.
-				}
-				
-				// Calculamos el importe total.
-				$importe = 0;
-				if ( ! empty( $this->suma ) &&  $this->suma == "yes" ) {
-					$importe = max( $tarifa_mas_barata );
-				} else {
-					foreach( $tarifa_mas_barata as $tarifa ) {
-						$importe += $tarifa;
-					}					
-				}
-
-				// Calculamos el precio.
-				$suma_cargos = 0;
-	
-				// Cargos adicionales.
-				if ( $this->fee > 0 ) { // Cargo por manipulación.
-					$suma_cargos += $this->fee;			
-				}
-				// ¿Cargo adicional por producto?.
-				$cargo_por_producto = ( $this->tipo_cargo == "no" ) ? 1 : WC()->cart->get_cart_contents_count();
-				
-				if ( $this->cargo > 0 && ! strpos( $this->cargo, '%' ) ) { // Cargo adicional normal.
-					$suma_cargos += $this->cargo * $cargo_por_producto;
-				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && ! strpos( $this->cargo, '|' ) ) { // Cargo adicional porcentaje.
-					$suma_cargos += ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
-				} else if ( $this->cargo > 0 && strpos( $this->cargo, '%' ) && strpos( $this->cargo, '|' ) ) { // Porcentaje con mínimo y máximo.
-					// Recogemos los valores mínimo y máximo.
-					$porcentaje = explode( '|', $this->cargo );
-					preg_match( '/min=[ \"|\' ](.*)[ \"|\' ][ \s+|$ ]/', $porcentaje[ 1 ], $minimo );
-					preg_match( '/max=[ \"|\' ](.*)[ \"|\' ]$/', $porcentaje[ 1 ], $maximo );
-					
-					$calculo_de_porcentaje = ( $importe * ( str_replace( '%', '', $this->cargo ) / 100 ) ) * $cargo_por_producto;
-					// Comprobamos el mínimo.
-					if ( isset( $minimo[ 1 ] ) && $minimo[ 1 ] > $calculo_de_porcentaje ) {
-						$calculo_de_porcentaje = $minimo[ 1 ];
-					}
-					// Comprobamos el máximo.
-					if ( isset( $maximo[ 1 ] ) && $calculo_de_porcentaje > $maximo[ 1 ] ) {
-						$calculo_de_porcentaje = $maximo[ 1 ];
-					}
-					// Añade el cargo.
-					$suma_cargos += $calculo_de_porcentaje;
-				}
-
-				// Actualizamos precio.
-				$importe	+= $suma_cargos;
-				// ¿Impuestos?
-				$impuestos	= ( ! empty( $this->tax_status ) && $this->tax_status != 'none' ) ? '' : false;
-
-				$tarifa = [
-					'id'		=> $this->get_rate_id(),
-					'label'		=> $this->title,
-					'cost'		=> $importe,
-					'taxes'		=> $impuestos,
-					'calc_tax'	=> 'per_order'
-				];
-				
-				$this->add_rate( $tarifa );
-                
-                // Limpieza del transient del icono para evitar datos obsoletos.
-                delete_transient( 'apg_shipping_icono_' . $this->instance_id );
-                
-                // Limpia la caché si cambia el total.
-                if ( WC()->session ) {
-                    WC()->session->__unset( 'apg_debugs_' . $this->instance_id );
+                    // For virtual products and bundles, still account for price if needed
+                    if ( $producto->is_virtual() && ! isset( $valores[ 'bundled_by' ] ) ) {
+                        // Virtual products don't contribute to shipping weight/volume
+                        $productos_totales += $valores['quantity'];
+                        $precio_total += $precio;
+                    } else if ( $producto->needs_shipping() ) {
+                        // Only process products that need shipping
+                        $peso_total += $peso;
+                        $productos_totales += $valores['quantity'];
+                        $precio_total += $precio;
+                        
+                        // Volume calculation
+                        if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
+                            $volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores['quantity'];
+                        }
+                        
+                        // Measures
+                        $medidas[] = [
+                            'largo' => $producto->get_length(),
+                            'ancho' => $producto->get_width(),
+                            'alto' => $producto->get_height(),
+                            'cantidad' => $valores['quantity'],
+                        ];
+                        
+                        // Store the largest side value
+                        if ( $producto->get_length() > $largo ) {
+                            $largo = $producto->get_length();
+                        }
+                        if ( $producto->get_width() > $ancho ) {
+                            $ancho = $producto->get_width();
+                        }
+                        if ( $producto->get_height() > $alto ) {
+                            $alto = $producto->get_height();
+                        }
+                        
+                        // Temporary value storing weight, quantity or total price (according to settings)
+                        $cantidad = ($this->tipo_tarifas == "unidad") ? $valores['quantity'] : $peso;
+                        if ($this->tipo_tarifas == "total") {
+                            $cantidad = $precio;
+                        }
+                        
+                        // Shipping class
+                        $clase = ($producto->get_shipping_class()) ? $producto->get_shipping_class() : 'sin-clase';
+                        // Initialize the general class
+                        if (!isset($clases['todas'])) {
+                            $clases['todas'] = 0;
+                        }
+                        $clases['todas'] += $cantidad;
+                        // Create or initialize the corresponding class
+                        if (!isset($clases[$clase])) {
+                            $clases[$clase] = $cantidad;
+                        } else if ($clase != 'todas') {
+                            $clases[$clase] += $cantidad;
+                        }
+                    } else {
+                        // For products that don't need shipping, still account for count and price
+                        $productos_totales += $valores['quantity'];
+                        $precio_total += $precio;
+                    }
                 }
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
-				do_action( 'woocommerce_' . $this->id . '_shipping_add_rate', $this, $tarifa );
-			}
-
+                
+                // Adjust the total weight value in case the setting is configured to use number of products or total price.
+                if ($this->tipo_tarifas == "unidad") {
+                    $peso_total = $productos_totales;
+                } else if ($this->tipo_tarifas == "total") {
+                    $peso_total = $precio_total;
+                }
+                
+                // Check if there are products to apply rates to
+                if (empty($medidas) && empty($clases)) {
+                    return 0; // No products that require shipping in this supplier group
+                }
+                
+                // Get rates
+                $tarifas = $this->dame_tarifas($clases);
+                
+                // Get the rate
+                $tarifa_mas_barata = $this->dame_tarifa_mas_barata($peso_total, $volumen, $largo, $ancho, $alto, $medidas, $clases, $tarifas); // Filters rates
+                if (empty($tarifa_mas_barata)) {
+                    return 0; // No rate for this supplier's products
+                }
+                
+                // Calculate the total amount
+                $importe = 0;
+                if (!empty($this->suma) && $this->suma == "yes") {
+                    $importe = max($tarifa_mas_barata);
+                } else {
+                    foreach($tarifa_mas_barata as $tarifa) {
+                        $importe += $tarifa;
+                    }
+                }
+                
+                return $importe;
+            }
+            
             /**
              * Procesa y retorna las tarifas configuradas en el método, parseando cada línea de tarifa.
              *

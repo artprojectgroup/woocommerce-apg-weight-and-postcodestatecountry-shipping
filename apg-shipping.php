@@ -137,9 +137,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     $this->instance_form_fields = $this->apg_shipping_campos_configuracion();
                 }
 
-                // Initialize supplier field name from constant if defined
-                $field_name = defined('APG_SHIPPING_PROVEEDOR_FIELD') ? APG_SHIPPING_PROVEEDOR_FIELD : 'proveedor';
-                $this->supplier_field_name = $field_name;
+                // Initialize supplier field name - default to 'proveedor', will be overridden in calculate_shipping if constant is set
+                $this->supplier_field_name = 'proveedor';
 
                 // Inicializamos variables.
 				$campos = [
@@ -871,10 +870,12 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
              * @return void
              */
             public function calculate_shipping( $paquete = [] ) {
-                // Check if supplier-based calculation is enabled
-                $is_supplier_split_enabled = defined('APG_SHIPPING_SPLIT_BY_PROVEEDOR') && APG_SHIPPING_SPLIT_BY_PROVEEDOR;
+                // Check if field-based calculation is enabled by checking for the APG_SHIPPING_SPLIT_FIELD constant
+                $split_field = defined('APG_SHIPPING_SPLIT_FIELD') ? APG_SHIPPING_SPLIT_FIELD : false;
                 
-                if ($is_supplier_split_enabled) {
+                if ($split_field) {
+                    // Set the supplier field name from the constant
+                    $this->supplier_field_name = $split_field;
                     $this->calculate_shipping_by_supplier($paquete);
                 } else {
                     $this->calculate_shipping_original($paquete);

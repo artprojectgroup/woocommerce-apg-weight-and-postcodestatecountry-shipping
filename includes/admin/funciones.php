@@ -378,8 +378,12 @@ add_action( 'updated_option', 'apg_shipping_borra_cache_icono_dinamico', 10, 3 )
 function apg_shipping_borra_cache_taxonomias_producto( $term_id, $tt_id, $taxonomy ) {
 	if ( in_array( $taxonomy, [ 'product_cat', 'product_tag' ], true ) ) {
 		delete_transient( 'apg_shipping_' . $taxonomy );
+	} elseif ( 0 === strpos( (string) $taxonomy, 'pa_' ) ) {
+		// Los valores (términos) de un atributo forman parte de la caché de atributos.
+		delete_transient( 'apg_shipping_atributos' );
 	}
 }
+add_action( 'created_term', 'apg_shipping_borra_cache_taxonomias_producto', 10, 3 );
 add_action( 'edited_term', 'apg_shipping_borra_cache_taxonomias_producto', 10, 3 );
 add_action( 'delete_term', 'apg_shipping_borra_cache_taxonomias_producto', 10, 3 );
 
@@ -404,6 +408,9 @@ function apg_shipping_borra_cache_roles_usuario() {
 }
 add_action( 'profile_update', 'apg_shipping_borra_cache_roles_usuario' );
 add_action( 'user_register', 'apg_shipping_borra_cache_roles_usuario' );
+// Los roles se suelen registrar o eliminar al activar/desactivar plugins.
+add_action( 'activated_plugin', 'apg_shipping_borra_cache_roles_usuario' );
+add_action( 'deactivated_plugin', 'apg_shipping_borra_cache_roles_usuario' );
 
 /**
  * Elimina la caché de métodos de pago cuando se actualiza el orden o la configuración de pasarelas.
@@ -417,45 +424,36 @@ add_action( 'update_option_woocommerce_gateway_order', 'apg_shipping_borra_cache
 add_action( 'woocommerce_update_options_payment_gateways', 'apg_shipping_borra_cache_metodos_pago' );
 
 /**
- * Elimina la caché de zonas de envío cuando se actualiza la configuración de métodos de envío.
+ * Elimina la caché de envíos: la lista global de zonas, la lista de métodos de cada
+ * instancia y la wp_cache de zona por instancia.
+ *
+ * Se recorren los instance_id reales de la tabla de métodos de zona en lugar de
+ * wp_load_alloptions(), que no contiene los transients con expiración (autoload «no»)
+ * ni los almacenados en un object cache persistente.
  *
  * @return void
  */
-function apg_shipping_borra_cache_zonas_envio() {
+function apg_shipping_borra_cache_envios() {
+	global $wpdb;
+
 	delete_transient( 'apg_shipping_zonas_de_envio' );
-}
-add_action( 'woocommerce_update_options_shipping', 'apg_shipping_borra_cache_zonas_envio' );
 
-/**
- * Elimina la caché de métodos de envío para una instancia específica.
- *
- * @param int $instance_id Identificador de la instancia.
- * @return void
- */
-function apg_shipping_borra_cache_metodos_envio( $instance_id ) {
-	delete_transient( 'apg_shipping_metodos_envio_' . absint( $instance_id ) );
-}
-add_action( 'woocommerce_update_shipping_method', 'apg_shipping_borra_cache_metodos_envio' );
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
+	$instancias = $wpdb->get_col( "SELECT instance_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods;" );
 
-/**
- * Elimina todos los transients relacionados con los métodos de envío al crear uno nuevo.
- *
- * @param int $zone_id     ID de la zona de envío.
- * @param int $method_id   ID del método de envío.
- * @param int $instance_id ID de la instancia.
- * @return void
- */
-function apg_shipping_borra_todos_los_transients_metodos_envio( $zone_id, $method_id, $instance_id ) {
-	$all_options = wp_load_alloptions();
-
-	foreach ( $all_options as $key => $value ) {
-        // Comprueba que la clave comience con nuestro prefijo utilizando strpos para mantener compatibilidad con versiones de PHP anteriores a 8.
-        if ( 0 === strpos( $key, '_transient_apg_shipping_metodos_envio_' ) ) {
-                delete_transient( str_replace( '_transient_', '', $key ) );
-        }
-    }
+	if ( ! empty( $instancias ) ) {
+		foreach ( $instancias as $instancia ) {
+			$instancia = absint( $instancia );
+			delete_transient( 'apg_shipping_metodos_envio_' . $instancia );
+			wp_cache_delete( 'apg_zone_' . $instancia, 'apg_shipping' );
+		}
+	}
 }
-add_action( 'woocommerce_shipping_zone_method_added', 'apg_shipping_borra_todos_los_transients_metodos_envio', 10, 3 );
+add_action( 'woocommerce_update_options_shipping', 'apg_shipping_borra_cache_envios' );
+add_action( 'woocommerce_shipping_zone_method_added', 'apg_shipping_borra_cache_envios' );
+add_action( 'woocommerce_shipping_zone_method_deleted', 'apg_shipping_borra_cache_envios' );
+add_action( 'woocommerce_shipping_zone_method_status_toggled', 'apg_shipping_borra_cache_envios' );
+add_action( 'woocommerce_delete_shipping_zone', 'apg_shipping_borra_cache_envios' );
 
 /**
  * Elimina la caché de atributos de producto cuando se añade, actualiza o elimina un atributo.
@@ -467,6 +465,7 @@ function apg_shipping_borra_cache_atributos() {
 }
 add_action( 'woocommerce_attribute_added', 'apg_shipping_borra_cache_atributos', 10 );
 add_action( 'woocommerce_attribute_updated', 'apg_shipping_borra_cache_atributos', 10 );
+add_action( 'woocommerce_attribute_deleted', 'apg_shipping_borra_cache_atributos', 10 );
 add_action( 'woocommerce_attribute_deleted', 'apg_shipping_borra_cache_atributos', 10 );
 
 /**

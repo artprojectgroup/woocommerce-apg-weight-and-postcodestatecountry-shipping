@@ -298,7 +298,7 @@ if ( WC()->shipping->get_shipping_classes() ) {
 			'data-source'   => 'classes',
 			'data-nonce'    => $apg_shipping_ajax_nonce,
 		] : [],
-		'options' 		=> [ 'todas' => __( 'All enabled shipping class', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $apg_clases_ajax ? $apg_clases_seed : $apg_clases_opts ),
+		'options' 		=> [ 'todas' => __( 'All enabled shipping classes', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) ] + ( $apg_clases_ajax ? $apg_clases_seed : $apg_clases_opts ),
 		'description'	=> ( $apg_clases_cnt > 500 ? __( 'Large list. Type to search…', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) : '' ),
 	];
 	$apg_campos[ 'tipo_clases' ] = [
@@ -393,7 +393,7 @@ $apg_campos[ 'icono' ] = [
 		'desc_tip'		=> true,
 ];
 $apg_campos[ 'muestra_icono' ] = [ 
-		'title'			=> __( 'How show icon image?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
+		'title'			=> __( 'How to show icon image?', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'desc_tip' 		=> __( "Select how you want to show the icon image.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'select',
 		'class'			=> 'wc-enhanced-select',

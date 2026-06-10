@@ -2,17 +2,17 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.9.0
+Version: 3.10.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
 Author: Art Project Group
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 WC requires at least: 5.6
-WC tested up to: 10.7.0
+WC tested up to: 10.9.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.9.0' );
+define( 'VERSION_apg_shipping', '3.10.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -587,11 +587,14 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     $this->metodos_de_envio = [];
                     $zonas_de_envio         = get_transient( 'apg_shipping_zonas_de_envio' );
                     // Obtiene la zona de envío de esta instancia.
-                    $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}" );
-                    if ( false === $zona_de_envio ) {
+                    $zona_de_envio          = wp_cache_get( "apg_zone_{$instancia}", 'apg_shipping' );
+                    if ( empty( $zona_de_envio ) ) {
                         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce
                         $zona_de_envio  = $wpdb->get_var( $wpdb->prepare( "SELECT zone_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE instance_id = %d LIMIT 1;", $instancia ) );
-                        wp_cache_set( "apg_zone_{$instancia}", $zona_de_envio );
+                        // Solo se cachea un valor válido para evitar «envenenar» la caché con una zona vacía en almacenes con object cache persistente.
+                        if ( ! empty( $zona_de_envio ) ) {
+                            wp_cache_set( "apg_zone_{$instancia}", $zona_de_envio, 'apg_shipping', DAY_IN_SECONDS );
+                        }
                     }
 
                     if ( empty( $zonas_de_envio ) ) {

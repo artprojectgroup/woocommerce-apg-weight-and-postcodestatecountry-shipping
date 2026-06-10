@@ -74,7 +74,7 @@ msgid "All enabled payments"
 msgstr ""
 
 #: includes/admin/campos.php:301
-msgid "All enabled shipping class"
+msgid "All enabled shipping classes"
 msgstr ""
 
 #: includes/admin/campos.php:385
@@ -165,11 +165,11 @@ msgid ""
 msgstr ""
 
 #: includes/cuadro-informacion.php:57 includes/admin/funciones-apg.php:45
-msgid "Contact with us by "
+msgid "Contact us by "
 msgstr ""
 
 #: includes/cuadro-informacion.php:55
-msgid "Contact with us:"
+msgid "Contact us:"
 msgstr ""
 
 #: apg-shipping.php:1350
@@ -246,7 +246,7 @@ msgid "Highest shipping class rate"
 msgstr ""
 
 #: includes/admin/campos.php:398
-msgid "How show icon image?"
+msgid "How to show icon image?"
 msgstr ""
 
 #. Author URI of the plugin
@@ -277,7 +277,7 @@ msgstr ""
 
 #: includes/cuadro-informacion.php:25
 msgid ""
-"If you enjoyed and find helpful this plugin, please make a donation:"
+"If you enjoy this plugin and find it helpful, please make a donation:"
 msgstr ""
 
 #: apg-shipping.php:1507

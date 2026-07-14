@@ -2,7 +2,7 @@
 Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
-Requires at least: 5.0
+Requires at least: 5.7
 Tested up to: 7.1
 Stable tag: 3.11.0
 WC requires at least: 5.6
@@ -564,7 +564,7 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 
 == Upgrade Notice ==
 = 3.11.0 =
-* Added compatibility with YITH WooCommerce Product Bundles. On bundles set to "Items will be bundled in a unique shipment", the bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions, so the bundle shipping rate is applied correctly.
+* Added compatibility with YITH WooCommerce Product Bundles: bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions.
 * Compatible with WooCommerce 11.0.
 
 == Translations ==

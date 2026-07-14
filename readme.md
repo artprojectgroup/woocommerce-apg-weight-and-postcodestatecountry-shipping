@@ -6,7 +6,7 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 
 Tags: WooCommerce, Shipping, Weight, Dimensions
 
-Requires at least: 5.0
+Requires at least: 5.7
 
 Tested up to: 7.1
 

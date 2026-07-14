@@ -9,7 +9,7 @@ Author URI: https://artprojectgroup.es/
 Author: Art Project Group
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-Requires at least: 5.0
+Requires at least: 5.7
 Tested up to: 7.1
 WC requires at least: 5.6
 WC tested up to: 11.0.0

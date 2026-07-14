@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.10.0
+Version: 3.11.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 5.0
 Tested up to: 7.1
 WC requires at least: 5.6
-WC tested up to: 10.9.0
+WC tested up to: 11.0.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.10.0' );
+define( 'VERSION_apg_shipping', '3.11.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -852,6 +852,38 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 			}
             
             /**
+             * Devuelve el producto contenedor si el artículo del carrito forma parte de un pack
+             * de YITH WooCommerce Product Bundles configurado como «envío único».
+             *
+             * YITH resuelve el envío de estos packs a nivel de paquete de envío, dejando solo el
+             * producto contenedor. Pero este método recorre el carrito directamente, donde los
+             * productos internos siguen presentes con su propia clase de envío (o sin ninguna) y
+             * con su propio peso y medidas, que no deben contarse.
+             *
+             * @param array $valores Datos de la línea del carrito.
+             * @return WC_Product|false Producto contenedor del pack, o false si no aplica.
+             */
+            public function apg_shipping_dame_pack_de_envio_unico( $valores ) {
+                if ( empty( $valores[ 'bundled_by' ] ) || is_null( WC()->cart ) ) {
+                    return false;
+                }
+
+                $carrito = WC()->cart->get_cart();
+                $pack    = isset( $carrito[ $valores[ 'bundled_by' ] ][ 'data' ] ) ? $carrito[ $valores[ 'bundled_by' ] ][ 'data' ] : false;
+
+                if ( ! $pack instanceof WC_Product || ! $pack->is_type( 'yith_bundle' ) ) {
+                    return false;
+                }
+
+                // «yes» = los artículos se envían individualmente: cada uno conserva su clase, peso y medidas.
+                if ( 'yes' === $pack->get_meta( '_yith_wcpb_non_bundled_shipping' ) ) {
+                    return false;
+                }
+
+                return $pack;
+            }
+
+            /**
              * Calcula y añade la tarifa de envío según las condiciones y reglas definidas.
              *
              * @param array $paquete Datos del paquete de WooCommerce.
@@ -904,9 +936,21 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				foreach ( WC()->cart->get_cart() as $identificador => $valores ) {
 					$producto  = $valores[ 'data' ];
 
+					// Compatibilidad con YITH WooCommerce Product Bundles: productos internos de un pack de «envío único».
+					$pack      = $this->apg_shipping_dame_pack_de_envio_unico( $valores );
+
 					// Toma el peso del producto.
 					$peso      = ( $producto->get_weight() > 0 ) ? $producto->get_weight() * $valores[ 'quantity' ] : 0;
-					
+
+					// El envío del pack lo define su contenedor: los productos internos no suman peso.
+					if ( $pack ) {
+						$peso_total	-= $peso;
+						$peso		 = 0;
+					}
+
+					// Clase de envío efectiva: los productos internos heredan la clase del pack.
+					$clase_de_envio = ( $pack && $pack->get_shipping_class() ) ? $pack->get_shipping_class() : $producto->get_shipping_class();
+
 					// Toma el precio del producto.
                     $modo_impuestos = version_compare( WC_VERSION, '4.4', '<' ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
                     if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
@@ -1016,8 +1060,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 
 					// No atiende a las clases de envío excluidas.
 					if ( ! empty( $this->clases_excluidas ) ) {
-						if ( ( ( in_array( $producto->get_shipping_class(), $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $producto->get_shipping_class() ) ) && $this->tipo_clases == 'no' ) ||
-							( ! in_array( $producto->get_shipping_class(), $this->clases_excluidas ) && ! in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
+						if ( ( ( in_array( $clase_de_envio, $this->clases_excluidas ) || ( in_array( "todas", $this->clases_excluidas ) && $clase_de_envio ) ) && $this->tipo_clases == 'no' ) ||
+							( ! in_array( $clase_de_envio, $this->clases_excluidas ) && ! in_array( "todas", $this->clases_excluidas ) && $this->tipo_clases == 'yes' ) ) {
 							$this->reduce_valores( $peso_total, $peso, $productos_totales, $valores, $precio_total, $producto );
 							
 							continue; 
@@ -1032,28 +1076,31 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					}
 
 					if ( $producto->needs_shipping() ) {
-						// Volumen.
-						if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
-							$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
-						}
-						
-						// Medidas.
-						$medidas[] = [
-							'largo'		=> $producto->get_length(),
-							'ancho'		=> $producto->get_width(),
-							'alto'		=> $producto->get_height(),
-							'cantidad'	=> $valores[ 'quantity' ],
-						];
-						
-						// Almacena el valor del lado más grande.
-						if ( $producto->get_length() > $largo ) {
-							$largo = $producto->get_length();
-						}
-						if ( $producto->get_width() > $ancho ) {
-							$ancho = $producto->get_width();
-						}
-						if ( $producto->get_height() > $alto ) {
-							$alto = $producto->get_height();
+						// El bulto del pack lo define su contenedor: los productos internos no suman volumen ni medidas.
+						if ( ! $pack ) {
+							// Volumen.
+							if ( $producto->get_length() && $producto->get_width() && $producto->get_height() ) {
+								$volumen += $producto->get_length() * $producto->get_width() * $producto->get_height() * $valores[ 'quantity' ];
+							}
+
+							// Medidas.
+							$medidas[] = [
+								'largo'		=> $producto->get_length(),
+								'ancho'		=> $producto->get_width(),
+								'alto'		=> $producto->get_height(),
+								'cantidad'	=> $valores[ 'quantity' ],
+							];
+
+							// Almacena el valor del lado más grande.
+							if ( $producto->get_length() > $largo ) {
+								$largo = $producto->get_length();
+							}
+							if ( $producto->get_width() > $ancho ) {
+								$ancho = $producto->get_width();
+							}
+							if ( $producto->get_height() > $alto ) {
+								$alto = $producto->get_height();
+							}
 						}
 
 						// Valor temporal que alamecena el peso, cantidad de productos o total del pedido (según configuración).
@@ -1063,7 +1110,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 						}
 
 						// Clase de envío.
-						$clase = ( $producto->get_shipping_class() ) ? $producto->get_shipping_class() : 'sin-clase';
+						$clase = ( $clase_de_envio ) ? $clase_de_envio : 'sin-clase';
 						// Inicializamos la clase general.
 						if ( ! isset ($clases[ 'todas' ] ) ) {
 							$clases[ 'todas' ] = 0;

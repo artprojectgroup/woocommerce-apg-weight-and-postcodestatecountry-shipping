@@ -10,11 +10,11 @@ Requires at least: 5.0
 
 Tested up to: 7.1
 
-Stable tag: 3.10.0
+Stable tag: 3.11.0
 
 WC requires at least: 5.6
 
-WC tested up to: 10.9.0
+WC tested up to: 11.0.0
 
 License: GPLv3 or later
 
@@ -121,6 +121,11 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+
+### 3.11.0
+
+- Añadida compatibilidad con YITH WooCommerce Product Bundles. En los packs configurados como «Los artículos serán combinados en un único envío», los productos internos heredan ahora la clase de envío del pack y dejan de sumar su propio peso y medidas, de modo que se aplica correctamente la tarifa de la clase del pack.
+- Compatible con WooCommerce 11.0.
 
 ### 3.10.0
 

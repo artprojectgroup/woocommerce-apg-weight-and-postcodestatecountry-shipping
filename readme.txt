@@ -4,9 +4,9 @@ Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 3.10.0
+Stable tag: 3.11.0
 WC requires at least: 5.6
-WC tested up to: 10.9.0
+WC tested up to: 11.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,6 +102,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.11.0 =
+* Added compatibility with YITH WooCommerce Product Bundles. On bundles set to "Items will be bundled in a unique shipment", the bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions, so the bundle shipping rate is applied correctly.
+* Compatible with WooCommerce 11.0.
 = 3.10.0 =
 * Fixed the shipping methods list not refreshing when methods were added, deleted or enabled/disabled in a shipping zone (the list could show empty or outdated on stores with a persistent object cache).
 * Improved cache invalidation for product categories, tags and attribute values, so new ones show up immediately.
@@ -560,8 +563,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.9.0 =
-* Fixed shipping method settings fields when creating a new instance from WooCommerce shipping zones.
+= 3.11.0 =
+* Added compatibility with YITH WooCommerce Product Bundles. On bundles set to "Items will be bundled in a unique shipment", the bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions, so the bundle shipping rate is applied correctly.
+* Compatible with WooCommerce 11.0.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

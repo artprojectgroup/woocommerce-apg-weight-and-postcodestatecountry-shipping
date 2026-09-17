@@ -8,13 +8,15 @@ Tags: WooCommerce, Shipping, Weight, Dimensions
 
 Requires at least: 5.7
 
-Tested up to: 7.1
+Tested up to: 7.2
 
-Stable tag: 3.11.0
+Requires PHP: 7.4
+
+Stable tag: 3.12.0
 
 WC requires at least: 5.6
 
-WC tested up to: 11.0.0
+WC tested up to: 11.1.0
 
 License: GPLv3 or later
 
@@ -121,6 +123,14 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+
+### 3.12.0
+
+- Reforzada la petición AJAX que usan los bloques de carrito y pago, a la que se le podían pedir los ajustes de otros plugins.
+- El título del método de envío y la URL del icono se escapan ahora antes de pintarse en los bloques de carrito y pago.
+- La valoración del plugin ya no provoca un aviso cuando wordpress.org no responde.
+- Pequeñas correcciones de seguridad en los enlaces del administrador y en el aviso de autodesactivación del plugin.
+- Compatible con WooCommerce 11.1 y WordPress 7.2.
 
 ### 3.11.0
 

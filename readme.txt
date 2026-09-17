@@ -3,10 +3,11 @@ Contributors: artprojectgroup
 Donate link: https://artprojectgroup.es/tienda/donacion
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.7
-Tested up to: 7.1
-Stable tag: 3.11.0
+Tested up to: 7.2
+Requires PHP: 7.4
+Stable tag: 3.12.0
 WC requires at least: 5.6
-WC tested up to: 11.0.0
+WC tested up to: 11.1.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,6 +103,12 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.12.0 =
+* Hardened the AJAX request used by the cart and checkout blocks, which could be asked for settings of other plugins.
+* The shipping method title and the icon URL are now escaped before being painted in the cart and checkout blocks.
+* The plugin rating no longer throws a notice when wordpress.org does not answer.
+* Small security fixes in the admin links and in the plugin self-deactivation notice.
+* Compatible with WooCommerce 11.1 and WordPress 7.2.
 = 3.11.0 =
 * Added compatibility with YITH WooCommerce Product Bundles. On bundles set to "Items will be bundled in a unique shipment", the bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions, so the bundle shipping rate is applied correctly.
 * Compatible with WooCommerce 11.0.
@@ -563,9 +570,9 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Initial version.
 
 == Upgrade Notice ==
-= 3.11.0 =
-* Added compatibility with YITH WooCommerce Product Bundles: bundled items now inherit the bundle shipping class and no longer add their own weight and dimensions.
-* Compatible with WooCommerce 11.0.
+= 3.12.0 =
+* Security update: hardened the AJAX request used by the cart and checkout blocks and escaped the shipping method title and icon URL.
+* Compatible with WooCommerce 11.1 and WordPress 7.2.
 
 == Translations ==
 * *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).

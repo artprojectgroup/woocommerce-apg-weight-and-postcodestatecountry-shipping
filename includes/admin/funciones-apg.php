@@ -38,11 +38,11 @@ function apg_shipping_enlaces( $enlaces, $archivo ) {
 
 	if ( $archivo == DIRECCION_apg_shipping ) {
 		$plugin = apg_shipping_plugin( $apg_shipping[ 'plugin_uri' ] );
-		$enlaces[] = '<a href="' . $apg_shipping[ 'donacion' ] . '" target="_blank" title="' . __( 'Make a donation by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'APG"><span class="genericon genericon-cart"></span></a>';
-		$enlaces[] = '<a href="'. $apg_shipping[ 'plugin_url' ] . '" target="_blank" title="' . $apg_shipping[ 'plugin' ] . '"><strong class="artprojectgroup">APG</strong></a>';
-		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Facebook" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://x.com/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'X" target="_blank"><span class="genericon genericon-x-alt"></span></a> <a href="https://es.linkedin.com/in/artprojectgroup" title="' . __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'LinkedIn" target="_blank"><span class="genericon genericon-linkedin"></span></a>';
-		$enlaces[] = '<a href="https://profiles.wordpress.org/artprojectgroup/" title="' . __( 'More plugins on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'WordPress" target="_blank"><span class="genericon genericon-wordpress"></span></a>';
-		$enlaces[] = '<a href="mailto:info@artprojectgroup.es" title="' . __( 'Contact us by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'e-mail"><span class="genericon genericon-mail"></span></a>';
+		$enlaces[] = '<a href="' . esc_url( $apg_shipping[ 'donacion' ] ) . '" target="_blank" title="' . esc_attr( __( 'Make a donation by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'APG' ) . '"><span class="genericon genericon-cart"></span></a>';
+		$enlaces[] = '<a href="'. esc_url( $apg_shipping[ 'plugin_url' ] ) . '" target="_blank" title="' . esc_attr( $apg_shipping[ 'plugin' ] ) . '"><strong class="artprojectgroup">APG</strong></a>';
+		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Facebook' ) . '" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://x.com/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'X' ) . '" target="_blank"><span class="genericon genericon-x-alt"></span></a> <a href="https://es.linkedin.com/in/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'LinkedIn' ) . '" target="_blank"><span class="genericon genericon-linkedin"></span></a>';
+		$enlaces[] = '<a href="https://profiles.wordpress.org/artprojectgroup/" title="' . esc_attr( __( 'More plugins on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'WordPress' ) . '" target="_blank"><span class="genericon genericon-wordpress"></span></a>';
+		$enlaces[] = '<a href="mailto:info@artprojectgroup.es" title="' . esc_attr( __( 'Contact us by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'e-mail' ) . '"><span class="genericon genericon-mail"></span></a>';
 		$enlaces[] = apg_shipping_plugin( $apg_shipping[ 'plugin_uri' ] );
 	}
 	
@@ -60,8 +60,8 @@ function apg_shipping_enlace_de_ajustes( $enlaces ) {
 	global $apg_shipping;
 
 	$enlaces_de_ajustes = [
-		'<a href="' . $apg_shipping[ 'ajustes' ] . '" title="' . __( 'Settings of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] .'">' . __( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>', 
-		'<a href="' . $apg_shipping[ 'soporte' ] . '" title="' . __( 'Support of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] .'">' . __( 'Support', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>'
+		'<a href="' . esc_url( admin_url( $apg_shipping[ 'ajustes' ] ) ) . '" title="' . esc_attr( __( 'Settings of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] ) .'">' . esc_html__( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>', 
+		'<a href="' . esc_url( $apg_shipping[ 'soporte' ] ) . '" title="' . esc_attr( __( 'Support of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] ) .'">' . esc_html__( 'Support', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>'
 	];
 	foreach ( $enlaces_de_ajustes as $enlace_de_ajustes ) {
 		array_unshift( $enlaces, $enlace_de_ajustes );
@@ -107,18 +107,26 @@ function apg_shipping_plugin( $nombre ) {
 		set_transient( 'apg_shipping_plugin', $respuesta, 24 * HOUR_IN_SECONDS );
 	}
 
+    // translators: %s is the plugin name.
+	$titulo		= esc_attr( sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) );
+	$enlace		= esc_url( $apg_shipping[ 'puntuacion' ] . '?rate=5#postform' );
+	$sin_datos	= '<a title="' . $titulo . '" href="' . $enlace . '" class="estrellas">' . esc_html__( 'Unknown rating', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>';
+
 	if ( is_wp_error( $respuesta ) ) {
-        // translators: %s is the plugin name.
-		return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . __( 'Unknown rating', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>';
+		return $sin_datos;
 	}
 
 	$codigo_respuesta = wp_remote_retrieve_response_code( $respuesta );
 	if ( 200 !== $codigo_respuesta ) {
-		// translators: %s is the plugin name.
-		return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . __( 'Unknown rating', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>';
+		return $sin_datos;
 	}
 
 	$plugin = json_decode( wp_remote_retrieve_body( $respuesta ) );
+
+	// Una respuesta vacía o malformada no debe intentar leer propiedades inexistentes.
+	if ( ! is_object( $plugin ) || ! isset( $plugin->rating, $plugin->num_ratings ) ) {
+		return $sin_datos;
+	}
 
     $rating = [
 	   'rating'		=> $plugin->rating,
@@ -130,8 +138,7 @@ function apg_shipping_plugin( $nombre ) {
 	$estrellas = ob_get_contents();
 	ob_end_clean();
 
-    // translators: %s is the plugin name.
-	return '<a title="' . sprintf( __( 'Please, rate %s:', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $apg_shipping[ 'plugin' ] ) . '" href="' . $apg_shipping[ 'puntuacion' ] . '?rate=5#postform" class="estrellas">' . $estrellas . '</a>';
+	return '<a title="' . $titulo . '" href="' . $enlace . '" class="estrellas">' . $estrellas . '</a>';
 }
 
 /**
@@ -216,7 +223,7 @@ function apg_shipping_debug_activo() {
 				continue;
 			}
 
-			$settings	= get_option( 'woocommerce_apg_shipping_' . $instance_id . '_settings', [] );
+			$settings	= get_option( 'woocommerce_apg_shipping_' . absint( $instance_id ) . '_settings', [] );
 			if ( isset( $settings[ 'debug' ] ) && $settings[ 'debug' ] === 'yes' ) {
 				return true;
 			}

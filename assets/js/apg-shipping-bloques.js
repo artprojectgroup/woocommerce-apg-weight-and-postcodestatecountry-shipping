@@ -2,6 +2,44 @@
  * Script para manejar los bloques de envío de APG en el carrito.
  */
 jQuery(function($) {
+    /**
+     * Escapa un valor que se va a insertar dentro de un atributo HTML.
+     *
+     * Los ayudantes basados en textContent o en .text() no codifican las comillas, por lo que no
+     * sirven en posición de atributo: este sí las codifica.
+     *
+     * @param {*} texto Valor a escapar.
+     * @return {string} Valor seguro para un atributo.
+     */
+    function escAttr( texto ) {
+        if ( texto === null || typeof texto === 'undefined' ) {
+            return '';
+        }
+
+        return String( texto )
+            .replace( /&/g, '&amp;' )
+            .replace( /</g, '&lt;' )
+            .replace( />/g, '&gt;' )
+            .replace( /"/g, '&quot;' )
+            .replace( /'/g, '&#039;' );
+    }
+
+    /**
+     * Comprueba que una URL de imagen usa un esquema navegable.
+     *
+     * Escapar las comillas no basta en href o src: hay que validar también el esquema.
+     *
+     * @param {*} url URL a comprobar.
+     * @return {boolean} True si la URL es http, https o relativa.
+     */
+    function urlValida( url ) {
+        if ( ! url ) {
+            return false;
+        }
+
+        return /^(https?:\/\/|\/|\.\/)/i.test( String( url ).trim() );
+    }
+
     // Solo aplica en la página del carrito
     if ( $('body').hasClass('woocommerce-cart') ) {
         // Inyecta el CSS personalizado
@@ -35,8 +73,8 @@ jQuery(function($) {
 				const d = res.data;
 				let icono = '', entrega = '', html = '';
 
-				if ( d.icono && d.muestra !== 'no' ) {
-					icono = `<img src="${d.icono}" style="display:inline;" class="apg_icon">`;
+				if ( d.icono && urlValida( d.icono ) && d.muestra !== 'no' ) {
+					icono = `<img src="${escAttr( d.icono )}" style="display:inline;" class="apg_icon">`;
 				}
 
 				if ( d.muestra === 'delante' ) {

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.11.0
+Version: 3.12.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -10,9 +10,10 @@ Author: Art Project Group
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 5.7
-Tested up to: 7.1
+Requires PHP: 7.4
+Tested up to: 7.2
 WC requires at least: 5.6
-WC tested up to: 11.0.0
+WC tested up to: 11.1.0
 
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
@@ -38,7 +39,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.11.0' );
+define( 'VERSION_apg_shipping', '3.12.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -1603,7 +1604,8 @@ function apg_shipping_render_console_debug() {
         return;
     }
 
-    $json = wp_json_encode( $payloads );
+    // Las banderas HEX impiden que un valor con «</script>» o comillas cierre la etiqueta y ejecute código.
+    $json = wp_json_encode( $payloads, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
     $code = 'var list = ' . $json . ';
         list.forEach(function(d, idx){
             console.group("WC - APG Weight Shipping - Debug #" + (idx + 1));
@@ -1655,18 +1657,60 @@ function apg_shipping_script_bloques() {
 add_action( 'enqueue_block_assets', 'apg_shipping_script_bloques' );
 
 /**
+ * Comprueba que un par método/instancia corresponde a un método de envío real de una zona de envío.
+ *
+ * Se usa para validar los identificadores que llegan por AJAX antes de convertirlos en el nombre
+ * de una opción de WordPress.
+ *
+ * @param string $slug        Identificador del método de envío (por ejemplo, apg_shipping o flat_rate).
+ * @param int    $instance_id Identificador de la instancia.
+ * @return bool True si la instancia existe y pertenece a ese método de envío.
+ */
+function apg_shipping_es_metodo_de_envio( $slug, $instance_id ) {
+    global $wpdb;
+
+    $instance_id    = absint( $instance_id );
+    if ( ! $instance_id || '' === $slug ) {
+        return false;
+    }
+
+    $cache_key  = 'apg_shipping_metodo_' . $instance_id;
+    $method_id  = wp_cache_get( $cache_key, 'apg_shipping' );
+
+    if ( false === $method_id ) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No existe una función alternativa en WooCommerce; el resultado se cachea en la línea siguiente.
+        $method_id  = $wpdb->get_var( $wpdb->prepare( "SELECT method_id FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE instance_id = %d LIMIT 1;", $instance_id ) );
+        $method_id  = is_string( $method_id ) ? $method_id : '';
+        wp_cache_set( $cache_key, $method_id, 'apg_shipping', DAY_IN_SECONDS );
+    }
+
+    return ( '' !== $method_id && $method_id === $slug );
+}
+
+/**
  * Gestiona la respuesta AJAX para obtener datos del método de envío (icono, entrega, etc) en bloques.
  *
  * @return void
  */
 function apg_shipping_ajax_datos() {
-    // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
+    // Endpoint público de solo lectura: devuelve el mismo rótulo que ya se ve en el carrito, por lo que no lleva
+    // nonce (obligaría a invalidar las páginas cacheadas) ni comprobación de capacidad.
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- Lectura pública sin efectos secundarios.
     $metodo = isset( $_POST[ 'metodo' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'metodo' ] ) ) : '';
     if ( ! preg_match( '/^([a-zA-Z0-9_]+):(\d+)$/', $metodo, $method ) ) {
         wp_send_json_error( __( 'Invalid format', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
     }
 
     list( , $slug, $instance_id )   = $method;
+    $instance_id                    = absint( $instance_id );
+
+    // El par método/instancia llega del navegador y construye el nombre de la opción que se lee justo debajo.
+    // Sin esta comprobación, cualquier visitante sin identificar podría pedir la lectura de cualquier opción
+    // que encaje con «woocommerce_<lo que sea>_<número>_settings».
+    if ( ! apg_shipping_es_metodo_de_envio( $slug, $instance_id ) ) {
+        wp_send_json_error( __( 'No data available', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
+    }
+
     $opciones                       = get_option( "woocommerce_{$slug}_{$instance_id}_settings" );
     if ( ! is_array( $opciones ) ) {
         wp_send_json_error( __( 'No data available', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) );
@@ -1679,7 +1723,8 @@ function apg_shipping_ajax_datos() {
         $entrega    = ( apply_filters( 'apg_shipping_delivery', true ) ) ? sprintf( __( "Estimated delivery time: %s", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ), $entrega ) : $entrega;
     }
     wp_send_json_success( [
-        'titulo'    => $opciones[ 'title' ] ?? ucfirst( $slug ),
+        // El título se inserta como HTML en el rótulo del bloque de envío: se limpia aquí, igual que el tiempo de entrega.
+        'titulo'    => wp_kses_post( $opciones[ 'title' ] ?? ucfirst( $slug ) ),
         'entrega'   => wp_kses_post( $entrega ),
         'icono'     => esc_url_raw( $opciones[ 'icono' ] ?? '' ),
         'muestra'   => $opciones[ 'muestra_icono' ] ?? '',
@@ -1700,7 +1745,12 @@ function apg_shipping_requiere_wc() {
     echo '<h3>' . esc_html( $apg_shipping[ 'plugin' ] ) . '</h3>';
     echo '<h4>' . esc_html__( 'This plugin requires WooCommerce to be active in order to run!', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</h4>';
     echo '</div>';
-	deactivate_plugins( DIRECCION_apg_shipping );
+
+	// admin_notices se ejecuta para cualquier usuario identificado que abra el escritorio: solo quien
+	// puede gestionar plugins debe provocar la desactivación.
+	if ( current_user_can( 'activate_plugins' ) ) {
+		deactivate_plugins( DIRECCION_apg_shipping );
+	}
 }
 
 /**

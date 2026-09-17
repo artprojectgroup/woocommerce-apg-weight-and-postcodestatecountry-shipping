@@ -344,7 +344,15 @@ function apg_shipping_dame_configuracion() {
         return [];
     }
     
-    return ( isset( $id[ 1 ] ) ) ? maybe_unserialize( get_option( 'woocommerce_apg_shipping_' . $id[ 1 ] . '_settings' ) ) : [];
+    if ( ! isset( $id[ 1 ] ) ) {
+        return [];
+    }
+
+    // El identificador procede de chosen_shipping_methods o del POST del checkout, ambos fijados por el cliente.
+    $opcion                 = get_option( 'woocommerce_apg_shipping_' . absint( $id[ 1 ] ) . '_settings' );
+    $apg_shipping_settings  = is_array( $opcion ) ? $opcion : maybe_unserialize( $opcion );
+
+    return is_array( $apg_shipping_settings ) ? $apg_shipping_settings : [];
 }
 
 /**
@@ -446,6 +454,7 @@ function apg_shipping_borra_cache_envios() {
 			$instancia = absint( $instancia );
 			delete_transient( 'apg_shipping_metodos_envio_' . $instancia );
 			wp_cache_delete( 'apg_zone_' . $instancia, 'apg_shipping' );
+			wp_cache_delete( 'apg_shipping_metodo_' . $instancia, 'apg_shipping' );
 		}
 	}
 }

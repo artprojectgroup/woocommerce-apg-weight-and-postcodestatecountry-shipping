@@ -12,7 +12,7 @@ Tested up to: 7.2
 
 Requires PHP: 7.4
 
-Stable tag: 3.12.0
+Stable tag: 3.13.0
 
 WC requires at least: 5.6
 
@@ -61,6 +61,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 - Puedes eliminar el texto previo del tiempo estimado de entrega con el filtro `apg_shipping_delivery`.
 - Totalmente compatible con el plugin [WooCommerce Product Bundles](https://woocommerce.com/products/product-bundles/).
 - Totalmente compatible con el plugin [WPML](https://wpml.org/?aid=80296&affiliate_key=m66Ss5ps0xoS).
+- Ayuda contextual en los ajustes del método de envío, que explica cada opción sin salir de la pantalla.
 
 ### Traducciones
 
@@ -73,7 +74,7 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 
 ### Soporte técnico
 
-**Art Project Group** te ofrece [**Soporte técnico**](https://artprojectgroup.es/tienda/ticket-de-soporte) para configurar o instalar ***WC - APG Weight Shipping***.
+**Art Project Group** te ofrece [**Soporte técnico**](https://artprojectgroup.es/tienda/soporte-tecnico) para configurar o instalar ***WC - APG Weight Shipping***.
 
 ### Origen
 
@@ -81,13 +82,15 @@ Añade a WooCommerce el cálculo de los gastos de envío según el peso, dimensi
 
 ### Más información
 
-En nuestro sitio web oficial puede obtener más información sobre [**WC - APG Weight Shipping**](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping). 
+En nuestro sitio web oficial puede obtener más información sobre [**WC - APG Weight Shipping**](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-envio-por-peso). 
+
+Tienes la [documentación completa](https://artprojectgroup.es/documentacion/wc-apg-envio-por-peso), con cada ajuste explicado uno a uno.
 
 ### Comentarios
 
 No olvides dejarnos tu comentario en:
 
-- [WC - APG Weight Shipping](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping) en Art Project Group.
+- [WC - APG Weight Shipping](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-envio-por-peso) en Art Project Group.
 - [Art Project Group](https://www.facebook.com/artprojectgroup) en Facebook.
 - [@artprojectgroup](https://x.com/artprojectgroup) en X.
 
@@ -118,11 +121,15 @@ Como la configuración del plugin es un poco compleja, hemos creado un tutorial 
 
 ### Soporte técnico
 
-Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](https://artprojectgroup.es/tienda/ticket-de-soporte). 
+Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Art Project Group** te ofrece su servicio de [**Soporte técnico**](https://artprojectgroup.es/tienda/soporte-tecnico). 
 
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+
+### 3.13.0
+
+- Ayuda contextual en los ajustes del método de envío, que explica cada opción sin salir de la pantalla.
 
 ### 3.12.0
 
@@ -962,7 +969,7 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 
 ## Soporte técnico
 
-Dado que **WC - APG Weight Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](https://artprojectgroup.es/tienda/ticket-de-soporte) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
+Dado que **WC - APG Weight Shipping** es totalmente gratuito, **Art Project Group** sólo proporciona el servicio de [**Soporte técnico**](https://artprojectgroup.es/tienda/soporte-tecnico) previo pago. En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.
 
 ## Donación
 

@@ -49,6 +49,7 @@ msgid ""
 msgstr ""
 
 #: includes/admin/campos.php:76
+#: includes/clases/class-apg-shipping-help.php:149
 msgid "Additional Fee"
 msgstr ""
 
@@ -90,10 +91,12 @@ msgid "Apply additional fee per product."
 msgstr ""
 
 #: includes/admin/campos.php:84
+#: includes/clases/class-apg-shipping-help.php:150
 msgid "Apply per product?"
 msgstr ""
 
 #: includes/admin/campos.php:111
+#: includes/clases/class-apg-shipping-help.php:159
 msgid "Apply shipping rate per..."
 msgstr ""
 
@@ -201,6 +204,7 @@ msgid "Enable/Disable"
 msgstr ""
 
 #: includes/admin/campos.php:410
+#: includes/clases/class-apg-shipping-help.php:189
 msgid "Estimated delivery time"
 msgstr ""
 
@@ -238,14 +242,17 @@ msgid "Guest"
 msgstr ""
 
 #: includes/admin/campos.php:68
+#: includes/clases/class-apg-shipping-help.php:148
 msgid "Handling Fee"
 msgstr ""
 
 #: includes/admin/campos.php:124
+#: includes/clases/class-apg-shipping-help.php:160
 msgid "Highest shipping class rate"
 msgstr ""
 
 #: includes/admin/campos.php:398
+#: includes/clases/class-apg-shipping-help.php:188
 msgid "How to show icon image?"
 msgstr ""
 
@@ -260,6 +267,7 @@ msgid ""
 msgstr ""
 
 #: includes/admin/campos.php:391
+#: includes/clases/class-apg-shipping-help.php:187
 msgid "Icon image"
 msgstr ""
 
@@ -306,6 +314,7 @@ msgid "Make a donation by "
 msgstr ""
 
 #: apg-shipping.php:220 includes/admin/campos.php:50
+#: includes/clases/class-apg-shipping-help.php:139
 msgid "Method Title"
 msgstr ""
 
@@ -354,10 +363,12 @@ msgid "Not show, just title"
 msgstr ""
 
 #: includes/admin/campos.php:131
+#: includes/clases/class-apg-shipping-help.php:161
 msgid "Overweight/over dimensions"
 msgstr ""
 
 #: includes/admin/campos.php:348
+#: includes/clases/class-apg-shipping-help.php:178
 msgid "Payment gateway"
 msgstr ""
 
@@ -546,6 +557,7 @@ msgid "Shipping method:"
 msgstr ""
 
 #: includes/admin/campos.php:375
+#: includes/clases/class-apg-shipping-help.php:179
 msgid "Shipping methods"
 msgstr ""
 
@@ -556,10 +568,12 @@ msgid "Shipping methods available in the same shipping zone of %s"
 msgstr ""
 
 #: includes/admin/campos.php:103
+#: includes/clases/class-apg-shipping-help.php:158
 msgid "Shipping Rates"
 msgstr ""
 
 #: includes/admin/campos.php:417
+#: includes/clases/class-apg-shipping-help.php:197
 msgid "Show debug information?"
 msgstr ""
 
@@ -572,6 +586,7 @@ msgid "Support of "
 msgstr ""
 
 #: includes/admin/campos.php:57
+#: includes/clases/class-apg-shipping-help.php:140
 msgid "Tax Status"
 msgstr ""
 
@@ -630,4 +645,199 @@ msgstr ""
 
 #. Name of the plugin
 msgid "WC - APG Weight Shipping"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:70
+msgid "More help"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:71
+msgid "Full documentation"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:136
+msgid "The method"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:138
+msgid ""
+"This method belongs to the shipping zone you are editing, so it only ever "
+"applies to the countries, states and postcodes of that zone. You can add it "
+"as many times as you need, each copy with its own rates."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:139
+msgid "the name the customer reads at checkout. APG Shipping by default."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:140
+msgid ""
+"whether the shipping cost is taxed or not. It only shows when taxes are "
+"enabled in WooCommerce."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:145
+msgid "Fees"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:147
+msgid ""
+"What is added on top of the rate the table gives. Both boxes are added to "
+"the shipping cost, never to the price of the products."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:148
+msgid "a fixed amount added to the cost of the order."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:149
+msgid ""
+"another amount on top, which can also be a percentage, as in 6%, and accepts "
+"a floor and a ceiling: 6%|min=\"20.50\" max=\"100\"."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:150
+msgid ""
+"charges the additional fee once per item in the cart instead of once per "
+"order."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:155
+msgid "Shipping rates"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:157
+msgid ""
+"The table that decides the price, one rule per line. The plugin reads them "
+"from the top down and charges the first one that fits, so write them from "
+"the smallest to the largest. Under the box you have your own weight and "
+"dimension units, and the names of your shipping classes, so you do not have "
+"to go and look them up."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:158
+msgid ""
+"the rules. Up to this weight and this price: 1000|6.95. With a maximum size: "
+"1000|6.95|10x10x10. By size alone: 10x10x10|6.95. A range: 500-1000|4.95. "
+"And a repeating rate, so you do not write a hundred lines: 500+100|2.00+0.25 "
+"means 2.00 up to 500, and 0.25 more for every 100 after that, with "
+"500+100-50|2.00+0.25 stopping at 50."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:159
+msgid ""
+"what the first number of each rule means: the total weight of the cart, "
+"which is the usual one, the number of items, or the cart total."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:160
+msgid ""
+"with several shipping classes in the same cart, charges only the dearest one "
+"instead of adding them all up. It only shows when your shop has shipping "
+"classes."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:161
+msgid ""
+"what to do with an order that goes over the last rule of the table. Ticked, "
+"which is how it comes, it charges the highest rate; unticked, the method "
+"does not show at checkout and that order cannot be shipped this way."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:166
+msgid "Exclusions"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:168
+msgid ""
+"What this method refuses to carry. There are five pairs of settings, one for "
+"product categories, tags, attributes, shipping classes and user roles, and "
+"the two in each pair work together."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:169
+msgid "No shipping (...)"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:169
+msgid ""
+"the list of categories, tags, attributes, shipping classes or roles this "
+"method does not accept. Leave a list empty and nothing is excluded by it. "
+"With more than five hundred entries the list turns into a search box, so you "
+"type instead of scrolling."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:170
+msgid "Shipping (...)?"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:170
+msgid ""
+"turns the list around: ticked, the method carries only what is on the list "
+"and refuses everything else."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:175
+msgid "At checkout"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:177
+msgid ""
+"Which payment methods and which other shipping methods can be used together "
+"with this one."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:178
+msgid ""
+"the payment methods the customer is offered when choosing this shipping "
+"method. Useful for leaving cash on delivery out of a shipping method that "
+"does not take it."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:179
+msgid ""
+"the other shipping methods of the same zone that are shown alongside this "
+"one. Unselect one and it disappears from checkout whenever this method is "
+"available."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:184
+msgid "How it looks"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:186
+msgid "What the customer sees next to the price at checkout."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:187
+msgid ""
+"the address of an image to show with the method, typically the carrier logo. "
+"60x21 pixels works well."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:188
+msgid ""
+"where the icon goes: before the title, after it, or on its own with no title "
+"at all."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:189
+msgid ""
+"a free text shown under the method, such as 24 to 48 hours. Leave it empty "
+"and nothing is shown."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:194
+msgid "Troubleshooting"
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:196
+msgid "For when the price that comes out is not the one you expected."
+msgstr ""
+
+#: includes/clases/class-apg-shipping-help.php:197
+msgid ""
+"prints on the cart page the weight, the dimensions and the rule the plugin "
+"used to reach that price, so you can see which line of the table matched. "
+"Remember to untick it before your customers see it."
 msgstr ""

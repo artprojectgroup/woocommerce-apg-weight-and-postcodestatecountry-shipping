@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.12.0
+Version: 3.13.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -39,7 +39,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.12.0' );
+define( 'VERSION_apg_shipping', '3.13.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -73,6 +73,19 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 		
 		// Cargamos funciones necesarias.
         include_once __DIR__ . '/includes/admin/funciones.php';
+
+        // Ayuda contextual. Los ajustes de este método viven dentro de la pantalla de ajustes de
+        // WooCommerce, y es la propia clase la que comprueba que se está editando una instancia
+        // suya antes de añadir nada.
+        //
+        // Va en `admin_head` con prioridad 11 y no en `load-woocommerce_page_wc-settings` porque
+        // WooCommerce vacía la ayuda de toda esa pantalla en `admin_head` con prioridad 10
+        // (`WC_Admin_Settings::get_settings_pages()`), mediante una función anónima que no se puede
+        // desenganchar. Añadiéndolos después, los paneles llegan intactos al HTML.
+        if ( is_admin() ) {
+            include_once __DIR__ . '/includes/clases/class-apg-shipping-help.php';
+            add_action( 'admin_head', array( 'APG_Shipping_Help', 'add_tabs' ), 11 );
+        }
 
         /**
          * Clase principal para el método de envío APG Shipping.

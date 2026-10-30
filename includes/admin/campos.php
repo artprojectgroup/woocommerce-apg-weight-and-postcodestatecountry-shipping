@@ -37,15 +37,6 @@ return ( function() {
 $apg_texto  = __( "Select the %1\$s where %2\$s doesn't accept shippings.", 'woocommerce-apg-weight-and-postcodestatecountry-shipping' );
 $apg_campos = [];
 
-// Campo: Activar/desactivar (solo WC < 2.7)
-if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-	$apg_campos[ 'activo' ] = [ 
-		'title'			=> __( 'Enable/Disable', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'type'			=> 'checkbox',
-		'label'			=> __( 'Enable this shipping method', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
-		'default'		=> 'yes'
-	];
-}
 $apg_campos[ 'title' ] = [
 		'title'			=> __( 'Method Title', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ),
 		'type'			=> 'text',

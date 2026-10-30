@@ -2,7 +2,7 @@
 /*
 Plugin Name: WC - APG Weight Shipping
 Requires Plugins: woocommerce
-Version: 3.13.0
+Version: 3.14.0
 Plugin URI: https://wordpress.org/plugins/woocommerce-apg-weight-and-postcodestatecountry-shipping/
 Description: Add to WooCommerce the calculation of shipping costs based on the order weight and postcode, province (state) and country of customer's address. Lets you add an unlimited shipping rates. Created from <a href="https://profiles.wordpress.org/andy_p/" target="_blank">Andy_P</a> <a href="https://wordpress.org/plugins/awd-weightcountry-shipping/" target="_blank"><strong>AWD Weight/Country Shipping</strong></a> plugin and the modification of <a href="https://wordpress.org/support/profile/mantish" target="_blank">Mantish</a> published in <a href="https://gist.github.com/Mantish/5658280" target="_blank">GitHub</a>.
 Author URI: https://artprojectgroup.es/
@@ -13,8 +13,7 @@ Requires at least: 5.7
 Requires PHP: 7.4
 Tested up to: 7.2
 WC requires at least: 5.6
-WC tested up to: 11.1.0
-
+WC tested up to: 11.2.1
 Text Domain: woocommerce-apg-weight-and-postcodestatecountry-shipping
 Domain Path: /languages
 */
@@ -39,7 +38,7 @@ define( 'DIRECCION_apg_shipping', plugin_basename( __FILE__ ) );
  * Constante con la versión actual del plugin.
  * @var string
  */
-define( 'VERSION_apg_shipping', '3.13.0' );
+define( 'VERSION_apg_shipping', '3.14.0' );
 
 // Funciones generales de APG.
 include_once __DIR__ . '/includes/admin/funciones-apg.php';
@@ -173,9 +172,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					'entrega',
 					'debug',
 				];
-				if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-					$campos[]  = 'activo';
-				}
 				foreach ( $campos as $campo ) {
 					$this->$campo  = $this->get_option( $campo );
 				}
@@ -282,10 +278,6 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                     'entrega'             => [ 'type' => 'text', 'default' => '' ],
                     'debug'               => [ 'type' => 'checkbox', 'default' => 'no' ],
                 ];
-
-                if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-                    $campos['activo'] = [ 'type' => 'checkbox', 'default' => 'yes' ];
-                }
 
                 return $campos;
             }
@@ -830,13 +822,7 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 				$productos_totales	-= $valores[ 'quantity' ];
                 $cantidad           = $valores[ 'quantity' ];
 
-                if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-                    $precio_unitario    = ( WC()->cart->tax_display_cart === 'excl' ) ? $producto->get_price_excluding_tax() : $producto->get_price_including_tax();
-                } elseif ( version_compare( WC_VERSION, '4.4', '<' ) ) {
-                    $precio_unitario    = ( WC()->cart->tax_display_cart === 'excl' ) ? wc_get_price_excluding_tax( $producto ) : wc_get_price_including_tax( $producto );
-                } else {
-                    $precio_unitario    = ( WC()->cart->get_tax_price_display_mode() === 'excl' ) ? wc_get_price_excluding_tax( $producto ) :  wc_get_price_including_tax( $producto );
-				}
+                $precio_unitario    = ( WC()->cart->get_tax_price_display_mode() === 'excl' ) ? wc_get_price_excluding_tax( $producto ) :  wc_get_price_including_tax( $producto );
                 
                 $precio_total   -= $precio_unitario * $cantidad;
 			}
@@ -851,14 +837,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
                 $disponible = true;
 
 				// Comprueba si está activo el plugin.
-                if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-                    if ( isset( $this->activo ) && $this->activo === 'no' ) {
-                        $disponible = false;
-                    }
-                } else {
-                    if ( ! $this->is_enabled() ) {
-                        $disponible = false;
-                    }
+                if ( ! $this->is_enabled() ) {
+                    $disponible = false;
                 }
 
                 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce hook.
@@ -966,12 +946,8 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) || is_network_only_plugin
 					$clase_de_envio = ( $pack && $pack->get_shipping_class() ) ? $pack->get_shipping_class() : $producto->get_shipping_class();
 
 					// Toma el precio del producto.
-                    $modo_impuestos = version_compare( WC_VERSION, '4.4', '<' ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
-                    if ( version_compare( WC_VERSION, '2.7', '<' ) ) {
-                        $precio_unitario    = ( $modo_impuestos === 'excl' ) ? $producto->get_price_excluding_tax() : $producto->get_price_including_tax();
-                    } else {
-                        $precio_unitario    = ( $modo_impuestos === 'excl' ) ? wc_get_price_excluding_tax( $producto ) : wc_get_price_including_tax( $producto );
-                    }
+                    $modo_impuestos = WC()->cart->get_tax_price_display_mode();
+                    $precio_unitario    = ( $modo_impuestos === 'excl' ) ? wc_get_price_excluding_tax( $producto ) : wc_get_price_including_tax( $producto );
 
                     $precio = $precio_unitario * $valores[ 'quantity' ];
 

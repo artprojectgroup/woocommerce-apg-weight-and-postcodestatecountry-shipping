@@ -89,7 +89,7 @@ function apg_shipping_icono( $etiqueta, $metodo ) {
     }
 
     // Precio y título.
-    $impuestos  = ( version_compare( WC_VERSION, '4.4', '<' ) ) ? WC()->cart->tax_display_cart : WC()->cart->get_tax_price_display_mode();
+    $impuestos  = WC()->cart->get_tax_price_display_mode();
     if ( $impuestos === 'excl' ) {
         $precio = ( $metodo->get_shipping_tax() > 0 && WC()->cart->prices_include_tax ) ? wc_price( $metodo->cost ) . ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>' : wc_price( $metodo->cost );
     } else {

@@ -9,15 +9,12 @@ Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.7
 
 Tested up to: 7.2
-
 Requires PHP: 7.4
 
-Stable tag: 3.13.0
-
+Stable tag: 3.14.0
 WC requires at least: 5.6
 
-WC tested up to: 11.1.0
-
+WC tested up to: 11.2.1
 License: GPLv3 or later
 
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -126,6 +123,11 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+
+### 3.14.0
+
+- Quitado el código de compatibilidad con WooCommerce anterior a 4.4, que ya no se ejecutaba.
+- Compatible con WordPress 7.2 y WooCommerce 11.2.1.
 
 ### 3.13.0
 

@@ -14,12 +14,31 @@
 defined( 'ABSPATH' ) || exit;
 
 // Definimos las variables.
+/* Devuelve la direccion de la web en el idioma de quien mira la pantalla. Se resuelve al usarla y
+nunca al cargar el plugin, porque hasta que WordPress no identifica al usuario no se sabe su idioma. */
+function apg_shipping_enlace( $clave ) {
+	global $apg_shipping;
+
+	if ( ! isset( $apg_shipping['enlaces'][ $clave ] ) ) {
+		return '';
+	}
+
+	$par = $apg_shipping['enlaces'][ $clave ];
+
+	return ( 0 === strpos( get_user_locale(), 'es' ) ) ? $par[0] : $par[1];
+}
+
 $apg_shipping = [	
 	'plugin' 		=> 'WC - APG Weight Shipping', 
 	'plugin_uri' 	=> 'woocommerce-apg-weight-and-postcodestatecountry-shipping', 
-	'donacion' 		=> 'https://artprojectgroup.es/tienda/donacion',
-	'soporte' 		=> 'https://artprojectgroup.es/tienda/soporte-tecnico',
-	'plugin_url' 	=> 'https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-weight-shipping', 
+	//Cada direccion de la web, en espanol y en ingles.
+	'enlaces' => array(
+		'web' => array( 'https://artprojectgroup.es/', 'https://artprojectgroup.com/' ),
+		'plugin_url' => array( 'https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-envio-por-peso', 'https://artprojectgroup.com/woocommerce-plugins/wc-apg-weight-shipping' ),
+		'donacion' => array( 'https://artprojectgroup.es/tienda/donacion', 'https://artprojectgroup.com/shop/donation' ),
+		'soporte' => array( 'https://artprojectgroup.es/tienda/soporte-tecnico', 'https://artprojectgroup.com/shop/technical-support' ),
+		'documentacion' => array( 'https://artprojectgroup.es/documentacion/wc-apg-envio-por-peso', 'https://artprojectgroup.com/documentation/wc-apg-weight-shipping' ),
+		),
 	'ajustes' 		=> 'admin.php?page=wc-settings&tab=shipping', 
 	'puntuacion' 	=> 'https://wordpress.org/support/view/plugin-reviews/woocommerce-apg-weight-and-postcodestatecountry-shipping'
 ];
@@ -38,8 +57,8 @@ function apg_shipping_enlaces( $enlaces, $archivo ) {
 
 	if ( $archivo == DIRECCION_apg_shipping ) {
 		$plugin = apg_shipping_plugin( $apg_shipping[ 'plugin_uri' ] );
-		$enlaces[] = '<a href="' . esc_url( $apg_shipping[ 'donacion' ] ) . '" target="_blank" title="' . esc_attr( __( 'Make a donation by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'APG' ) . '"><span class="genericon genericon-cart"></span></a>';
-		$enlaces[] = '<a href="'. esc_url( $apg_shipping[ 'plugin_url' ] ) . '" target="_blank" title="' . esc_attr( $apg_shipping[ 'plugin' ] ) . '"><strong class="artprojectgroup">APG</strong></a>';
+		$enlaces[] = '<a href="' . esc_url( apg_shipping_enlace( 'donacion' ) ) . '" target="_blank" title="' . esc_attr( __( 'Make a donation by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'APG' ) . '"><span class="genericon genericon-cart"></span></a>';
+		$enlaces[] = '<a href="'. esc_url( apg_shipping_enlace( 'plugin_url' ) ) . '" target="_blank" title="' . esc_attr( $apg_shipping[ 'plugin' ] ) . '"><strong class="artprojectgroup">APG</strong></a>';
 		$enlaces[] = '<a href="https://www.facebook.com/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'Facebook' ) . '" target="_blank"><span class="genericon genericon-facebook-alt"></span></a> <a href="https://x.com/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'X' ) . '" target="_blank"><span class="genericon genericon-x-alt"></span></a> <a href="https://es.linkedin.com/in/artprojectgroup" title="' . esc_attr( __( 'Follow us on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'LinkedIn' ) . '" target="_blank"><span class="genericon genericon-linkedin"></span></a>';
 		$enlaces[] = '<a href="https://profiles.wordpress.org/artprojectgroup/" title="' . esc_attr( __( 'More plugins on ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'WordPress' ) . '" target="_blank"><span class="genericon genericon-wordpress"></span></a>';
 		$enlaces[] = '<a href="mailto:info@artprojectgroup.es" title="' . esc_attr( __( 'Contact us by ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . 'e-mail' ) . '"><span class="genericon genericon-mail"></span></a>';
@@ -61,7 +80,7 @@ function apg_shipping_enlace_de_ajustes( $enlaces ) {
 
 	$enlaces_de_ajustes = [
 		'<a href="' . esc_url( admin_url( $apg_shipping[ 'ajustes' ] ) ) . '" title="' . esc_attr( __( 'Settings of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] ) .'">' . esc_html__( 'Settings', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>', 
-		'<a href="' . esc_url( $apg_shipping[ 'soporte' ] ) . '" title="' . esc_attr( __( 'Support of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] ) .'">' . esc_html__( 'Support', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>'
+		'<a href="' . esc_url( apg_shipping_enlace( 'soporte' ) ) . '" title="' . esc_attr( __( 'Support of ', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . $apg_shipping[ 'plugin' ] ) .'">' . esc_html__( 'Support', 'woocommerce-apg-weight-and-postcodestatecountry-shipping' ) . '</a>'
 	];
 	foreach ( $enlaces_de_ajustes as $enlace_de_ajustes ) {
 		array_unshift( $enlaces, $enlace_de_ajustes );

@@ -11,7 +11,7 @@ Requires at least: 5.7
 Tested up to: 7.2
 Requires PHP: 7.4
 
-Stable tag: 3.14.0
+Stable tag: 3.14.1
 WC requires at least: 5.6
 
 WC tested up to: 11.2.1
@@ -123,6 +123,9 @@ Si necesitas ayuda para configurar o instalar **WC - APG Weight Shipping**, **Ar
 *En ningún caso **Art Project Group** proporciona ningún tipo de soporte técnico gratuito.*
 
 ## Changelog
+
+### 3.14.1
+- Los enlaces a la web, a la documentación, a la donación y al soporte se abren en el idioma de quien mira la pantalla.
 
 ### 3.14.0
 

@@ -24,16 +24,6 @@ class APG_Shipping_Help {
 	const METODO = 'apg_shipping';
 
 	/**
-	 * Dirección de la documentación completa, en español.
-	 */
-	const DOCS_URL = 'https://artprojectgroup.es/documentacion/wc-apg-envio-por-peso';
-
-	/**
-	 * Dirección de la documentación completa, en inglés.
-	 */
-	const DOCS_URL_EN = 'https://artprojectgroup.com/documentation/wc-apg-envio-por-peso';
-
-	/**
 	 * Añade los paneles del plugin a la pantalla de ajustes de envío.
 	 *
 	 * Se engancha en load-woocommerce_page_wc-settings, que cubre toda la pantalla de ajustes de
@@ -101,7 +91,8 @@ class APG_Shipping_Help {
 	 * @return string
 	 */
 	private static function documentacion() {
-		return ( 0 === strpos( get_user_locale(), 'es' ) ) ? self::DOCS_URL : self::DOCS_URL_EN;
+		//El idioma lo decide apg_shipping_enlace(), que es quien guarda las dos direcciones.
+		return apg_shipping_enlace( 'documentacion' );
 	}
 
 	/**

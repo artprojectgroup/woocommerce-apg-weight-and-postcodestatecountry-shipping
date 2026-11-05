@@ -1,11 +1,11 @@
 === WC - APG Weight Shipping ===
 Contributors: artprojectgroup
-Donate link: https://artprojectgroup.es/tienda/donacion
+Donate link: https://artprojectgroup.com/shop/donation
 Tags: WooCommerce, Shipping, Weight, Dimensions
 Requires at least: 5.7
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 3.14.0
+Stable tag: 3.14.1
 WC requires at least: 5.6
 WC tested up to: 11.2.1
 License: GPLv3 or later
@@ -51,33 +51,33 @@ Add to WooCommerce shipping costs calculating based on weight, size and post cod
 * Contextual help on the shipping method settings, explaining every setting without leaving the screen.
 
 = Translations =
-* Español ([**Art Project Group**](https://artprojectgroup.es/)).
-* English ([**Art Project Group**](https://artprojectgroup.es/)).
+* Español ([**Art Project Group**](https://artprojectgroup.com/)).
+* English ([**Art Project Group**](https://artprojectgroup.com/)).
 * Français ([**Guillaume**](https://guillaume-thibord.com/)).
 * Português ([**Alain Aubry**](https://www.casa-indigo.com/)).
 * Português (Brasil) ([**Danilo Lopes da Silva**](https://www.armarinhosdonaflor.com.br/)).
 * Italiano ([**Angelo Lazzari**](https://www.redtulp.com/)).
 
 = Technical support =
-**Art Project Group** offers [**Technical support**](https://artprojectgroup.es/tienda/soporte-tecnico) to configure or install ***WC - APG Weight Shipping***.
+**Art Project Group** offers [**Technical support**](https://artprojectgroup.com/shop/technical-support) to configure or install ***WC - APG Weight Shipping***.
 
 = Origin =
 **WC - APG Weight Shipping** has been programmed from plugin [*AWD Weight/Country Shipping*](https://wordpress.org/plugins/awd-weightcountry-shipping/) from [Andy_P](https://profiles.wordpress.org/andy_p/) and [Mantish](https://wordpress.org/support/profile/mantish) modification published on [GitHub](https://gist.github.com/Mantish/5658280), who, despite his brilliance, didn’t offer all the features we needed. Even so their work has been absolutely essential for the realization of this plugin.
 
 = More information =
-On our official website you can learn more about [**WC - APG Weight Shipping**](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-envio-por-peso). 
+On our official website you can learn more about [**WC - APG Weight Shipping**](https://artprojectgroup.com/woocommerce-plugins/wc-apg-weight-shipping). 
 
-You can also read the [full documentation](https://artprojectgroup.es/documentacion/wc-apg-envio-por-peso), with every setting explained one by one.
+You can also read the [full documentation](https://artprojectgroup.com/documentation/wc-apg-weight-shipping), with every setting explained one by one.
 
 = Comments =
 Don’t forget to leave us your comment on:
 
-* [WC - APG Weight Shipping](https://artprojectgroup.es/plugins-para-woocommerce/wc-apg-envio-por-peso) on Art Project Group.
+* [WC - APG Weight Shipping](https://artprojectgroup.com/woocommerce-plugins/wc-apg-weight-shipping) on Art Project Group.
 * [Art Project Group](https://www.facebook.com/artprojectgroup) on Facebook.
 * [@artprojectgroup](https://x.com/artprojectgroup) on X.
 
 = More plugins =
-Remember that you can find more [plugins for WordPress](https://artprojectgroup.es/plugins-para-wordpress) and more [plugins for WooCommerce](https://artprojectgroup.es/plugins-para-woocommerce) on [Art Project Group](https://artprojectgroup.es) and our profile on [WordPress](https://profiles.wordpress.org/artprojectgroup/).
+Remember that you can find more [plugins for WordPress](https://artprojectgroup.com/wordpress-plugins) and more [plugins for WooCommerce](https://artprojectgroup.com/woocommerce-plugins) on [Art Project Group](https://artprojectgroup.com) and our profile on [WordPress](https://profiles.wordpress.org/artprojectgroup/).
 
 = GitHub =
 You can follow the development of this plugin on [Github](https://github.com/artprojectgroup/woocommerce-apg-weight-and-postcodestatecountry-shipping).
@@ -89,15 +89,15 @@ You can follow the development of this plugin on [Github](https://github.com/art
  * Search **WC - APG Weight Shipping** in the search engine available on *Plugins -> Add New* and press *Install Now* button.
 2. Activate plugin through *Plugins* menu on WordPress Administration Panel.
 3. Set up plugin on *WooCommerce -> Settings -> Shipping* or through *Settings* button.
-4. Ready, now you can enjoy it, and if you like it and find it useful, make a [*donation*](https://artprojectgroup.es/tienda/donacion).
+4. Ready, now you can enjoy it, and if you like it and find it useful, make a [*donation*](https://artprojectgroup.com/shop/donation).
 
 
 == Frequently asked questions ==
 = How do you set up? =
-As the plugin configuration is a bit complex, we have created a tutorial where we explain setup process step by step with a real example. You can visit it on [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](https://artprojectgroup.es/como-se-configura-woocommerce-apg-weight-and-postcodestatecountry-shipping).
+As the plugin configuration is a bit complex, we have created a tutorial where we explain setup process step by step with a real example. You can visit it on [¿Cómo se configura WooCommerce – APG Weight and Postcode/State/Country Shipping?](https://artprojectgroup.com/how-to-configure-wc-apg-weight-shipping).
 
 = Support =
-If you need help to configuring or installing **WC - APG Weight Shipping**, **Art Project Group** offers its service [**Technical Support**](https://artprojectgroup.es/tienda/soporte-tecnico). 
+If you need help to configuring or installing **WC - APG Weight Shipping**, **Art Project Group** offers its service [**Technical Support**](https://artprojectgroup.com/shop/technical-support). 
 
 *In any case **Art Project Group** provides any kind of free technical support.*
 
@@ -106,6 +106,8 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 2. Screenshot of WC - APG Weight Shipping. APG Shipping Tab.
 
 == Changelog ==
+= 3.14.1 =
+* The links to the website, the documentation, the donation and the support now open in the language of whoever is looking at the screen.
 = 3.14.0 =
 * Removed the compatibility code for WooCommerce below 4.4, which no longer ran.
 * Compatible with WordPress 7.2 and WooCommerce 11.2.1.
@@ -585,18 +587,18 @@ If you need help to configuring or installing **WC - APG Weight Shipping**, **Ar
 * Compatible with WooCommerce 11.1 and WordPress 7.2.
 
 == Translations ==
-* *English*: by [**Art Project Group**](https://artprojectgroup.es/) (default language).
-* *Español*: por [**Art Project Group**](https://artprojectgroup.es/).
+* *English*: by [**Art Project Group**](https://artprojectgroup.com/) (default language).
+* *Español*: por [**Art Project Group**](https://artprojectgroup.com/).
 * *Français*: par [**Guillaume**](http://guillaume-thibord.com/).
 * *Português*: por [**Alain Aubry**](http://www.casa-indigo.com/).
 * *Português (Brasil)*: por [**Danilo Lopes da Silva**](http://www.armarinhosdonaflor.com.br/).
 * *Italiano*: da [**Angelo Lazzari**](http://www.redtulp.com/).
 
 == Support ==
-Since **WC - APG Weight Shipping** is totally free, **Art Project Group** only provides payment [**Technical Support**](https://artprojectgroup.es/tienda/soporte-tecnico) service. In no case does **Art Project Group** provide any kind of free technical support.
+Since **WC - APG Weight Shipping** is totally free, **Art Project Group** only provides payment [**Technical Support**](https://artprojectgroup.com/shop/technical-support) service. In no case does **Art Project Group** provide any kind of free technical support.
 
 == Donation ==
-Did you like **WC - APG Weight Shipping** and find it useful on your website? We would appreciate a [small donation](https://artprojectgroup.es/tienda/donacion) that will help us to continue improving this plugin and create more plugins totally free for the entire WordPress community.
+Did you like **WC - APG Weight Shipping** and find it useful on your website? We would appreciate a [small donation](https://artprojectgroup.com/shop/donation) that will help us to continue improving this plugin and create more plugins totally free for the entire WordPress community.
 
 == Thanks ==
 * To [Andy_P](https://profiles.wordpress.org/andy_p/) and [Mantish](https://wordpress.org/support/profile/mantish) for the great plugin and modification that have inspired **WC - APG Weight Shipping**.
